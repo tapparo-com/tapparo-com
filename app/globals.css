@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Space Grotesk", sans-serif;
+
+  --color-background: #FAF9F7;
+  --color-foreground: #1A1916;
+  --color-accent: #C17A5A;
+  --color-muted: #9A9086;
+  --color-border: #E8E4DF;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
