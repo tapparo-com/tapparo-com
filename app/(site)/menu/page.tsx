@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { MENU_QUERY } from "@/sanity/lib/queries";
-import { MenuSection } from "@/components/MenuSection";
+import { MENU_QUERY, MENU_PAGE_QUERY } from "@/sanity/lib/queries";
+import { SectionMenuHeader } from "@/components/sections/SectionMenuHeader";
+import { SectionMenuCategory } from "@/components/sections/SectionMenuCategory";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,10 +9,24 @@ export const metadata: Metadata = {
   description: "Our menu of focaccia, drinks, and more.",
 };
 
+type Allergen = {
+  _id: string;
+  code: string;
+  label: string;
+};
+
+type MenuPageData = {
+  title: string;
+  subtitle?: string;
+  allergens: Allergen[];
+};
+
 type MenuCategory = {
   _id: string;
   title: string;
+  slug: string;
   description?: string;
+  tier?: string;
   items: {
     _id: string;
     title: string;
@@ -19,33 +34,58 @@ type MenuCategory = {
     pricingType: string;
     price?: number;
     priceVariants?: { _key: string; label: string; price: number }[];
-    dietaryTags?: string[];
+    allergens?: Allergen[];
     image?: any;
   }[];
+  extras?: { _key: string; name: string; price: string }[];
 };
 
 export default async function MenuPage() {
-  const categories = await sanityFetch<MenuCategory[]>({
-    query: MENU_QUERY,
-    tags: ["menuCategory", "menuItem"],
-  });
+  const [menuPageData, categories] = await Promise.all([
+    sanityFetch<MenuPageData>({
+      query: MENU_PAGE_QUERY,
+      tags: ["menuPage", "allergen"],
+    }),
+    sanityFetch<MenuCategory[]>({
+      query: MENU_QUERY,
+      tags: ["menuCategory", "menuItem", "allergen"],
+    }),
+  ]);
+
+  const title = menuPageData?.title || "The Menu";
+  const subtitle = menuPageData?.subtitle;
+  const allergens = menuPageData?.allergens || [];
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-20">
-      <h1 className="text-4xl font-bold tracking-tight">Menu</h1>
+    <div className="scroll-smooth">
+      <SectionMenuHeader
+        title={title}
+        subtitle={subtitle}
+        allergens={allergens}
+        categories={
+          categories?.map((c) => ({
+            _id: c._id,
+            title: c.title,
+            slug: c.slug,
+          })) || []
+        }
+      />
+
       {categories && categories.length > 0 ? (
-        <div className="mt-12 divide-y divide-border">
-          {categories.map((category) => (
-            <MenuSection
-              key={category._id}
-              title={category.title}
-              description={category.description}
-              items={category.items}
-            />
-          ))}
-        </div>
+        categories.map((category) => (
+          <SectionMenuCategory
+            key={category._id}
+            title={category.title}
+            slug={category.slug}
+            description={category.description}
+            items={category.items}
+            extras={category.extras}
+          />
+        ))
       ) : (
-        <p className="mt-8 text-muted">Menu coming soon.</p>
+        <p className="mx-auto max-w-[1856px] px-4 py-12 text-muted md:px-8">
+          Menu coming soon.
+        </p>
       )}
     </div>
   );

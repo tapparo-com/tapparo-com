@@ -89,18 +89,22 @@ export const menuItem = defineType({
       ],
     }),
     defineField({
-      name: "dietaryTags",
-      title: "Dietary Tags",
+      name: "allergens",
+      title: "Allergens",
       type: "array",
-      of: [defineArrayMember({ type: "string" })],
-      options: {
-        list: [
-          { title: "Vegan", value: "vegan" },
-          { title: "Vegetarian", value: "vegetarian" },
-          { title: "Gluten-Free", value: "gluten-free" },
-          { title: "Contains Nuts", value: "contains-nuts" },
-        ],
-      },
+      of: [
+        defineArrayMember({
+          type: "reference",
+          to: [{ type: "allergen" }],
+        }),
+      ],
+    }),
+    defineField({
+      name: "available",
+      title: "Available",
+      type: "boolean",
+      description: "Toggle off for seasonal items that are currently unavailable",
+      initialValue: true,
     }),
     defineField({
       name: "image",

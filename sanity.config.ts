@@ -5,6 +5,8 @@ import { schemaTypes } from "./sanity/schemaTypes";
 import { CogIcon } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
+const SINGLETONS = ["siteSettings", "homePage", "menuPage"];
+
 const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
@@ -18,9 +20,25 @@ const structure: StructureResolver = (S) =>
             .documentId("siteSettings")
             .title("Site Settings")
         ),
+      S.listItem()
+        .title("Home Page")
+        .child(
+          S.document()
+            .schemaType("homePage")
+            .documentId("homePage")
+            .title("Home Page")
+        ),
+      S.listItem()
+        .title("Menu Page")
+        .child(
+          S.document()
+            .schemaType("menuPage")
+            .documentId("menuPage")
+            .title("Menu Page")
+        ),
       S.divider(),
       ...S.documentTypeListItems().filter(
-        (listItem) => !["siteSettings"].includes(listItem.getId() as string)
+        (listItem) => !SINGLETONS.includes(listItem.getId() as string)
       ),
     ]);
 

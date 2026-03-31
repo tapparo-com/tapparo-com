@@ -1,7 +1,6 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { ComingSoon } from "@/components/ComingSoon";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -10,9 +9,12 @@ type SiteSettings = {
   tagline: string;
   isComingSoon: boolean;
   comingSoonText: string;
+  logo?: { asset?: { _id: string; url: string } };
+  heroImages?: any[];
   email: string;
   phone: string;
   address: string;
+  mapUrl?: string;
   openingHours: { _key: string; day: string; hours: string }[];
   socialLinks: { _key: string; platform: string; url: string }[];
   seoDefaults: { title: string; description: string };
@@ -50,7 +52,6 @@ export default async function SiteLayout({
 
   return (
     <>
-      <Header restaurantName={settings?.restaurantName} />
       <main>{children}</main>
       <Footer settings={settings} />
     </>

@@ -19,6 +19,37 @@ export const siteSettings = defineType({
       type: "string",
     }),
     defineField({
+      name: "logo",
+      title: "Logo",
+      type: "image",
+      description: "SVG logo used in hero and footer",
+    }),
+    defineField({
+      name: "heroImages",
+      title: "Hero Images",
+      type: "array",
+      description: "Background carousel images for the hero section",
+      of: [
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "mapUrl",
+      title: "Map URL",
+      type: "url",
+      description: "Google Maps link for the restaurant location",
+    }),
+    defineField({
       name: "isComingSoon",
       title: "Coming Soon Mode",
       type: "boolean",
