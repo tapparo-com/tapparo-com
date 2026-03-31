@@ -40,34 +40,36 @@ export function SectionHero({
   }, [images.length]);
 
   return (
-    <section className="relative h-[780px] overflow-hidden md:h-[640px] xl:h-[1080px]">
-      {/* Background carousel */}
-      {images.map((img, i) => (
-        <div
-          key={img._key}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            i === currentIndex ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <Image
-            src={urlFor(img).width(1920).height(1080).url()}
-            alt={img.alt || ""}
-            fill
-            className="object-cover"
-            priority={i === 0}
-            placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
-            blurDataURL={img.asset?.metadata?.lqip || undefined}
-          />
-        </div>
-      ))}
+    <>
+      {/* Fixed background carousel — stays locked to viewport */}
+      <div className="fixed inset-0 z-0 h-svh overflow-hidden">
+        {images.map((img, i) => (
+          <div
+            key={img._key}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              i === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={urlFor(img).width(1920).height(1080).url()}
+              alt={img.alt || ""}
+              fill
+              className="object-cover"
+              priority={i === 0}
+              placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
+              blurDataURL={img.asset?.metadata?.lqip || undefined}
+            />
+          </div>
+        ))}
 
-      {/* Fallback background if no images */}
-      {images.length === 0 && (
-        <div className="absolute inset-0 bg-foreground" />
-      )}
+        {/* Fallback background if no images */}
+        {images.length === 0 && (
+          <div className="absolute inset-0 bg-foreground" />
+        )}
+      </div>
 
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 xl:pb-20">
+      {/* Hero content — takes up viewport height, scrolls naturally */}
+      <section className="relative z-10 flex h-svh flex-col items-center justify-end pb-12 md:pb-16 xl:pb-20">
         <h1 className="sr-only">{restaurantName}</h1>
 
         {logo?.asset && (
@@ -91,7 +93,7 @@ export function SectionHero({
             {tagline}
           </p>
         )}
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

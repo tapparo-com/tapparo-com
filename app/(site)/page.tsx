@@ -40,6 +40,8 @@ export default async function HomePage() {
         sections={pageData?.sections || []}
         shared={{
           restaurantName: settings?.restaurantName,
+          tagline: settings?.tagline,
+          logo: settings?.logo,
           openingHours: settings?.openingHours,
         }}
       />

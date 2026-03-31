@@ -30,9 +30,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _key,
       _type,
       _type == "sectionHero" => {
-        logo,
-        heroImages[]{ _key, ${imageFields} },
-        tagline
+        heroImages[]{ _key, ${imageFields} }
       },
       _type == "sectionIntro" => {
         heading,

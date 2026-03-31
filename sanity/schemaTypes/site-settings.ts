@@ -25,25 +25,6 @@ export const siteSettings = defineType({
       description: "SVG logo used in hero and footer",
     }),
     defineField({
-      name: "heroImages",
-      title: "Hero Images",
-      type: "array",
-      description: "Background carousel images for the hero section",
-      of: [
-        defineArrayMember({
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: "alt",
-              title: "Alt Text",
-              type: "string",
-            }),
-          ],
-        }),
-      ],
-    }),
-    defineField({
       name: "mapUrl",
       title: "Map URL",
       type: "url",

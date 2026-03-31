@@ -19,6 +19,8 @@ type Section = {
 
 type SharedData = {
   restaurantName?: string;
+  tagline?: string;
+  logo?: any;
   openingHours?: { _key: string; day: string; hours: string }[];
 };
 
@@ -60,21 +62,26 @@ export async function SectionRenderer({ sections, shared }: Props) {
       : null,
   ]);
 
+  const heroIndex = sections.findIndex((s) => s._type === "sectionHero");
+  const heroSection = heroIndex !== -1 ? sections[heroIndex] : null;
+  const restSections = heroSection
+    ? sections.filter((_, i) => i !== heroIndex)
+    : sections;
+
   return (
     <>
-      {sections.map((section) => {
+      {heroSection && (
+        <SectionHero
+          key={heroSection._key}
+          restaurantName={shared?.restaurantName || "Tapparo"}
+          tagline={shared?.tagline}
+          logo={shared?.logo}
+          heroImages={heroSection.heroImages}
+        />
+      )}
+      <div className="relative z-10 bg-background">
+      {restSections.map((section) => {
         switch (section._type) {
-          case "sectionHero":
-            return (
-              <SectionHero
-                key={section._key}
-                restaurantName={shared?.restaurantName || "Tapparo"}
-                tagline={section.tagline}
-                logo={section.logo}
-                heroImages={section.heroImages}
-              />
-            );
-
           case "sectionIntro":
             return (
               <SectionIntro
@@ -174,6 +181,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return null;
         }
       })}
+      </div>
     </>
   );
 }

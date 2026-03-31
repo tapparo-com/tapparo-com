@@ -17,12 +17,6 @@ export const sectionHero = defineArrayMember({
   icon: ImageIcon,
   fields: [
     defineField({
-      name: "logo",
-      title: "Logo",
-      type: "image",
-      description: "SVG logo overlay on the hero",
-    }),
-    defineField({
       name: "heroImages",
       title: "Background Images",
       type: "array",
@@ -37,17 +31,10 @@ export const sectionHero = defineArrayMember({
         }),
       ],
     }),
-    defineField({
-      name: "tagline",
-      title: "Tagline",
-      type: "string",
-      description: 'e.g. "Focacceria • Daybar"',
-    }),
   ],
   preview: {
-    select: { subtitle: "tagline" },
-    prepare({ subtitle }) {
-      return { title: "Hero", subtitle };
+    prepare() {
+      return { title: "Hero" };
     },
   },
 });

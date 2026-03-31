@@ -106,6 +106,8 @@ export default async function SlugPage({ params }: Props) {
           sections={page.sections || []}
           shared={{
             restaurantName: settings?.restaurantName,
+            tagline: settings?.tagline,
+            logo: settings?.logo,
             openingHours: settings?.openingHours,
           }}
         />

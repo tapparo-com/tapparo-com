@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 
 type Settings = {
@@ -25,18 +24,26 @@ export function Footer({ settings }: FooterProps) {
   };
 
   return (
-    <footer className="border-t-2 border-accent">
+    <footer className="relative z-10 border-t-2 border-accent bg-background">
       <div className="mx-auto max-w-[1856px] px-3 pt-24 pb-12 md:px-8 md:pt-24 xl:pt-[280px] xl:pb-20">
         <div className="grid gap-12 md:grid-cols-[1fr_2fr] xl:gap-16">
           {/* Left column: Logo + scroll-to-top */}
           <div className="flex flex-col items-start gap-8">
             {settings?.logo?.asset && (
-              <Image
-                src={urlFor(settings.logo).url()}
-                alt={`${settings.restaurantName || "Tapparo"} logo`}
-                width={280}
-                height={80}
-                className="w-full max-w-[280px] dark:invert"
+              <div
+                className="h-20 w-full max-w-[280px] bg-foreground"
+                style={{
+                  maskImage: `url(${urlFor(settings.logo).url()})`,
+                  maskSize: "contain",
+                  maskRepeat: "no-repeat",
+                  maskPosition: "left center",
+                  WebkitMaskImage: `url(${urlFor(settings.logo).url()})`,
+                  WebkitMaskSize: "contain",
+                  WebkitMaskRepeat: "no-repeat",
+                  WebkitMaskPosition: "left center",
+                }}
+                role="img"
+                aria-label={`${settings.restaurantName || "Tapparo"} logo`}
               />
             )}
             {!settings?.logo?.asset && (
