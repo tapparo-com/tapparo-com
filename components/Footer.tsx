@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { urlFor } from "@/sanity/lib/image";
+import { SanityLogo } from "@/components/ui/SanityLogo";
 
 type Settings = {
   restaurantName: string;
@@ -30,20 +30,10 @@ export function Footer({ settings }: FooterProps) {
           {/* Left column: Logo + scroll-to-top */}
           <div className="flex flex-col items-start gap-8">
             {settings?.logo?.asset && (
-              <div
-                className="h-20 w-full max-w-[280px] bg-foreground"
-                style={{
-                  maskImage: `url(${urlFor(settings.logo).url()})`,
-                  maskSize: "contain",
-                  maskRepeat: "no-repeat",
-                  maskPosition: "left center",
-                  WebkitMaskImage: `url(${urlFor(settings.logo).url()})`,
-                  WebkitMaskSize: "contain",
-                  WebkitMaskRepeat: "no-repeat",
-                  WebkitMaskPosition: "left center",
-                }}
-                role="img"
-                aria-label={`${settings.restaurantName || "Tapparo"} logo`}
+              <SanityLogo
+                logo={settings.logo}
+                alt={`${settings.restaurantName || "Tapparo"} logo`}
+                className="w-full max-w-[280px] text-foreground [&_svg]:w-full [&_svg]:h-auto"
               />
             )}
             {!settings?.logo?.asset && (

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { useEffect, useState } from "react";
+import { SanityLogo } from "@/components/ui/SanityLogo";
 
 type HeroImage = {
   _key: string;
@@ -73,12 +74,10 @@ export function SectionHero({
         <h1 className="sr-only">{restaurantName}</h1>
 
         {logo?.asset && (
-          <Image
-            src={urlFor(logo).url()}
+          <SanityLogo
+            logo={logo}
             alt={`${restaurantName} logo`}
-            width={752}
-            height={208}
-            className="mb-6 w-[calc(100%-48px)] max-w-[752px] md:mb-8"
+            className="mb-6 w-[calc(100%-48px)] max-w-[752px] text-background md:mb-8 [&_svg]:w-full [&_svg]:h-auto"
           />
         )}
 

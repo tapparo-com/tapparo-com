@@ -1,6 +1,7 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
+import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./sanity/schemaTypes";
 import { CogIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
@@ -69,7 +70,7 @@ export default defineConfig({
   basePath: "/studio",
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  plugins: [structureTool({ structure }), visionTool()],
+  plugins: [structureTool({ structure }), media(), visionTool()],
   schema: {
     types: schemaTypes,
   },
