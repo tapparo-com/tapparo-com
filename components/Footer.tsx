@@ -90,7 +90,15 @@ export function Footer({ settings }: FooterProps) {
                     href="/imprint"
                     className="text-muted transition-colors hover:text-foreground"
                   >
-                    Imprint
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/imprint"
+                    className="text-muted transition-colors hover:text-foreground"
+                  >
+                    Terms of Use
                   </Link>
                 </li>
               </ul>
@@ -102,6 +110,9 @@ export function Footer({ settings }: FooterProps) {
                 Contact
               </h4>
               <address className="space-y-2 text-sm not-italic text-muted">
+                <p className="font-medium uppercase text-foreground">
+                  {settings?.restaurantName || "Tapparo"}
+                </p>
                 {settings?.address && (
                   <p className="whitespace-pre-line">{settings.address}</p>
                 )}
@@ -172,7 +183,8 @@ export function Footer({ settings }: FooterProps) {
                         rel="noopener noreferrer"
                         className="text-muted transition-colors hover:text-foreground"
                       >
-                        {link.platform}
+                        {link.platform.charAt(0).toUpperCase() +
+                          link.platform.slice(1)}
                       </a>
                     </li>
                   ))}

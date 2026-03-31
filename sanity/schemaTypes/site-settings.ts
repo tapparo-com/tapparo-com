@@ -125,6 +125,7 @@ export const siteSettings = defineType({
                   { title: "Facebook", value: "facebook" },
                   { title: "X / Twitter", value: "twitter" },
                   { title: "TikTok", value: "tiktok" },
+                  { title: "WhatsApp", value: "whatsapp" },
                 ],
               },
               validation: (rule) => rule.required(),

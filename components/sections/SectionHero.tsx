@@ -35,7 +35,7 @@ export function SectionHero({
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
+    }, 800);
     return () => clearInterval(interval);
   }, [images.length]);
 
@@ -87,7 +87,7 @@ export function SectionHero({
         )}
 
         {tagline && (
-          <p className="font-display text-[17.5px] font-medium uppercase tracking-[0.5em] text-white drop-shadow-lg md:text-xl md:tracking-[0.83em] xl:text-4xl xl:tracking-[13.32px]">
+          <p className="font-display text-[17.5px] font-medium tracking-[0.5em] text-white drop-shadow-lg md:text-xl md:tracking-[0.83em] xl:text-4xl xl:tracking-[13.32px]">
             {tagline}
           </p>
         )}

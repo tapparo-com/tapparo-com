@@ -14,8 +14,20 @@ type SectionGalleryProps = {
   images?: GalleryImage[] | null;
 };
 
+// Placeholder column layout matching Figma's organic gallery
+const PLACEHOLDER_COLUMNS = [
+  [{ w: 200, h: 320 }],
+  [{ w: 220, h: 240 }, { w: 220, h: 180 }],
+  [{ w: 280, h: 300 }],
+  [{ w: 160, h: 160 }, { w: 160, h: 220 }],
+  [{ w: 240, h: 280 }],
+  [{ w: 180, h: 200 }, { w: 180, h: 260 }],
+  [{ w: 200, h: 240 }],
+];
+
 export function SectionGallery({ images }: SectionGalleryProps) {
   const trackRef = useRef<HTMLUListElement>(null);
+  const hasImages = images && images.length > 0;
 
   useEffect(() => {
     const track = trackRef.current;
@@ -43,18 +55,33 @@ export function SectionGallery({ images }: SectionGalleryProps) {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-  if (!images || images.length === 0) return null;
+  // Build columns from real images or use placeholders
+  let columns: { key: string; w: number; h: number; src?: string; alt?: string }[][] = [];
 
-  // Distribute images into columns of 1-2 images each
-  const columns: GalleryImage[][] = [];
-  let col: GalleryImage[] = [];
-  images.forEach((img, i) => {
-    col.push(img);
-    if (col.length === 2 || i === images.length - 1) {
-      columns.push(col);
-      col = [];
-    }
-  });
+  if (hasImages) {
+    let col: typeof columns[0] = [];
+    images.forEach((img, i) => {
+      col.push({
+        key: img._key,
+        w: 320,
+        h: 400,
+        src: urlFor(img).width(400).height(500).url(),
+        alt: img.alt || "",
+      });
+      if (col.length === 2 || i === images.length - 1) {
+        columns.push(col);
+        col = [];
+      }
+    });
+  } else {
+    columns = PLACEHOLDER_COLUMNS.map((col, ci) =>
+      col.map((item, ii) => ({
+        key: `p-${ci}-${ii}`,
+        w: item.w,
+        h: item.h,
+      }))
+    );
+  }
 
   return (
     <section
@@ -63,25 +90,30 @@ export function SectionGallery({ images }: SectionGalleryProps) {
     >
       <ul
         ref={trackRef}
-        className="flex gap-4 will-change-transform"
+        className="flex items-center gap-4 will-change-transform"
         aria-hidden="true"
       >
-        {/* Render columns twice for infinite loop */}
-        {[...columns, ...columns].map((colImgs, colIdx) => (
-          <li
-            key={colIdx}
-            className="flex shrink-0 flex-col gap-4"
-          >
-            {colImgs.map((img) => (
-              <Image
-                key={img._key}
-                src={urlFor(img).width(400).height(500).url()}
-                alt={img.alt || ""}
-                width={400}
-                height={500}
-                className="h-auto w-[200px] rounded-sm object-cover shadow-[0_1px_2px_rgba(54,29,5,0.25)] md:w-[260px] xl:w-[320px]"
-              />
-            ))}
+        {[...columns, ...columns].map((colItems, colIdx) => (
+          <li key={colIdx} className="flex shrink-0 flex-col gap-4">
+            {colItems.map((item) =>
+              item.src ? (
+                <Image
+                  key={item.key}
+                  src={item.src}
+                  alt={item.alt || ""}
+                  width={item.w}
+                  height={item.h}
+                  className="h-auto rounded-sm object-cover shadow-[0_1px_2px_rgba(54,29,5,0.25)]"
+                  style={{ width: item.w * 0.8, height: "auto" }}
+                />
+              ) : (
+                <div
+                  key={item.key}
+                  className="shrink-0 rounded-sm bg-[#A0A0A0] shadow-[0_1px_2px_rgba(54,29,5,0.25)]"
+                  style={{ width: item.w, height: item.h }}
+                />
+              )
+            )}
           </li>
         ))}
       </ul>

@@ -43,8 +43,8 @@ export function SectionIntro({
     <section className="mx-auto max-w-[1856px] px-3 py-14 md:px-8 md:py-16 xl:py-20">
       <div className="grid gap-10 md:grid-cols-[2fr_3fr] md:gap-8 xl:gap-12">
         {/* Left: Menu image */}
-        {menuImage?.asset && (
-          <Link href="/menu" className="group block overflow-hidden border border-foreground">
+        <Link href="/menu" className="group block overflow-hidden border border-foreground">
+          {menuImage?.asset ? (
             <Image
               src={urlFor(menuImage).width(800).height(1000).url()}
               alt={menuImage.alt || "View our menu"}
@@ -54,8 +54,12 @@ export function SectionIntro({
               placeholder={menuImage.asset.metadata?.lqip ? "blur" : undefined}
               blurDataURL={menuImage.asset.metadata?.lqip || undefined}
             />
-          </Link>
-        )}
+          ) : (
+            <div className="flex aspect-[4/5] items-center justify-center bg-accent/10 text-muted">
+              <span className="font-sans text-sm">Menu image</span>
+            </div>
+          )}
+        </Link>
 
         {/* Right: Text content */}
         <div className="flex flex-col gap-10 md:gap-10 xl:gap-12">
@@ -78,7 +82,7 @@ export function SectionIntro({
 
           {/* Body text */}
           {body && (
-            <p className="max-w-lg font-body text-base leading-relaxed text-foreground">
+            <p className="max-w-lg font-sans text-base leading-relaxed text-foreground">
               {body}
             </p>
           )}
@@ -86,16 +90,16 @@ export function SectionIntro({
           {/* Opening hours */}
           {openingHours && openingHours.length > 0 && (
             <div className="border-t border-foreground/20 pt-6">
-              <h3 className="mb-3 font-body text-xs font-medium uppercase tracking-wider text-muted">
+              <h3 className="mb-3 font-sans text-xs font-medium uppercase tracking-wider text-muted">
                 Hours
               </h3>
               <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-1">
                 {openingHours.map((row) => (
                   <div key={row._key} className="contents">
-                    <dt className="font-body text-sm text-foreground">
+                    <dt className="font-sans text-sm text-foreground">
                       {row.day}
                     </dt>
-                    <dd className="font-body text-sm text-foreground">
+                    <dd className="font-sans text-sm text-foreground">
                       {row.hours}
                     </dd>
                   </div>

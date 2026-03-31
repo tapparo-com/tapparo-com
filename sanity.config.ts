@@ -2,15 +2,24 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemaTypes";
-import { CogIcon } from "@sanity/icons";
+import { CogIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
-const SINGLETONS = ["siteSettings", "homePage", "menuPage"];
+const HIDDEN_TYPES = [
+  "siteSettings",
+  "page",
+  "menuCategory",
+  "menuItem",
+  "allergen",
+  "post",
+  "author",
+];
 
 const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
+      // Site Settings singleton
       S.listItem()
         .title("Site Settings")
         .icon(CogIcon)
@@ -20,26 +29,38 @@ const structure: StructureResolver = (S) =>
             .documentId("siteSettings")
             .title("Site Settings")
         ),
-      S.listItem()
-        .title("Home Page")
-        .child(
-          S.document()
-            .schemaType("homePage")
-            .documentId("homePage")
-            .title("Home Page")
-        ),
-      S.listItem()
-        .title("Menu Page")
-        .child(
-          S.document()
-            .schemaType("menuPage")
-            .documentId("menuPage")
-            .title("Menu Page")
-        ),
       S.divider(),
-      ...S.documentTypeListItems().filter(
-        (listItem) => !SINGLETONS.includes(listItem.getId() as string)
-      ),
+
+      // Pages collection
+      S.documentTypeListItem("page").title("Pages"),
+      S.divider(),
+
+      // Menu group
+      S.listItem()
+        .title("Menu")
+        .icon(TagIcon)
+        .child(
+          S.list()
+            .title("Menu")
+            .items([
+              S.documentTypeListItem("menuCategory").title("Categories"),
+              S.documentTypeListItem("menuItem").title("Items"),
+              S.documentTypeListItem("allergen").title("Allergens"),
+            ])
+        ),
+
+      // Stories group
+      S.listItem()
+        .title("Stories")
+        .icon(DocumentTextIcon)
+        .child(
+          S.list()
+            .title("Stories")
+            .items([
+              S.documentTypeListItem("post").title("Posts"),
+              S.documentTypeListItem("author").title("Authors"),
+            ])
+        ),
     ]);
 
 export default defineConfig({

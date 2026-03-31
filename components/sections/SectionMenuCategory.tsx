@@ -52,7 +52,7 @@ export function SectionMenuCategory({
           {title}
         </h2>
         {description && (
-          <p className="font-body text-sm text-muted">{description}</p>
+          <p className="font-sans text-sm text-muted">{description}</p>
         )}
       </div>
 
@@ -76,7 +76,7 @@ export function SectionMenuCategory({
                 />
               </div>
               {item.description && (
-                <p className="mt-1 font-body text-xs leading-relaxed text-muted md:text-sm">
+                <p className="mt-1 font-sans text-xs leading-relaxed text-muted md:text-sm">
                   {item.description}
                 </p>
               )}
@@ -100,7 +100,7 @@ export function SectionMenuCategory({
       {extras && extras.length > 0 && (
         <aside className="mt-6 border-t border-border pt-4">
           <h3 className="sr-only">Extras</h3>
-          <p className="mb-2 font-body text-xs text-muted">Extras</p>
+          <p className="mb-2 font-sans text-xs text-muted">Extras</p>
           <dl className="flex flex-wrap gap-x-4 gap-y-1">
             {extras.map((extra) => (
               <div key={extra._key} className="flex items-center gap-1">

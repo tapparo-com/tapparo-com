@@ -1,5 +1,6 @@
 import { defineType, defineField } from "sanity";
 import { DocumentIcon } from "@sanity/icons";
+import { allSectionTypes } from "./sections";
 
 export const page = defineType({
   name: "page",
@@ -24,10 +25,10 @@ export const page = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "body",
-      title: "Body",
+      name: "sections",
+      title: "Sections",
       type: "array",
-      of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
+      of: allSectionTypes,
     }),
     defineField({
       name: "seo",

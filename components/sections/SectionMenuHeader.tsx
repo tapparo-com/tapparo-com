@@ -32,7 +32,7 @@ export function SectionMenuHeader({
       </h1>
 
       {subtitle && (
-        <p className="mt-3 max-w-md font-body text-sm text-muted md:mt-4 md:text-base">
+        <p className="mt-3 max-w-md font-sans text-sm text-muted md:mt-4 md:text-base">
           {subtitle}
         </p>
       )}
@@ -58,12 +58,12 @@ export function SectionMenuHeader({
 
       {allergens.length > 0 && (
         <aside aria-label="Allergen legend" className="mt-4 md:mt-6">
-          <p className="mb-2 font-body text-xs text-muted">Allergens</p>
+          <p className="mb-2 font-sans text-xs text-muted">Allergens</p>
           <ul className="flex flex-wrap gap-2">
             {allergens.map((a) => (
               <li key={a._id} className="flex items-center gap-1.5">
                 <AllergenBadge code={a.code} label={a.label} />
-                <span className="font-body text-xs text-muted">{a.label}</span>
+                <span className="font-sans text-xs text-muted">{a.label}</span>
               </li>
             ))}
           </ul>

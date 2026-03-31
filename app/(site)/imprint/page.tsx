@@ -1,45 +1,38 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { PAGE_QUERY } from "@/sanity/lib/queries";
-import { PortableText } from "@portabletext/react";
+import { PAGE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
+import { SectionRenderer } from "@/components/SectionRenderer";
 import type { Metadata } from "next";
 
-type PageData = {
-  _id: string;
-  title: string;
-  body?: any[];
-  seo?: { title?: string; description?: string };
-} | null;
-
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await sanityFetch<PageData>({
-    query: PAGE_QUERY,
+  const pageData = await sanityFetch<any>({
+    query: PAGE_BY_SLUG_QUERY,
     params: { slug: "imprint" },
     tags: ["page"],
   });
 
   return {
-    title: page?.seo?.title || "Imprint — Tapparo",
-    description: page?.seo?.description,
+    title: pageData?.seo?.title || pageData?.title || "Imprint",
+    description: pageData?.seo?.description,
   };
 }
 
 export default async function ImprintPage() {
-  const page = await sanityFetch<PageData>({
-    query: PAGE_QUERY,
+  const pageData = await sanityFetch<any>({
+    query: PAGE_BY_SLUG_QUERY,
     params: { slug: "imprint" },
     tags: ["page"],
   });
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-20">
-      <h1 className="text-4xl font-bold tracking-tight">
-        {page?.title || "Imprint"}
-      </h1>
-      {page?.body && (
-        <div className="prose prose-neutral mt-8 max-w-none">
-          <PortableText value={page.body} />
-        </div>
+    <>
+      {pageData?.title && (
+        <header className="mx-auto max-w-[1856px] px-3 pt-12 pb-4 md:px-8 md:pt-16">
+          <h1 className="text-4xl font-bold tracking-tight">
+            {pageData.title}
+          </h1>
+        </header>
       )}
-    </div>
+      <SectionRenderer sections={pageData?.sections || []} />
+    </>
   );
 }
