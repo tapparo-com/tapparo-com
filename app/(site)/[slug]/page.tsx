@@ -81,6 +81,9 @@ function formatDate(dateString: string) {
 export default async function SlugPage({ params }: Props) {
   const { slug } = await params;
 
+  // "home" is served at / only — block /home
+  if (slug === "home") notFound();
+
   // --- Try CMS page ---
   const [page, settings] = await Promise.all([
     sanityFetch<any>({

@@ -11,6 +11,7 @@ export const menuItem = defineType({
       name: "title",
       title: "Title",
       type: "string",
+      description: "Item name as shown on the menu, e.g. 'Margherita'.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -18,11 +19,13 @@ export const menuItem = defineType({
       title: "Description",
       type: "text",
       rows: 2,
+      description: "Ingredients or short description shown below the item name in muted text.",
     }),
     defineField({
       name: "category",
       title: "Category",
       type: "reference",
+      description: "Which menu category this item belongs to. The item appears under this category on the menu page.",
       to: [{ type: "menuCategory" }],
       validation: (rule) => rule.required(),
     }),
@@ -30,6 +33,7 @@ export const menuItem = defineType({
       name: "pricingType",
       title: "Pricing Type",
       type: "string",
+      description: "'Single Price' for items with one price. 'Price Variants' for items with sizes (e.g. S/L).",
       options: {
         list: [
           { title: "Single Price", value: "single" },
@@ -44,6 +48,7 @@ export const menuItem = defineType({
       name: "price",
       title: "Price",
       type: "number",
+      description: "Price in euros. Shown as '€X.XX' on the menu.",
       hidden: ({ parent }) => parent?.pricingType !== "single",
       validation: (rule) =>
         rule.custom((value, context) => {
@@ -58,6 +63,7 @@ export const menuItem = defineType({
       name: "priceVariants",
       title: "Price Variants",
       type: "array",
+      description: "Multiple price options. Each needs a label (e.g. 'S', 'L') and a price.",
       hidden: ({ parent }) => parent?.pricingType !== "variants",
       of: [
         defineArrayMember({
@@ -92,6 +98,7 @@ export const menuItem = defineType({
       name: "allergens",
       title: "Allergens",
       type: "array",
+      description: "Select from the allergen list. Shown as small circular badges (e.g. G, D, N) next to the item.",
       of: [
         defineArrayMember({
           type: "reference",
@@ -103,7 +110,7 @@ export const menuItem = defineType({
       name: "available",
       title: "Available",
       type: "boolean",
-      description: "Toggle off for seasonal items that are currently unavailable",
+      description: "When OFF, this item is hidden from the menu page. Use for seasonal items that are temporarily unavailable.",
       initialValue: true,
     }),
     defineField({
@@ -117,6 +124,7 @@ export const menuItem = defineType({
       title: "Sort Order",
       type: "number",
       initialValue: 0,
+      description: "Order within the category. Lower numbers appear first.",
     }),
   ],
   preview: {

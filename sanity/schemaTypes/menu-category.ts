@@ -11,6 +11,7 @@ export const menuCategory = defineType({
       name: "title",
       title: "Title",
       type: "string",
+      description: "Category name shown as a heading on the menu page, e.g. 'Focaccia Classica'.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -18,7 +19,7 @@ export const menuCategory = defineType({
       title: "Slug",
       type: "slug",
       options: { source: "title", maxLength: 96 },
-      description: "Used as the section anchor ID on the menu page",
+      description: "Used for the anchor link in the category navigation. Auto-generated from the title.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -26,11 +27,13 @@ export const menuCategory = defineType({
       title: "Description",
       type: "text",
       rows: 2,
+      description: "Short subtitle shown next to the category heading.",
     }),
     defineField({
       name: "tier",
       title: "Tier",
       type: "string",
+      description: "Visual grouping — currently informational, may be used for styling in the future.",
       options: {
         list: [
           { title: "Classica", value: "classica" },
@@ -45,7 +48,7 @@ export const menuCategory = defineType({
       name: "extras",
       title: "Extras",
       type: "array",
-      description: 'Per-category extras like "Extra cheese +€1.00"',
+      description: "Add-ons shown at the bottom of this category, e.g. 'Extra cheese +€1.00'.",
       of: [
         defineArrayMember({
           type: "object",
@@ -74,6 +77,7 @@ export const menuCategory = defineType({
       title: "Sort Order",
       type: "number",
       initialValue: 0,
+      description: "Lower numbers appear first on the menu page. Use 0, 1, 2, 3... to set the order.",
       validation: (rule) => rule.required(),
     }),
   ],

@@ -24,23 +24,24 @@ export function Footer({ settings }: FooterProps) {
   };
 
   return (
-    <footer className="relative z-10 border-t-2 border-accent bg-background">
+    <footer className="relative z-10 border-t border-accent bg-background">
       <div className="mx-auto max-w-[1856px] px-3 pt-24 pb-12 md:px-8 md:pt-24 xl:pt-[280px] xl:pb-20">
         <div className="grid gap-12 md:grid-cols-[1fr_2fr] xl:gap-16">
           {/* Left column: Logo + scroll-to-top */}
           <div className="flex flex-col items-start gap-8">
-            {settings?.logo?.asset && (
-              <SanityLogo
-                logo={settings.logo}
-                alt={`${settings.restaurantName || "Tapparo"} logo`}
-                className="w-full max-w-[280px] text-foreground [&_svg]:w-full [&_svg]:h-auto"
-              />
-            )}
-            {!settings?.logo?.asset && (
-              <span className="font-display text-3xl font-bold text-foreground">
-                {settings?.restaurantName || "Tapparo"}
-              </span>
-            )}
+            <Link href="/">
+              {settings?.logo?.asset ? (
+                <SanityLogo
+                  logo={settings.logo}
+                  alt={`${settings.restaurantName || "Tapparo"} logo`}
+                  className="w-full max-w-[280px] text-foreground [&_svg]:w-full [&_svg]:h-auto"
+                />
+              ) : (
+                <span className="font-display text-3xl font-bold text-foreground">
+                  {settings?.restaurantName || "Tapparo"}
+                </span>
+              )}
+            </Link>
             <button
               onClick={scrollToTop}
               aria-label="Scroll to top"
@@ -87,15 +88,7 @@ export function Footer({ settings }: FooterProps) {
                     href="/imprint"
                     className="text-muted transition-colors hover:text-foreground"
                   >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/imprint"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Terms of Use
+                    Imprint
                   </Link>
                 </li>
               </ul>

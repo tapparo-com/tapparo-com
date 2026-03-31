@@ -20,13 +20,13 @@ export const sectionHero = defineArrayMember({
       name: "heroImages",
       title: "Background Images",
       type: "array",
-      description: "Carousel images — auto-rotate in background",
+      description: "Full-screen background images that auto-rotate. Upload at least 1920×1080px for best quality. The logo and tagline from Site Settings are overlaid automatically.",
       of: [
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
           fields: [
-            defineField({ name: "alt", title: "Alt Text", type: "string" }),
+            defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for screen readers and SEO. Example: 'Bar counter with focaccia and wine glasses'" }),
           ],
         }),
       ],
@@ -49,8 +49,7 @@ export const sectionIntro = defineArrayMember({
       name: "heading",
       title: "Heading",
       type: "array",
-      description:
-        "Use bold for accent-colored text",
+      description: "Large intro text. Use **bold** to highlight words in the accent color (red).",
       of: [defineArrayMember({ type: "block" })],
     }),
     defineField({
@@ -58,11 +57,13 @@ export const sectionIntro = defineArrayMember({
       title: "Body Text",
       type: "text",
       rows: 4,
+      description: "Paragraph text shown below the heading and 'View Menu' button.",
     }),
     defineField({
       name: "menuImage",
       title: "Menu Image",
       type: "image",
+      description: "Illustration or photo shown on the left. Links to the menu page. Recommended aspect ratio 4:5 (portrait).",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", title: "Alt Text", type: "string" }),
@@ -86,12 +87,13 @@ export const sectionMoodImages = defineArrayMember({
       name: "title",
       title: "Section Label",
       type: "string",
+      description: "Small label shown to the left of the images on desktop.",
     }),
     defineField({
       name: "images",
       title: "Images",
       type: "array",
-      description: "3 portrait images (4:5 ratio)",
+      description: "Exactly 3 portrait photos. Displayed side by side on desktop, stacked on mobile. Recommended 4:5 ratio.",
       of: [
         defineArrayMember({
           type: "image",
@@ -128,11 +130,13 @@ export const sectionQuote = defineArrayMember({
       title: "Quote",
       type: "text",
       rows: 3,
+      description: "Displayed in large editorial text.",
     }),
     defineField({
       name: "author",
       title: "Author",
       type: "string",
+      description: "Attribution shown in red before the quote on desktop, below on mobile. Use UPPERCASE for style.",
     }),
   ],
   preview: {
@@ -154,6 +158,7 @@ export const sectionLargeText = defineArrayMember({
       title: "Display Text",
       type: "text",
       rows: 4,
+      description: "Large display text, no attribution. Same visual style as the Quote section.",
     }),
   ],
   preview: {
@@ -177,6 +182,7 @@ export const sectionGallery = defineArrayMember({
       name: "images",
       title: "Gallery Images",
       type: "array",
+      description: "Auto-scrolling horizontal gallery. Upload a mix of landscape and portrait images for visual variety.",
       of: [
         defineArrayMember({
           type: "image",
@@ -205,14 +211,14 @@ export const sectionStories = defineArrayMember({
       name: "heading",
       title: "Heading",
       type: "string",
-      description: 'e.g. "OUR STORIES"',
+      description: "Label shown above the blog card carousel. Example: 'OUR STORIES'.",
     }),
     defineField({
       name: "count",
       title: "Number of Posts",
       type: "number",
       initialValue: 6,
-      description: "How many recent posts to show",
+      description: "Number of recent blog posts to display. Cards are shown in a horizontal scroll.",
     }),
   ],
   preview: {
