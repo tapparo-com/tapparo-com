@@ -110,6 +110,11 @@ export const MENU_QUERY = defineQuery(/* groq */ `
   }
 `);
 
+// --- Page slugs (for static params + sitemap) ---
+export const PAGES_SLUGS_QUERY = defineQuery(/* groq */ `
+  *[_type == "page" && slug.current != "home"]{ "slug": slug.current }
+`);
+
 // --- Blog ---
 export const BLOG_LIST_QUERY = defineQuery(/* groq */ `
   *[_type == "post" && defined(slug.current)] | order(publishedAt desc){

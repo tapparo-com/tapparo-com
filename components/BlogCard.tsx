@@ -24,7 +24,7 @@ function formatDate(dateString: string) {
 export function BlogCard({ post }: Props) {
   return (
     <article>
-      <Link href={`/blog/${post.slug}`} className="group block">
+      <Link href={`/${post.slug}`} className="group block">
         {post.coverImage && (
           <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
             <Image

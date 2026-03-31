@@ -81,7 +81,7 @@ export function SectionStories({ heading, posts }: SectionStoriesProps) {
               className="w-[342px] shrink-0 snap-start md:w-[500px] xl:w-[624px]"
             >
               <article>
-                <Link href={`/blog/${post.slug}`} className="group block">
+                <Link href={`/${post.slug}`} className="group block">
                   <div className="aspect-[4/5] overflow-hidden">
                     {post.coverImage ? (
                       <Image

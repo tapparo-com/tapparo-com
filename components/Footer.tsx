@@ -79,7 +79,7 @@ export function Footer({ settings }: FooterProps) {
                 </li>
                 <li>
                   <Link
-                    href="/blog"
+                    href="/"
                     className="text-muted transition-colors hover:text-foreground"
                   >
                     Stories
