@@ -53,9 +53,9 @@ export default async function SiteLayout({
       <ComingSoon
         settings={{
           restaurantName: brand?.restaurantName,
-          tagline: brand?.tagline,
           logo: brand?.logo,
-          comingSoonText: seo?.comingSoonText,
+          comingSoonBody: seo?.comingSoonBody,
+          socialLinks: seo?.comingSoonSocialLinks,
         }}
       />
     );

@@ -34,7 +34,8 @@ export const SOCIAL_QUERY = defineQuery(/* groq */ `
 export const SEO_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsSeo"][0]{
     isComingSoon,
-    comingSoonText,
+    comingSoonBody,
+    comingSoonSocialLinks[]->{ _id, label, url },
     metaTitle,
     metaDescription
   }

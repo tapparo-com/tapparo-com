@@ -174,11 +174,21 @@ export const settingsSeo = defineType({
       initialValue: false,
     }),
     defineField({
-      name: "comingSoonText",
-      title: "Coming Soon Text",
-      type: "text",
-      rows: 3,
-      description: "Message shown on the Coming Soon page below the restaurant name.",
+      name: "comingSoonBody",
+      title: "Coming Soon Body",
+      type: "array",
+      description:
+        "Text shown on the Coming Soon page below the logo. Displayed in large type.",
+      of: [{ type: "block" }],
+      hidden: ({ document }) => !document?.isComingSoon,
+    }),
+    defineField({
+      name: "comingSoonSocialLinks",
+      title: "Coming Soon Social Links",
+      type: "array",
+      description:
+        "Social links shown on the Coming Soon page. Pick from Site Settings > Social Links.",
+      of: [{ type: "reference", to: [{ type: "socialLink" }] }],
       hidden: ({ document }) => !document?.isComingSoon,
     }),
     defineField({
