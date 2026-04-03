@@ -14,6 +14,7 @@ import { allergen } from "./allergen";
 import { post } from "./post";
 import { author } from "./author";
 import { legalPage } from "./legal-page";
+import { storiesPage } from "./stories-page";
 
 export const schemaTypes = [
   settingsBrand,
@@ -31,4 +32,5 @@ export const schemaTypes = [
   post,
   author,
   legalPage,
+  storiesPage,
 ];

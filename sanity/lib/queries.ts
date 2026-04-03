@@ -46,7 +46,11 @@ export const HEADER_NAV_QUERY = defineQuery(/* groq */ `
     pageLinks[]{
       _key,
       label,
-      "slug": page->slug.current
+      "slug": select(
+        page->_type == "menuPage" => "menu",
+        page->_type == "storiesPage" => "stories",
+        page->slug.current
+      )
     },
     socialLinks[]->{ _id, label, url },
     showPhone,
@@ -62,7 +66,11 @@ export const FOOTER_NAV_QUERY = defineQuery(/* groq */ `
     pageLinks[]{
       _key,
       label,
-      "slug": page->slug.current
+      "slug": select(
+        page->_type == "menuPage" => "menu",
+        page->_type == "storiesPage" => "stories",
+        page->slug.current
+      )
     },
     socialLinks[]->{ _id, label, url },
     showPhone,
@@ -171,6 +179,14 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
       extras[]{ _key, name, price },
       images[]{ _key, asset->{_id, url}, alt }
     }
+  }
+`);
+
+// --- Stories page ---
+export const STORIES_PAGE_QUERY = defineQuery(/* groq */ `
+  *[_type == "storiesPage"][0]{
+    title,
+    description
   }
 `);
 

@@ -18,17 +18,33 @@ const navPageLink = defineArrayMember({
       name: "page",
       title: "Page",
       type: "reference",
-      description: "Select an internal page.",
-      to: [{ type: "page" }],
+      description: "Select an internal page, story, or legal page.",
+      to: [
+        { type: "page" },
+        { type: "post" },
+        { type: "legalPage" },
+        { type: "menuPage" },
+        { type: "storiesPage" },
+      ],
       validation: (rule) => rule.required(),
     }),
   ],
   preview: {
-    select: { title: "label", slug: "page.slug.current" },
-    prepare({ title, slug }) {
+    select: {
+      title: "label",
+      slug: "page.slug.current",
+      pageType: "page._type",
+    },
+    prepare({ title, slug, pageType }) {
+      const resolvedSlug =
+        pageType === "menuPage"
+          ? "menu"
+          : pageType === "storiesPage"
+            ? "stories"
+            : slug;
       return {
         title: title || "Page Link",
-        subtitle: slug ? `/${slug}` : "No page selected",
+        subtitle: resolvedSlug ? `/${resolvedSlug}` : "No page selected",
       };
     },
   },

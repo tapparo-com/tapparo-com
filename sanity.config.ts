@@ -28,6 +28,7 @@ const HIDDEN_TYPES = [
   "post",
   "author",
   "legalPage",
+  "storiesPage",
 ];
 
 const structure: StructureResolver = (S) =>
@@ -144,6 +145,15 @@ const structure: StructureResolver = (S) =>
           S.list()
             .title("Stories")
             .items([
+              S.listItem()
+                .title("Stories Page")
+                .icon(DocumentTextIcon)
+                .child(
+                  S.document()
+                    .schemaType("storiesPage")
+                    .documentId("storiesPage")
+                    .title("Stories Page")
+                ),
               S.documentTypeListItem("post").title("Posts"),
               S.documentTypeListItem("author").title("Authors"),
             ])
