@@ -55,7 +55,7 @@ export function SectionStories({
           <div className="flex flex-col gap-10 md:row-start-1 md:col-start-2">
             <div className="flex flex-col gap-10 xl:flex-row xl:flex-wrap">
               {visiblePosts.map((post) => (
-                <div key={post._id} className="max-w-gutter xl:flex-1">
+                <div key={post._id} className="max-w-gutter xl:w-[calc((100%-var(--content-gap))/2)]">
                   <PostCard post={post} />
                 </div>
               ))}

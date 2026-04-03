@@ -29,8 +29,8 @@ export function Header({
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-accent bg-background">
-        <div className="mx-auto max-w-[1856px] px-3 py-3 md:px-8">
+      <header className="sticky top-0 z-50 border-b border-accent bg-background px-3 py-2 md:px-8 ">
+        <div className="mx-auto max-w-[1856px]">
           <div className="flex items-center justify-between md:grid grid-cols-sidebar md:gap-10">
             <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center">
               {logo?.asset ? (
