@@ -96,7 +96,7 @@ export function SectionSubhero({
     <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
       <div className="mx-auto max-w-[1856px]">
         {/* Desktop/Tablet: grid with label sidebar. Mobile: stacked. */}
-        <div className="flex flex-col gap-16 md:grid md:grid-cols-[288px_1fr] md:gap-10 xl:grid-cols-[320px_1fr]">
+        <div className="flex flex-col gap-16 md:grid grid-cols-sidebar md:gap-10">
           {/* Left column: section label */}
           {label && (
             <div className="shrink-0 md:row-start-1 md:col-start-1">
@@ -111,7 +111,7 @@ export function SectionSubhero({
             {/* Desktop: text + image side by side. Tablet/Mobile: stacked. */}
             <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
               {/* Text column */}
-              <div className="flex max-w-[624px] flex-col gap-[60px] xl:flex-1">
+              <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
                 {/* Heading */}
                 {heading && (
                   <h2 className="text-section-heading font-sans font-medium text-foreground">
@@ -127,7 +127,7 @@ export function SectionSubhero({
                   <ImageBlock
                     image={image}
                     href={buttonHref}
-                    className="max-w-[624px] xl:hidden"
+                    className="max-w-gutter xl:hidden"
                   />
                 )}
 
@@ -165,7 +165,7 @@ export function SectionSubhero({
                 <ImageBlock
                   image={image}
                   href={buttonHref}
-                  className="hidden max-w-[624px] xl:block xl:flex-1"
+                  className="hidden max-w-gutter xl:block xl:flex-1"
                 />
               )}
             </div>

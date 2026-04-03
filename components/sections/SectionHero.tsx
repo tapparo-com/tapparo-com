@@ -73,11 +73,11 @@ export function SectionHero({
       <section className="relative z-10 flex h-svh items-end overflow-hidden py-12">
         <div className="mx-auto w-full max-w-[1856px] px-3 md:px-8">
           {/* Grid: empty left col + logo right col on desktop. Full-width on mobile. */}
-          <div className="md:grid md:grid-cols-[288px_1fr] md:gap-10 xl:grid-cols-[320px_1fr]">
+          <div className="md:grid grid-cols-sidebar md:gap-10">
             <div className="col-start-2 pb-20 md:pb-0">
               <h1 className="sr-only">{restaurantName}</h1>
 
-              <div className="flex max-w-[624px] flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]">
+              <div className="flex max-w-gutter flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]">
                 {logo?.asset ? (
                   <SanityLogo
                     logo={logo}

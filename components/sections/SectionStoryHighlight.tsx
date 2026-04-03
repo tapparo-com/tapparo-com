@@ -38,7 +38,7 @@ export function SectionStoryHighlight({
   return (
     <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
       <div className="mx-auto max-w-[1856px]">
-        <div className="flex flex-col gap-10 pb-20 md:grid md:grid-cols-[288px_1fr] md:gap-10 xl:grid-cols-[320px_1fr]">
+        <div className="flex flex-col gap-10 pb-20 md:grid grid-cols-sidebar md:gap-10">
           {/* Left column: section label */}
           {label && (
             <div className="shrink-0 md:row-start-1 md:col-start-1">
@@ -52,7 +52,7 @@ export function SectionStoryHighlight({
           <div className="md:row-start-1 md:col-start-2">
             <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
               {/* Text column */}
-              <div className="flex max-w-[624px] flex-col gap-[60px] xl:flex-1">
+              <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
                 {/* Title + inline image for md/sm */}
                 <div className="flex flex-col gap-7">
                   {title && (
@@ -106,7 +106,7 @@ export function SectionStoryHighlight({
               {coverImage?.asset && (
                 <Link
                   href={storyHref}
-                  className="group hidden max-w-[624px] xl:block xl:flex-1"
+                  className="group hidden max-w-gutter xl:block xl:flex-1"
                 >
                   <div className="relative aspect-square overflow-hidden">
                     <Image

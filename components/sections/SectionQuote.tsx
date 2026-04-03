@@ -1,40 +1,76 @@
+import Image from "next/image";
+import { urlFor } from "@/sanity/lib/image";
+
 type SectionQuoteProps = {
-  quote?: string | null;
   author?: string | null;
+  quote?: string | null;
+  image?: {
+    asset?: { _id: string; url: string; metadata?: { lqip?: string } };
+    alt?: string;
+  } | null;
 };
 
-export function SectionQuote({ quote, author }: SectionQuoteProps) {
+export function SectionQuote({ author, quote, image }: SectionQuoteProps) {
   if (!quote) return null;
 
   return (
-    <section className="mx-auto max-w-[1440px] px-3 pt-12 pb-24 md:px-8 md:pt-12 md:pb-[180px] xl:pb-[180px]">
-      <blockquote>
-        {/* Desktop/Tablet: author inline before quote */}
-        <div className="hidden md:block">
-          <p className="font-sans text-[28px] font-semibold leading-snug xl:text-4xl xl:leading-snug">
-            {author && (
-              <cite className="not-italic text-[#CF3717]">
-                {author}
-                {" — "}
-              </cite>
-            )}
-            {quote}
-          </p>
+    <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
+      <div className="mx-auto max-w-[1856px]">
+        <div className="pb-20 md:grid grid-cols-sidebar md:gap-10">
+          {/* Right column (col-2): image + quote side by side on xl, stacked on sm */}
+          <blockquote className="md:col-start-2">
+            <div className="flex flex-col gap-[60px] xl:flex-row xl:items-center xl:gap-10">
+              {/* Image — desktop only, left side */}
+              {image?.asset && (
+                <div className="hidden max-w-gutter xl:block xl:flex-1">
+                  <div className="relative aspect-square overflow-hidden">
+                    <Image
+                      src={urlFor(image).width(624).height(624).url()}
+                      alt={image.alt || ""}
+                      fill
+                      className="object-cover"
+                      placeholder={
+                        image.asset.metadata?.lqip ? "blur" : undefined
+                      }
+                      blurDataURL={image.asset.metadata?.lqip || undefined}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Text: author + quote */}
+              <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
+                {author && (
+                  <cite className="text-base uppercase not-italic text-accent">
+                    {author}
+                  </cite>
+                )}
+                <p className="text-section-heading font-sans font-medium text-foreground">
+                  {quote}
+                </p>
+
+                {/* Image — sm/md only, below text */}
+                {image?.asset && (
+                  <div className="max-w-gutter xl:hidden">
+                    <div className="relative aspect-square overflow-hidden">
+                      <Image
+                        src={urlFor(image).width(624).height(624).url()}
+                        alt={image.alt || ""}
+                        fill
+                        className="object-cover"
+                        placeholder={
+                          image.asset.metadata?.lqip ? "blur" : undefined
+                        }
+                        blurDataURL={image.asset.metadata?.lqip || undefined}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </blockquote>
         </div>
-        {/* Mobile: stacked */}
-        <div className="md:hidden text-center">
-          <p className="font-sans text-2xl font-semibold leading-snug">
-            {quote}
-          </p>
-          {author && (
-            <footer className="mt-4">
-              <cite className="font-sans text-[15px] font-normal uppercase not-italic text-[#CF3717]">
-                {author}
-              </cite>
-            </footer>
-          )}
-        </div>
-      </blockquote>
+      </div>
     </section>
   );
 }

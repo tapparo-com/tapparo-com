@@ -188,17 +188,27 @@ export const sectionQuote = defineArrayMember({
   icon: BlockquoteIcon,
   fields: [
     defineField({
-      name: "quote",
-      title: "Quote",
-      type: "text",
-      rows: 3,
-      description: "Displayed in large editorial text.",
-    }),
-    defineField({
       name: "author",
       title: "Author",
       type: "string",
-      description: "Attribution shown in red before the quote on desktop, below on mobile. Use UPPERCASE for style.",
+      description: "Attribution shown in accent color above the quote text.",
+    }),
+    defineField({
+      name: "quote",
+      title: "Quote",
+      type: "text",
+      rows: 4,
+      description: "Large editorial text displayed next to the image.",
+    }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      description: "Square image shown alongside the quote. Recommended 1:1 ratio.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+      ],
     }),
   ],
   preview: {
@@ -244,7 +254,7 @@ export const sectionGallery = defineArrayMember({
       name: "images",
       title: "Gallery Images",
       type: "array",
-      description: "Auto-scrolling horizontal gallery. Upload a mix of landscape and portrait images for visual variety.",
+      description: "Portrait images displayed in a horizontal row that bleeds off-screen. Recommended 3:4 ratio, at least 4 images.",
       of: [
         defineArrayMember({
           type: "image",
@@ -255,10 +265,17 @@ export const sectionGallery = defineArrayMember({
         }),
       ],
     }),
+    defineField({
+      name: "caption",
+      title: "Caption",
+      type: "string",
+      description: "Large text shown below the image row.",
+    }),
   ],
   preview: {
-    prepare() {
-      return { title: "Gallery" };
+    select: { subtitle: "caption" },
+    prepare({ subtitle }) {
+      return { title: "Gallery", subtitle };
     },
   },
 });
@@ -271,16 +288,16 @@ export const sectionStories = defineArrayMember({
   fields: [
     defineField({
       name: "heading",
-      title: "Heading",
+      title: "Section Label",
       type: "string",
-      description: "Label shown above the blog card carousel. Example: 'OUR STORIES'.",
+      description: "Small uppercase label shown in the left column, e.g. 'OUR STORIES'.",
     }),
     defineField({
-      name: "count",
-      title: "Number of Posts",
-      type: "number",
-      initialValue: 6,
-      description: "Number of recent blog posts to display. Cards are shown in a horizontal scroll.",
+      name: "pinnedStory",
+      title: "Pinned Story",
+      type: "reference",
+      description: "Optional. Pick a story to always show first in the grid. Leave empty to sort by date only.",
+      to: [{ type: "post" }],
     }),
   ],
   preview: {

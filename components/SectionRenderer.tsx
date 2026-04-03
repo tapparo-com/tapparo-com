@@ -42,10 +42,6 @@ export async function SectionRenderer({ sections, shared }: Props) {
     needsStories
       ? sanityFetch<any[]>({
           query: STORIES_QUERY,
-          params: {
-            count:
-              sections.find((s) => s._type === "sectionStories")?.count ?? 6,
-          },
           tags: ["post"],
         })
       : null,
@@ -121,8 +117,9 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return (
               <SectionQuote
                 key={section._key}
-                quote={section.quote}
                 author={section.author}
+                quote={section.quote}
+                image={section.image}
               />
             );
 
@@ -139,6 +136,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
               <SectionGallery
                 key={section._key}
                 images={section.images}
+                caption={section.caption}
               />
             );
 
@@ -148,6 +146,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 key={section._key}
                 heading={section.heading}
                 posts={stories || []}
+                pinnedStoryId={section.pinnedStoryId}
               />
             );
 

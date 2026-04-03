@@ -84,18 +84,20 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         images[]{ _key, ${imageFields} }
       },
       _type == "sectionQuote" => {
+        author,
         quote,
-        author
+        image{ ${imageFields} }
       },
       _type == "sectionLargeText" => {
         text
       },
       _type == "sectionGallery" => {
-        images[]{ _key, ${imageFields} }
+        images[]{ _key, ${imageFields} },
+        caption
       },
       _type == "sectionStories" => {
         heading,
-        count
+        "pinnedStoryId": pinnedStory->_id
       },
       _type == "sectionRichText" => {
         body
@@ -114,13 +116,14 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
 
 // --- Stories (blog posts for stories section) ---
 export const STORIES_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc)[0...$count]{
+  *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
     _id,
     title,
     excerpt,
     coverImage,
     publishedAt,
-    "slug": slug.current
+    "slug": slug.current,
+    "authorName": author->name
   }
 `);
 
