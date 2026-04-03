@@ -2,17 +2,26 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: "Space Grotesk", sans-serif;
+  --font-sans: "Instrument Sans", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
 
-  --color-background: #FAF9F7;
-  --color-foreground: #1A1916;
-  --color-accent: #C17A5A;
-  --color-muted: #9A9086;
-  --color-border: #E8E4DF;
+  --color-background: #F5F4F2;
+  --color-foreground: #181818;
+  --color-accent: #E84F2F;
+  --color-muted: #8D8D8D;
+  --color-border: rgba(24, 24, 24, 0.12);
 }
 
 @layer base {
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }

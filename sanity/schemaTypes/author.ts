@@ -11,12 +11,14 @@ export const author = defineType({
       name: "name",
       title: "Name",
       type: "string",
+      description: "Author name shown on blog posts.",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "image",
       title: "Image",
       type: "image",
+      description: "Profile photo — not currently displayed on the site but available for future use.",
       options: { hotspot: true },
     }),
     defineField({
@@ -24,6 +26,7 @@ export const author = defineType({
       title: "Bio",
       type: "text",
       rows: 4,
+      description: "Short biography — not currently displayed on the site but available for future use.",
     }),
   ],
   preview: {

@@ -1,14 +1,26 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
+import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./sanity/schemaTypes";
-import { CogIcon } from "@sanity/icons";
+import { CogIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
+
+const HIDDEN_TYPES = [
+  "siteSettings",
+  "page",
+  "menuCategory",
+  "menuItem",
+  "allergen",
+  "post",
+  "author",
+];
 
 const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
+      // Site Settings singleton
       S.listItem()
         .title("Site Settings")
         .icon(CogIcon)
@@ -19,9 +31,37 @@ const structure: StructureResolver = (S) =>
             .title("Site Settings")
         ),
       S.divider(),
-      ...S.documentTypeListItems().filter(
-        (listItem) => !["siteSettings"].includes(listItem.getId() as string)
-      ),
+
+      // Pages collection
+      S.documentTypeListItem("page").title("Pages"),
+      S.divider(),
+
+      // Menu group
+      S.listItem()
+        .title("Menu")
+        .icon(TagIcon)
+        .child(
+          S.list()
+            .title("Menu")
+            .items([
+              S.documentTypeListItem("menuCategory").title("Categories"),
+              S.documentTypeListItem("menuItem").title("Items"),
+              S.documentTypeListItem("allergen").title("Allergens"),
+            ])
+        ),
+
+      // Stories group
+      S.listItem()
+        .title("Stories")
+        .icon(DocumentTextIcon)
+        .child(
+          S.list()
+            .title("Stories")
+            .items([
+              S.documentTypeListItem("post").title("Posts"),
+              S.documentTypeListItem("author").title("Authors"),
+            ])
+        ),
     ]);
 
 export default defineConfig({
@@ -30,7 +70,7 @@ export default defineConfig({
   basePath: "/studio",
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  plugins: [structureTool({ structure }), visionTool()],
+  plugins: [structureTool({ structure }), media(), visionTool()],
   schema: {
     types: schemaTypes,
   },
