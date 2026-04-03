@@ -34,7 +34,7 @@ export function MenuOverlay({ isOpen, onClose, headerNav }: MenuOverlayProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/75 backdrop-blur-sm">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/90 backdrop-blur-sm">
       <nav className="flex flex-col items-center gap-4">
         {headerNav?.pageLinks?.map((item) => (
           <Link
