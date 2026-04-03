@@ -7,6 +7,8 @@ import {
   BRAND_QUERY,
   HOURS_QUERY,
   RELATED_STORIES_QUERY,
+  LEGAL_PAGE_QUERY,
+  LEGAL_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { PostBody } from "@/components/PostBody";
@@ -21,7 +23,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const [pages, posts] = await Promise.all([
+  const [pages, posts, legalPages] = await Promise.all([
     sanityFetch<{ slug: string }[]>({
       query: PAGES_SLUGS_QUERY,
       tags: ["page"],
@@ -30,11 +32,16 @@ export async function generateStaticParams() {
       query: BLOG_LIST_QUERY,
       tags: ["post"],
     }),
+    sanityFetch<{ slug: string }[]>({
+      query: LEGAL_SLUGS_QUERY,
+      tags: ["legalPage"],
+    }),
   ]);
 
   return [
     ...(pages ?? []).map((p) => ({ slug: p.slug })),
     ...(posts ?? []).map((p) => ({ slug: p.slug })),
+    ...(legalPages ?? []).map((p) => ({ slug: p.slug })),
   ];
 }
 
@@ -66,6 +73,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: post.seo?.title || post.title,
       description: post.seo?.description || post.excerpt,
+    };
+  }
+
+  // Try legal page
+  const legal = await sanityFetch<any>({
+    query: LEGAL_PAGE_QUERY,
+    params: { slug },
+    tags: ["legalPage"],
+  });
+
+  if (legal) {
+    return {
+      title: legal.seo?.title || legal.title,
+      description: legal.seo?.description,
     };
   }
 
@@ -236,6 +257,45 @@ export default async function SlugPage({ params }: Props) {
         {relatedPosts && relatedPosts.length > 0 && (
           <SectionRelatedStories posts={relatedPosts} />
         )}
+      </div>
+    );
+  }
+
+  // --- Try legal page ---
+  const legal = await sanityFetch<any>({
+    query: LEGAL_PAGE_QUERY,
+    params: { slug },
+    tags: ["legalPage"],
+  });
+
+  if (legal) {
+    return (
+      <div className="relative z-10 bg-background">
+        <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
+          <div className="mx-auto max-w-[1856px]">
+            <div className="md:grid grid-cols-sidebar md:gap-10">
+              {/* Col-1: Updated date (md+) */}
+              {legal.updatedAt && (
+                <div className="hidden md:flex md:col-start-1 flex-col">
+                  <span className="text-base text-muted">Updated</span>
+                  <span className="text-base uppercase text-muted">
+                    {formatDate(legal.updatedAt)}
+                  </span>
+                </div>
+              )}
+
+              {/* Col-2: Title + Body */}
+              <div className="md:col-start-2">
+                <div className="flex max-w-gutter flex-col gap-[60px]">
+                  <h1 className="text-[30px] font-medium leading-[1.1] tracking-[-0.6px] text-foreground md:text-[38px] md:tracking-[-0.84px] xl:text-[42px]">
+                    {legal.title}
+                  </h1>
+                  {legal.body && <PostBody value={legal.body} />}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }

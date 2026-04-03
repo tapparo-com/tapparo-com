@@ -187,6 +187,22 @@ export const RELATED_STORIES_QUERY = defineQuery(/* groq */ `
   }
 `);
 
+// --- Legal pages ---
+export const LEGAL_PAGE_QUERY = defineQuery(/* groq */ `
+  *[_type == "legalPage" && slug.current == $slug][0]{
+    _id,
+    title,
+    "slug": slug.current,
+    body,
+    updatedAt,
+    seo{ title, description }
+  }
+`);
+
+export const LEGAL_SLUGS_QUERY = defineQuery(/* groq */ `
+  *[_type == "legalPage" && defined(slug.current)]{ "slug": slug.current }
+`);
+
 // --- Page slugs (for static params + sitemap) ---
 export const PAGES_SLUGS_QUERY = defineQuery(/* groq */ `
   *[_type == "page" && slug.current != "home"]{ "slug": slug.current }

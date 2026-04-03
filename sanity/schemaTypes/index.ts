@@ -13,6 +13,7 @@ import { menuItem } from "./menu-item";
 import { allergen } from "./allergen";
 import { post } from "./post";
 import { author } from "./author";
+import { legalPage } from "./legal-page";
 
 export const schemaTypes = [
   settingsBrand,
@@ -29,4 +30,5 @@ export const schemaTypes = [
   allergen,
   post,
   author,
+  legalPage,
 ];

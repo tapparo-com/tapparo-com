@@ -27,6 +27,7 @@ const HIDDEN_TYPES = [
   "allergen",
   "post",
   "author",
+  "legalPage",
 ];
 
 const structure: StructureResolver = (S) =>
@@ -147,6 +148,9 @@ const structure: StructureResolver = (S) =>
               S.documentTypeListItem("author").title("Authors"),
             ])
         ),
+
+      // Legal group
+      S.documentTypeListItem("legalPage").title("Legal"),
     ]);
 
 export default defineConfig({
