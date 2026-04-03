@@ -6,12 +6,13 @@ import {
   PAGES_SLUGS_QUERY,
   BRAND_QUERY,
   HOURS_QUERY,
+  RELATED_STORIES_QUERY,
 } from "@/sanity/lib/queries";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { PostBody } from "@/components/PostBody";
+import { SectionRelatedStories } from "@/components/sections/SectionRelatedStories";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -124,46 +125,118 @@ export default async function SlugPage({ params }: Props) {
     tags: ["post"],
   });
 
+  // Fetch related stories when enabled (default: true)
+  let relatedPosts: any[] | null = null;
+  if (post && post.showRelatedStories !== false) {
+    relatedPosts = post.relatedStories?.length
+      ? post.relatedStories
+      : await sanityFetch<any[]>({
+          query: RELATED_STORIES_QUERY,
+          params: { slug },
+          tags: ["post"],
+        });
+  }
+
   if (post) {
     return (
-      <article className="mx-auto max-w-2xl px-6 py-20">
-        <Link
-          href="/"
-          className="text-sm text-muted transition-colors hover:text-foreground"
-        >
-          &larr; Back
-        </Link>
+      <div className="relative z-10 bg-background">
+        {/* Article */}
+        <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
+          <div className="mx-auto max-w-[1856px]">
+            <div className="md:grid grid-cols-sidebar md:gap-10">
+              {/* Col-1: Author + Date (md+) */}
+              <div className="hidden md:flex md:col-start-1 flex-col gap-7">
+                {post.author?.name && (
+                  <div className="flex flex-col">
+                    <span className="text-base text-muted">Author</span>
+                    <span className="text-base uppercase text-foreground">
+                      {post.author.name}
+                    </span>
+                  </div>
+                )}
+                {post.publishedAt && (
+                  <div className="flex flex-col">
+                    <span className="text-base text-muted">Published</span>
+                    <span className="text-base uppercase text-muted">
+                      {formatDate(post.publishedAt)}
+                    </span>
+                  </div>
+                )}
+              </div>
 
-        <header className="mt-8">
-          <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
-          <div className="mt-4 flex items-center gap-4 text-sm text-muted">
-            {post.author && (
-              <span className="font-medium text-foreground">
-                {post.author.name}
-              </span>
-            )}
-            {post.publishedAt && <time>{formatDate(post.publishedAt)}</time>}
-          </div>
-        </header>
+              {/* Col-2: Article content */}
+              <div className="md:col-start-2">
+                <div className="flex flex-col gap-[60px] xl:flex-row xl:gap-10">
+                  {/* Text column */}
+                  <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
+                    {/* Title block */}
+                    <div className="flex flex-col gap-7">
+                      <h1 className="text-[30px] font-medium leading-[1.1] tracking-[-0.6px] text-foreground md:text-[38px] md:tracking-[-0.84px] xl:text-[42px]">
+                        {post.title}
+                      </h1>
 
-        {post.coverImage && (
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-lg">
-            <Image
-              src={urlFor(post.coverImage).width(1200).height(675).url()}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-            />
+                      {/* Cover image (mobile + tablet) */}
+                      {post.coverImage && (
+                        <div className="relative aspect-square overflow-hidden xl:hidden">
+                          <Image
+                            src={urlFor(post.coverImage)
+                              .width(624)
+                              .height(624)
+                              .url()}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
+                            priority
+                          />
+                        </div>
+                      )}
+
+                      {/* Author + Date inline (mobile only) */}
+                      <div className="flex items-center gap-4 md:hidden">
+                        {post.author?.name && (
+                          <span className="text-base uppercase text-foreground">
+                            {post.author.name}
+                          </span>
+                        )}
+                        {post.publishedAt && (
+                          <time className="text-base uppercase text-muted">
+                            {formatDate(post.publishedAt)}
+                          </time>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Body */}
+                    {post.body && <PostBody value={post.body} />}
+                  </div>
+
+                  {/* Cover image column (desktop only) */}
+                  {post.coverImage && (
+                    <div className="hidden max-w-gutter xl:block xl:flex-1">
+                      <div className="relative aspect-square overflow-hidden">
+                        <Image
+                          src={urlFor(post.coverImage)
+                            .width(624)
+                            .height(624)
+                            .url()}
+                          alt={post.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
+        </section>
+
+        {/* Related Stories */}
+        {relatedPosts && relatedPosts.length > 0 && (
+          <SectionRelatedStories posts={relatedPosts} />
         )}
-
-        {post.body && (
-          <div className="prose prose-neutral mt-12 max-w-none">
-            <PostBody value={post.body} />
-          </div>
-        )}
-      </article>
+      </div>
     );
   }
 

@@ -58,105 +58,108 @@ export function Footer({ settings, footerNav }: FooterProps) {
 
           {/* Col-2: 4 info columns */}
           <div className="md:row-start-1 md:col-start-2">
-            {/* Mobile: 2x2 grid. Desktop: 4-col flex with gap-20 */}
-            <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-20 xl:flex xl:gap-20">
-              {/* Pages */}
-              {pageLinks.length > 0 && (
-                <div className="flex flex-col gap-7">
-                  <span className="text-base text-muted">Pages</span>
-                  <nav className="flex flex-col">
-                    {pageLinks.map((item) => (
-                      <Link
-                        key={item._key}
-                        href={item.slug === "home" ? "/" : `/${item.slug}`}
-                        className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
-              )}
-
-              {/* Contact */}
-              <div className="flex flex-col gap-7">
-                <span className="text-base text-muted">Contact</span>
-                <div className="flex flex-col">
-                  {settings?.address && (
-                    <p className="text-base uppercase leading-7 text-foreground whitespace-pre-line">
-                      {settings.restaurantName}
-                      {"\n"}
-                      {settings.address}
-                    </p>
-                  )}
-                  <div className="flex flex-col pt-7">
-                    {settings?.mapUrl && (
-                      <a
-                        href={settings.mapUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
-                      >
-                        Maps
-                      </a>
-                    )}
-                    {showEmail !== false && settings?.email && (
-                      <a
-                        href={`mailto:${settings.email}`}
-                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
-                      >
-                        {settings.email}
-                      </a>
-                    )}
-                    {showPhone !== false && settings?.phone && (
-                      <a
-                        href={`tel:${settings.phone.replace(/\s/g, "")}`}
-                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
-                      >
-                        {settings.phone}
-                      </a>
-                    )}
+            {/* Mobile: 2 rows (Hours+Pages, Contact+Follow) sized to content.
+                XL: single row reordered (Pages, Contact, Hours, Follow) via order. */}
+            <div className="flex flex-col gap-20 xl:flex-row">
+              {/* Row 1 mobile: Hours + Pages */}
+              <div className="grid grid-cols-[fit-content(100%)_1fr] gap-x-8 xl:contents">
+                {settings?.openingHours && settings.openingHours.length > 0 && (
+                  <div className="flex flex-col gap-7 xl:order-3">
+                    <span className="text-base text-muted">Hours</span>
+                    <dl className="flex flex-col">
+                      {settings.openingHours.map((entry) => (
+                        <div
+                          key={entry._key}
+                          className="flex gap-2 text-base uppercase leading-7 text-foreground"
+                        >
+                          <dt className="w-[88px]">{entry.day}</dt>
+                          <dd className="whitespace-nowrap">{entry.hours}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </div>
-                </div>
+                )}
+
+                {pageLinks.length > 0 && (
+                  <div className="flex flex-col gap-7 xl:order-1">
+                    <span className="text-base text-muted">Pages</span>
+                    <nav className="flex flex-col">
+                      {pageLinks.map((item) => (
+                        <Link
+                          key={item._key}
+                          href={item.slug === "home" ? "/" : `/${item.slug}`}
+                          className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </nav>
+                  </div>
+                )}
               </div>
 
-              {/* Hours */}
-              {settings?.openingHours && settings.openingHours.length > 0 && (
-                <div className="flex flex-col gap-7">
-                  <span className="text-base text-muted">Hours</span>
-                  <dl className="flex flex-col">
-                    {settings.openingHours.map((entry) => (
-                      <div
-                        key={entry._key}
-                        className="flex gap-2 text-base uppercase leading-7 text-foreground"
-                      >
-                        <dt className="w-[88px]">{entry.day}</dt>
-                        <dd className="whitespace-nowrap">{entry.hours}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              )}
-
-              {/* Follow */}
-              {socialLinks.length > 0 && (
-                <div className="flex flex-col gap-7">
-                  <span className="text-base text-muted">Follow</span>
+              {/* Row 2 mobile: Contact + Follow */}
+              <div className="grid grid-cols-[fit-content(100%)_1fr] gap-x-8 xl:contents">
+                <div className="flex flex-col gap-7 xl:order-2">
+                  <span className="text-base text-muted">Contact</span>
                   <div className="flex flex-col">
-                    {socialLinks.map((link) => (
-                      <a
-                        key={link._id}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
+                    {settings?.address && (
+                      <p className="text-base uppercase leading-7 text-foreground whitespace-pre-line">
+                        {settings.restaurantName}
+                        {"\n"}
+                        {settings.address}
+                      </p>
+                    )}
+                    <div className="flex flex-col pt-7">
+                      {settings?.mapUrl && (
+                        <a
+                          href={settings.mapUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
+                        >
+                          Maps
+                        </a>
+                      )}
+                      {showEmail !== false && settings?.email && (
+                        <a
+                          href={`mailto:${settings.email}`}
+                          className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
+                        >
+                          {settings.email}
+                        </a>
+                      )}
+                      {showPhone !== false && settings?.phone && (
+                        <a
+                          href={`tel:${settings.phone.replace(/\s/g, "")}`}
+                          className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
+                        >
+                          {settings.phone}
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
+
+                {socialLinks.length > 0 && (
+                  <div className="flex flex-col gap-7 xl:order-4">
+                    <span className="text-base text-muted">Follow</span>
+                    <div className="flex flex-col">
+                      {socialLinks.map((link) => (
+                        <a
+                          key={link._id}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

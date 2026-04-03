@@ -1,5 +1,6 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { MENU_PAGE_QUERY, ALLERGENS_QUERY } from "@/sanity/lib/queries";
+import { SectionPageIntro } from "@/components/sections/SectionPageIntro";
 import { SectionMenuHeader } from "@/components/sections/SectionMenuHeader";
 import { SectionMenuCategory } from "@/components/sections/SectionMenuCategory";
 import { SectionAllergensLegend } from "@/components/sections/SectionAllergensLegend";
@@ -24,6 +25,12 @@ export default async function MenuPage() {
 
   return (
     <div className="relative z-10 bg-background">
+      {menuData?.title && (
+        <SectionPageIntro
+          title={menuData.title}
+          description={menuData.description}
+        />
+      )}
       <SectionMenuHeader categories={categories} />
 
       {categories.filter(Boolean).map((category: any) => (

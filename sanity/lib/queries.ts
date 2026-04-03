@@ -152,6 +152,8 @@ export const ALLERGENS_QUERY = defineQuery(/* groq */ `
 
 export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
   *[_type == "menuPage"][0]{
+    title,
+    description,
     categories[]->{
       _id,
       title,
@@ -169,6 +171,19 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
       extras[]{ _key, name, price },
       images[]{ _key, asset->{_id, url}, alt }
     }
+  }
+`);
+
+// --- Related stories (excludes current post) ---
+export const RELATED_STORIES_QUERY = defineQuery(/* groq */ `
+  *[_type == "post" && slug.current != $slug && defined(slug.current)] | order(publishedAt desc)[0...2]{
+    _id,
+    title,
+    excerpt,
+    coverImage,
+    publishedAt,
+    "slug": slug.current,
+    "authorName": author->name
   }
 `);
 
@@ -199,6 +214,16 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
     coverImage,
     publishedAt,
     author->{name, image},
+    showRelatedStories,
+    "relatedStories": relatedStories[]->{
+      _id,
+      title,
+      excerpt,
+      coverImage,
+      publishedAt,
+      "slug": slug.current,
+      "authorName": author->name
+    },
     seo{ title, description }
   }
 `);

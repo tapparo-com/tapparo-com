@@ -8,6 +8,19 @@ export const menuPage = defineType({
   icon: TagIcon,
   fields: [
     defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      description: "Page heading shown above the menu, e.g. Menu",
+    }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+      rows: 3,
+      description: "Optional introductory text below the title",
+    }),
+    defineField({
       name: "categories",
       title: "Categories",
       type: "array",

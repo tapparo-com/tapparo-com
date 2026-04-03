@@ -119,7 +119,7 @@ export function SectionMenuCategory({
                         <PriceVariants item={item} />
                       </div>
                       {item.description && (
-                        <p className="text-base leading-7 text-[#404040]">
+                        <p className="text-base text-balance pr-20 leading-7 text-[#404040]">
                           {item.description}
                         </p>
                       )}

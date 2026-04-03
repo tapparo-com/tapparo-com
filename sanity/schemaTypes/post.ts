@@ -63,6 +63,29 @@ export const post = defineType({
       to: [{ type: "author" }],
     }),
     defineField({
+      name: "showRelatedStories",
+      title: "Show Related Stories",
+      type: "boolean",
+      description:
+        "Show an 'Other Stories' section at the bottom of this post.",
+      initialValue: true,
+    }),
+    defineField({
+      name: "relatedStories",
+      title: "Related Stories",
+      type: "array",
+      description:
+        "Pick up to 2 posts. If left empty, the 2 most recent posts are shown.",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "post" }],
+        },
+      ],
+      validation: (rule) => rule.max(2),
+      hidden: ({ parent }) => parent?.showRelatedStories === false,
+    }),
+    defineField({
       name: "seo",
       title: "SEO",
       type: "object",
