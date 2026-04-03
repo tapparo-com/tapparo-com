@@ -109,8 +109,22 @@ export const navigation = defineType({
       title: "Footer Links",
       type: "array",
       description:
-        "Links shown in the site footer. Separate from navigation — configure independently.",
-      of: [navPageLink, navSocialLinks, navPhoneLink],
+        "Page and social links shown in the site footer. Drag to reorder.",
+      of: [navPageLink, navSocialLinks],
+    }),
+    defineField({
+      name: "footerShowPhone",
+      title: "Show Phone in Footer",
+      type: "boolean",
+      description: "Display the phone number from Site Settings in the footer contact column.",
+      initialValue: true,
+    }),
+    defineField({
+      name: "footerShowEmail",
+      title: "Show Email in Footer",
+      type: "boolean",
+      description: "Display the email address from Site Settings in the footer contact column.",
+      initialValue: true,
     }),
   ],
   preview: {

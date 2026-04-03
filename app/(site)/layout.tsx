@@ -65,7 +65,12 @@ export default async function SiteLayout({
         navigationItems={navigation?.menuItems}
       />
       <main>{children}</main>
-      <Footer settings={settings} footerItems={navigation?.footerItems} />
+      <Footer
+        settings={settings}
+        footerItems={navigation?.footerItems}
+        showPhone={navigation?.footerShowPhone}
+        showEmail={navigation?.footerShowEmail}
+      />
     </>
   );
 }

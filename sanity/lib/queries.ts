@@ -41,7 +41,9 @@ const navItemFields = /* groq */ `
 export const NAVIGATION_QUERY = defineQuery(/* groq */ `
   *[_type == "navigation"][0]{
     menuItems[]{ ${navItemFields} },
-    footerItems[]{ ${navItemFields} }
+    footerItems[]{ ${navItemFields} },
+    footerShowPhone,
+    footerShowEmail
   }
 `);
 
