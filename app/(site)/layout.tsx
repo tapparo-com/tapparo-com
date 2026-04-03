@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import { SITE_SETTINGS_QUERY, NAVIGATION_QUERY } from "@/sanity/lib/queries";
 import { ComingSoon } from "@/components/ComingSoon";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -41,10 +42,16 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await sanityFetch<SiteSettings>({
-    query: SITE_SETTINGS_QUERY,
-    tags: ["siteSettings"],
-  });
+  const [settings, navigation] = await Promise.all([
+    sanityFetch<SiteSettings>({
+      query: SITE_SETTINGS_QUERY,
+      tags: ["siteSettings"],
+    }),
+    sanityFetch<any>({
+      query: NAVIGATION_QUERY,
+      tags: ["navigation", "siteSettings"],
+    }),
+  ]);
 
   if (settings?.isComingSoon) {
     return <ComingSoon settings={settings} />;
@@ -52,8 +59,13 @@ export default async function SiteLayout({
 
   return (
     <>
+      <Header
+        restaurantName={settings?.restaurantName}
+        logo={settings?.logo}
+        navigationItems={navigation?.menuItems}
+      />
       <main>{children}</main>
-      <Footer settings={settings} />
+      <Footer settings={settings} footerItems={navigation?.footerItems} />
     </>
   );
 }

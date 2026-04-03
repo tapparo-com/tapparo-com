@@ -1,7 +1,8 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { STORIES_QUERY, ALLERGENS_QUERY, MENU_QUERY } from "@/sanity/lib/queries";
 import { SectionHero } from "@/components/sections/SectionHero";
-import { SectionIntro } from "@/components/sections/SectionIntro";
+import { SectionSubhero } from "@/components/sections/SectionSubhero";
+import { SectionStoryHighlight } from "@/components/sections/SectionStoryHighlight";
 import { SectionImageGrid } from "@/components/sections/SectionImageGrid";
 import { SectionQuote } from "@/components/sections/SectionQuote";
 import { SectionLargeText } from "@/components/sections/SectionLargeText";
@@ -82,14 +83,28 @@ export async function SectionRenderer({ sections, shared }: Props) {
       <div className="relative z-10 bg-background">
       {restSections.map((section) => {
         switch (section._type) {
-          case "sectionIntro":
+          case "sectionSubhero":
             return (
-              <SectionIntro
+              <SectionSubhero
                 key={section._key}
+                label={section.label}
                 heading={section.heading}
-                body={section.body}
-                menuImage={section.menuImage}
+                image={section.image}
+                button={section.button}
+                showOpeningHours={section.showOpeningHours}
                 openingHours={shared?.openingHours}
+              />
+            );
+
+          case "sectionStoryHighlight":
+            return (
+              <SectionStoryHighlight
+                key={section._key}
+                label={section.label}
+                story={section.story}
+                titleOverride={section.titleOverride}
+                excerptOverride={section.excerptOverride}
+                buttonLabel={section.buttonLabel}
               />
             );
 

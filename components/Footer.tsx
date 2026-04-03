@@ -14,14 +14,43 @@ type Settings = {
   socialLinks?: { _key: string; platform: string; url: string }[];
 };
 
-type FooterProps = {
-  settings?: Settings | null;
+type NavItem = {
+  _key: string;
+  _type: string;
+  label?: string;
+  slug?: string;
+  socialLinks?: { _key: string; platform: string; url: string }[];
+  phone?: string;
 };
 
-export function Footer({ settings }: FooterProps) {
+type FooterProps = {
+  settings?: Settings | null;
+  footerItems?: NavItem[] | null;
+};
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export function Footer({ settings, footerItems }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Split footer items into page links vs other types for column layout
+  const pageLinks: NavItem[] = [];
+  const socialLinks: { _key: string; platform: string; url: string }[] = [];
+  let phoneNumber: string | null = null;
+
+  footerItems?.forEach((item) => {
+    if (item._type === "navPageLink") pageLinks.push(item);
+    if (item._type === "navSocialLinks" && item.socialLinks) {
+      socialLinks.push(...item.socialLinks);
+    }
+    if (item._type === "navPhoneLink" && item.phone) {
+      phoneNumber = item.phone;
+    }
+  });
 
   return (
     <footer className="relative z-10 border-t border-accent bg-background">
@@ -51,48 +80,28 @@ export function Footer({ settings }: FooterProps) {
             </button>
           </div>
 
-          {/* Right column: 4-col grid (2x2 on mobile/tablet) */}
+          {/* Right column: 4-col grid */}
           <div className="grid grid-cols-2 gap-8 xl:grid-cols-4 xl:gap-12">
-            {/* Restaurant nav */}
-            <nav aria-label="Site navigation">
-              <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
-                Restaurant
-              </h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/menu"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Menu
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Stories
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/imprint"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Imprint
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+            {/* Pages */}
+            {pageLinks.length > 0 && (
+              <nav aria-label="Site navigation">
+                <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
+                  Pages
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  {pageLinks.map((item) => (
+                    <li key={item._key}>
+                      <Link
+                        href={item.slug === "home" ? "/" : `/${item.slug}`}
+                        className="text-muted transition-colors hover:text-foreground"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
 
             {/* Contact */}
             <div>
@@ -118,13 +127,13 @@ export function Footer({ settings }: FooterProps) {
                     </a>
                   </p>
                 )}
-                {settings?.phone && (
+                {(phoneNumber || settings?.phone) && (
                   <p>
                     <a
-                      href={`tel:${settings.phone.replace(/\s/g, "")}`}
+                      href={`tel:${(phoneNumber || settings?.phone || "").replace(/\s/g, "")}`}
                       className="transition-colors hover:text-foreground"
                     >
-                      {settings.phone}
+                      {phoneNumber || settings?.phone}
                     </a>
                   </p>
                 )}
@@ -159,13 +168,13 @@ export function Footer({ settings }: FooterProps) {
             </div>
 
             {/* Follow */}
-            <div>
-              <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
-                Follow
-              </h4>
-              {settings?.socialLinks && settings.socialLinks.length > 0 && (
+            {socialLinks.length > 0 && (
+              <div>
+                <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
+                  Follow
+                </h4>
                 <ul className="space-y-2 text-sm">
-                  {settings.socialLinks.map((link) => (
+                  {socialLinks.map((link) => (
                     <li key={link._key}>
                       <a
                         href={link.url}
@@ -173,14 +182,13 @@ export function Footer({ settings }: FooterProps) {
                         rel="noopener noreferrer"
                         className="text-muted transition-colors hover:text-foreground"
                       >
-                        {link.platform.charAt(0).toUpperCase() +
-                          link.platform.slice(1)}
+                        {capitalize(link.platform)}
                       </a>
                     </li>
                   ))}
                 </ul>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 

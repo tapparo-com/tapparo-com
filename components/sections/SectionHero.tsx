@@ -70,28 +70,35 @@ export function SectionHero({
       </div>
 
       {/* Hero content — takes up viewport height, scrolls naturally */}
-      <section className="relative z-10 flex h-svh flex-col items-center justify-end pb-12 md:pb-16 xl:pb-20">
-        <h1 className="sr-only">{restaurantName}</h1>
+      <section className="relative z-10 flex h-svh items-end overflow-hidden py-12">
+        <div className="mx-auto w-full max-w-[1856px] px-3 md:px-8">
+          {/* Grid: empty left col + logo right col on desktop. Full-width on mobile. */}
+          <div className="md:grid md:grid-cols-[288px_1fr] md:gap-10 xl:grid-cols-[320px_1fr]">
+            <div className="col-start-2 pb-20 md:pb-0">
+              <h1 className="sr-only">{restaurantName}</h1>
 
-        {logo?.asset && (
-          <SanityLogo
-            logo={logo}
-            alt={`${restaurantName} logo`}
-            className="mb-6 w-[calc(100%-48px)] max-w-[752px] text-background md:mb-8 [&_svg]:w-full [&_svg]:h-auto"
-          />
-        )}
+              <div className="flex max-w-[624px] flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]">
+                {logo?.asset ? (
+                  <SanityLogo
+                    logo={logo}
+                    alt={`${restaurantName} logo`}
+                    className="w-full text-background [&_svg]:w-full [&_svg]:h-auto"
+                  />
+                ) : (
+                  <span className="text-4xl font-bold text-white md:text-6xl xl:text-8xl">
+                    {restaurantName}
+                  </span>
+                )}
 
-        {!logo?.asset && (
-          <span className="mb-6 text-4xl font-bold text-white md:mb-8 md:text-6xl xl:text-8xl">
-            {restaurantName}
-          </span>
-        )}
-
-        {tagline && (
-          <p className="font-display text-[17.5px] font-medium tracking-[0.5em] text-white drop-shadow-lg md:text-xl md:tracking-[0.83em] xl:text-4xl xl:tracking-[13.32px]">
-            {tagline}
-          </p>
-        )}
+                {tagline && (
+                  <p className="font-display text-[18px] font-medium tracking-[6.66px] text-background md:text-[28px] md:tracking-[10.36px] xl:text-[36px] xl:tracking-[13.32px]">
+                    {tagline}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );

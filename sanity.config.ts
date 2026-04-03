@@ -3,11 +3,12 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./sanity/schemaTypes";
-import { CogIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
+import { CogIcon, MenuIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
 const HIDDEN_TYPES = [
   "siteSettings",
+  "navigation",
   "page",
   "menuCategory",
   "menuItem",
@@ -29,6 +30,15 @@ const structure: StructureResolver = (S) =>
             .schemaType("siteSettings")
             .documentId("siteSettings")
             .title("Site Settings")
+        ),
+      S.listItem()
+        .title("Navigation")
+        .icon(MenuIcon)
+        .child(
+          S.document()
+            .schemaType("navigation")
+            .documentId("navigation")
+            .title("Navigation")
         ),
       S.divider(),
 

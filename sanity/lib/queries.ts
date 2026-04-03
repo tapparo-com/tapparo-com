@@ -21,6 +21,30 @@ export const SITE_SETTINGS_QUERY = defineQuery(/* groq */ `
   }
 `);
 
+// --- Navigation (menu overlay, footer) ---
+// Shared GROQ fragment for nav item resolution
+const navItemFields = /* groq */ `
+  _key,
+  _type,
+  _type == "navPageLink" => {
+    label,
+    "slug": page->slug.current
+  },
+  _type == "navSocialLinks" => {
+    "socialLinks": *[_type == "siteSettings"][0].socialLinks[]{ _key, platform, url }
+  },
+  _type == "navPhoneLink" => {
+    "phone": *[_type == "siteSettings"][0].phone
+  }
+`;
+
+export const NAVIGATION_QUERY = defineQuery(/* groq */ `
+  *[_type == "navigation"][0]{
+    menuItems[]{ ${navItemFields} },
+    footerItems[]{ ${navItemFields} }
+  }
+`);
+
 // --- Page by slug (page builder) ---
 export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
   *[_type == "page" && slug.current == $slug][0]{
@@ -32,10 +56,28 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionHero" => {
         heroImages[]{ _key, ${imageFields} }
       },
-      _type == "sectionIntro" => {
+      _type == "sectionSubhero" => {
+        label,
         heading,
-        body,
-        menuImage{ ${imageFields} }
+        image{ ${imageFields} },
+        "button": button[0]{
+          label,
+          "slug": page->slug.current,
+          variant
+        },
+        showOpeningHours
+      },
+      _type == "sectionStoryHighlight" => {
+        label,
+        titleOverride,
+        excerptOverride,
+        "story": story->{
+          title,
+          excerpt,
+          coverImage{ ${imageFields} },
+          "slug": slug.current
+        },
+        buttonLabel
       },
       _type == "sectionMoodImages" => {
         title,

@@ -99,7 +99,7 @@ export const siteSettings = defineType({
       name: "socialLinks",
       title: "Social Links",
       type: "array",
-      description: "Shown in the footer under 'Follow'. Each link opens in a new tab.",
+      description: "Shown in the footer under 'Follow' and in the menu overlay. Each link opens in a new tab.",
       of: [
         defineArrayMember({
           type: "object",

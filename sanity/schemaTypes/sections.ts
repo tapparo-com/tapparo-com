@@ -10,6 +10,53 @@ import {
   BlockquoteIcon,
 } from "@sanity/icons";
 
+// Reusable button array member — opens in a modal when editing
+const buttonLink = defineArrayMember({
+  type: "object",
+  name: "buttonLink",
+  title: "Button",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Label",
+      type: "string",
+      description: "Text shown on the button, e.g. 'View the menu'.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "page",
+      title: "Page",
+      type: "reference",
+      description: "Select an internal page.",
+      to: [{ type: "page" }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "variant",
+      title: "Style",
+      type: "string",
+      description: "Visual style of the button.",
+      options: {
+        list: [
+          { title: "Filled (accent background)", value: "filled" },
+          { title: "Outline (accent border)", value: "outline" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "filled",
+    }),
+  ],
+  preview: {
+    select: { title: "label", slug: "page.slug.current" },
+    prepare({ title, slug }) {
+      return {
+        title: title || "Button",
+        subtitle: slug ? `/${slug}` : "No page selected",
+      };
+    },
+  },
+});
+
 export const sectionHero = defineArrayMember({
   type: "object",
   name: "sectionHero",
@@ -39,12 +86,18 @@ export const sectionHero = defineArrayMember({
   },
 });
 
-export const sectionIntro = defineArrayMember({
+export const sectionSubhero = defineArrayMember({
   type: "object",
-  name: "sectionIntro",
-  title: "Intro",
+  name: "sectionSubhero",
+  title: "SubHero",
   icon: DocumentTextIcon,
   fields: [
+    defineField({
+      name: "label",
+      title: "Section Label",
+      type: "string",
+      description: "Small uppercase label shown in the left column on desktop, e.g. 'ABOUT'.",
+    }),
     defineField({
       name: "heading",
       title: "Heading",
@@ -53,26 +106,35 @@ export const sectionIntro = defineArrayMember({
       of: [defineArrayMember({ type: "block" })],
     }),
     defineField({
-      name: "body",
-      title: "Body Text",
-      type: "text",
-      rows: 4,
-      description: "Paragraph text shown below the heading and 'View Menu' button.",
-    }),
-    defineField({
-      name: "menuImage",
-      title: "Menu Image",
+      name: "image",
+      title: "Image",
       type: "image",
-      description: "Illustration or photo shown on the left. Links to the menu page. Recommended aspect ratio 4:5 (portrait).",
+      description: "Illustration or photo displayed alongside the text. Portrait orientation recommended (roughly 3:4 ratio).",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", title: "Alt Text", type: "string" }),
       ],
     }),
+    defineField({
+      name: "button",
+      title: "Button",
+      type: "array",
+      description: "Optional call-to-action button. Add one to display it below the heading.",
+      of: [buttonLink],
+      validation: (rule) => rule.max(1).error("Only one button allowed."),
+    }),
+    defineField({
+      name: "showOpeningHours",
+      title: "Show Opening Hours",
+      type: "boolean",
+      description: "Toggle to display opening hours from Site Settings below the content.",
+      initialValue: false,
+    }),
   ],
   preview: {
-    prepare() {
-      return { title: "Intro" };
+    select: { subtitle: "label" },
+    prepare({ subtitle }) {
+      return { title: "SubHero", subtitle };
     },
   },
 });
@@ -312,9 +374,98 @@ export const sectionMenuCategories = defineArrayMember({
   },
 });
 
+// Button variant without a page reference — link comes from the parent section
+const storyButton = defineArrayMember({
+  type: "object",
+  name: "storyButton",
+  title: "Button",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Label",
+      type: "string",
+      description: "Text shown on the button, e.g. 'Learn more'.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "variant",
+      title: "Style",
+      type: "string",
+      description: "Visual style of the button.",
+      options: {
+        list: [
+          { title: "Filled (accent background)", value: "filled" },
+          { title: "Outline (accent border)", value: "outline" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "outline",
+    }),
+  ],
+  preview: {
+    select: { title: "label" },
+    prepare({ title }) {
+      return { title: title || "Button" };
+    },
+  },
+});
+
+export const sectionStoryHighlight = defineArrayMember({
+  type: "object",
+  name: "sectionStoryHighlight",
+  title: "Story Highlight",
+  icon: StarIcon,
+  fields: [
+    defineField({
+      name: "label",
+      title: "Section Label",
+      type: "string",
+      description: "Small uppercase label shown in the left column on desktop, e.g. 'HIGHLIGHT'.",
+    }),
+    defineField({
+      name: "story",
+      title: "Story",
+      type: "reference",
+      description: "Select a blog post to highlight. Its title, excerpt, and cover image are used automatically.",
+      to: [{ type: "post" }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "titleOverride",
+      title: "Title Override",
+      type: "string",
+      description: "Leave empty to use the post's title. Set a value to override it.",
+    }),
+    defineField({
+      name: "excerptOverride",
+      title: "Excerpt Override",
+      type: "text",
+      rows: 4,
+      description: "Leave empty to use the post's excerpt. Set a value to override it.",
+    }),
+    defineField({
+      name: "buttonLabel",
+      title: "Button Label",
+      type: "string",
+      description: "Text shown on the button, e.g. 'Learn more'. Links to the selected story.",
+      validation: (rule) => rule.required(),
+    }),
+  ],
+  preview: {
+    select: { subtitle: "label", storyTitle: "story.title" },
+    prepare({ subtitle, storyTitle }) {
+      return {
+        title: "Story Highlight",
+        subtitle: subtitle || storyTitle,
+      };
+    },
+  },
+});
+
 export const allSectionTypes = [
   sectionHero,
-  sectionIntro,
+  sectionSubhero,
+  sectionStoryHighlight,
   sectionMoodImages,
   sectionQuote,
   sectionLargeText,

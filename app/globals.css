@@ -13,8 +13,27 @@
 }
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+@utility text-section-heading {
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.6px;
+
+  @media (min-width: 768px) {
+    font-size: 38px;
+    letter-spacing: -0.76px;
+  }
+
+  @media (min-width: 1280px) {
+    font-size: 42px;
+    letter-spacing: -0.84px;
   }
 }
 
