@@ -21,6 +21,7 @@ const HIDDEN_TYPES = [
   "navigationHeader",
   "navigationFooter",
   "page",
+  "menuPage",
   "menuCategory",
   "menuItem",
   "allergen",
@@ -119,6 +120,15 @@ const structure: StructureResolver = (S) =>
           S.list()
             .title("Menu")
             .items([
+              S.listItem()
+                .title("Menu Page")
+                .icon(TagIcon)
+                .child(
+                  S.document()
+                    .schemaType("menuPage")
+                    .documentId("menuPage")
+                    .title("Menu Page")
+                ),
               S.documentTypeListItem("menuCategory").title("Categories"),
               S.documentTypeListItem("menuItem").title("Items"),
               S.documentTypeListItem("allergen").title("Allergens"),

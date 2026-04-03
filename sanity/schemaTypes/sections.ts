@@ -4,8 +4,6 @@ import {
   BlockContentIcon,
   DocumentTextIcon,
   PlayIcon,
-  TagIcon,
-  ComponentIcon,
   StarIcon,
   BlockquoteIcon,
 } from "@sanity/icons";
@@ -342,55 +340,6 @@ export const sectionRichText = defineArrayMember({
   },
 });
 
-export const sectionMenuHeader = defineArrayMember({
-  type: "object",
-  name: "sectionMenuHeader",
-  title: "Menu Header",
-  icon: TagIcon,
-  fields: [
-    defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "subtitle",
-      title: "Subtitle",
-      type: "text",
-      rows: 2,
-    }),
-  ],
-  preview: {
-    select: { subtitle: "title" },
-    prepare({ subtitle }) {
-      return { title: "Menu Header", subtitle };
-    },
-  },
-});
-
-export const sectionMenuCategories = defineArrayMember({
-  type: "object",
-  name: "sectionMenuCategories",
-  title: "Menu Categories",
-  icon: ComponentIcon,
-  fields: [
-    defineField({
-      name: "placeholder",
-      title: "Info",
-      type: "string",
-      readOnly: true,
-      initialValue: "This section renders all menu categories and items automatically.",
-      description: "No configuration needed — categories are pulled from the Menu collection.",
-    }),
-  ],
-  preview: {
-    prepare() {
-      return { title: "Menu Categories (auto)" };
-    },
-  },
-});
-
 // Button variant without a page reference — link comes from the parent section
 const storyButton = defineArrayMember({
   type: "object",
@@ -489,6 +438,4 @@ export const allSectionTypes = [
   sectionGallery,
   sectionStories,
   sectionRichText,
-  sectionMenuHeader,
-  sectionMenuCategories,
 ];

@@ -1,5 +1,5 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { STORIES_QUERY, ALLERGENS_QUERY, MENU_QUERY } from "@/sanity/lib/queries";
+import { STORIES_QUERY } from "@/sanity/lib/queries";
 import { SectionHero } from "@/components/sections/SectionHero";
 import { SectionSubhero } from "@/components/sections/SectionSubhero";
 import { SectionStoryHighlight } from "@/components/sections/SectionStoryHighlight";
@@ -8,8 +8,6 @@ import { SectionQuote } from "@/components/sections/SectionQuote";
 import { SectionLargeText } from "@/components/sections/SectionLargeText";
 import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
-import { SectionMenuHeader } from "@/components/sections/SectionMenuHeader";
-import { SectionMenuCategory } from "@/components/sections/SectionMenuCategory";
 import { SectionRichText } from "@/components/sections/SectionRichText";
 
 type Section = {
@@ -35,29 +33,13 @@ export async function SectionRenderer({ sections, shared }: Props) {
 
   // Pre-fetch data needed by dynamic sections
   const needsStories = sections.some((s) => s._type === "sectionStories");
-  const needsMenu = sections.some((s) => s._type === "sectionMenuCategories");
-  const needsAllergens = sections.some((s) => s._type === "sectionMenuHeader");
 
-  const [stories, allergens, menuCategories] = await Promise.all([
-    needsStories
-      ? sanityFetch<any[]>({
-          query: STORIES_QUERY,
-          tags: ["post"],
-        })
-      : null,
-    needsAllergens
-      ? sanityFetch<any[]>({
-          query: ALLERGENS_QUERY,
-          tags: ["allergen"],
-        })
-      : null,
-    needsMenu
-      ? sanityFetch<any[]>({
-          query: MENU_QUERY,
-          tags: ["menuCategory", "menuItem", "allergen"],
-        })
-      : null,
-  ]);
+  const stories = needsStories
+    ? await sanityFetch<any[]>({
+        query: STORIES_QUERY,
+        tags: ["post"],
+      })
+    : null;
 
   const heroIndex = sections.findIndex((s) => s._type === "sectionHero");
   const heroSection = heroIndex !== -1 ? sections[heroIndex] : null;
@@ -156,39 +138,6 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 key={section._key}
                 body={section.body}
               />
-            );
-
-          case "sectionMenuHeader":
-            return (
-              <SectionMenuHeader
-                key={section._key}
-                title={section.title}
-                subtitle={section.subtitle}
-                allergens={allergens || []}
-                categories={
-                  menuCategories?.map((c: any) => ({
-                    _id: c._id,
-                    title: c.title,
-                    slug: c.slug,
-                  })) || []
-                }
-              />
-            );
-
-          case "sectionMenuCategories":
-            return (
-              <div key={section._key}>
-                {menuCategories?.map((category: any) => (
-                  <SectionMenuCategory
-                    key={category._id}
-                    title={category.title}
-                    slug={category.slug}
-                    description={category.description}
-                    items={category.items}
-                    extras={category.extras}
-                  />
-                ))}
-              </div>
             );
 
           default:

@@ -127,13 +127,6 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionRichText" => {
         body
       },
-      _type == "sectionMenuHeader" => {
-        title,
-        subtitle
-      },
-      _type == "sectionMenuCategories" => {
-        ...
-      }
     },
     seo{ title, description }
   }
@@ -157,24 +150,25 @@ export const ALLERGENS_QUERY = defineQuery(/* groq */ `
   *[_type == "allergen"] | order(code asc){ _id, code, label }
 `);
 
-export const MENU_QUERY = defineQuery(/* groq */ `
-  *[_type == "menuCategory"] | order(sortOrder asc){
-    _id,
-    title,
-    "slug": slug.current,
-    description,
-    tier,
-    "items": *[_type == "menuItem" && references(^._id) && available != false] | order(sortOrder asc){
+export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
+  *[_type == "menuPage"][0]{
+    categories[]->{
       _id,
       title,
+      "slug": slug.current,
       description,
-      pricingType,
-      price,
-      priceVariants[]{ _key, label, price },
-      "allergens": allergens[]->{ _id, code, label },
-      image
-    },
-    extras[]{ _key, name, price }
+      "items": items[@->available != false]->{
+        _id,
+        title,
+        description,
+        pricingType,
+        price,
+        priceVariants[]{ _key, label, price },
+        "allergens": allergens[]->{ _id, code, label }
+      },
+      extras[]{ _key, name, price },
+      images[]{ _key, asset->{_id, url}, alt }
+    }
   }
 `);
 

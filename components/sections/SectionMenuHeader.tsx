@@ -1,10 +1,6 @@
-import { AllergenBadge } from "@/components/ui/AllergenBadge";
+"use client";
 
-type Allergen = {
-  _id: string;
-  code: string;
-  label: string;
-};
+import { useEffect, useState } from "react";
 
 type Category = {
   _id: string;
@@ -13,62 +9,68 @@ type Category = {
 };
 
 type SectionMenuHeaderProps = {
-  title: string;
+  title?: string | null;
   subtitle?: string | null;
-  allergens: Allergen[];
+  allergens?: { _id: string; code: string; label: string }[];
   categories: Category[];
 };
 
 export function SectionMenuHeader({
-  title,
-  subtitle,
-  allergens,
   categories,
 }: SectionMenuHeaderProps) {
+  const [activeSlug, setActiveSlug] = useState<string | null>(
+    categories[0]?.slug ?? null
+  );
+
+  useEffect(() => {
+    if (categories.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((e) => e.isIntersecting);
+        if (visible) {
+          setActiveSlug(visible.target.id);
+        }
+      },
+      { rootMargin: "-20% 0px -60% 0px" }
+    );
+
+    categories.forEach((cat) => {
+      const el = document.getElementById(cat.slug);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [categories]);
+
+  if (categories.length === 0) return null;
+
   return (
-    <header className="mx-auto max-w-[1856px] px-4 pt-12 pb-8 md:px-8 md:pt-16 md:pb-10 xl:pt-20 xl:pb-12">
-      <h1 className="font-sans text-4xl font-bold tracking-tight text-foreground md:text-5xl xl:text-[64px] xl:leading-none">
-        {title}
-      </h1>
-
-      {subtitle && (
-        <p className="mt-3 max-w-md font-sans text-sm text-muted md:mt-4 md:text-base">
-          {subtitle}
-        </p>
-      )}
-
-      {categories.length > 0 && (
-        <nav aria-label="Menu categories" className="mt-6 md:mt-8 xl:mt-10">
-          <ul className="flex flex-wrap gap-x-4 gap-y-2 md:gap-x-6">
-            {categories.map((cat) => (
-              <li key={cat._id}>
+    <nav
+      aria-label="Menu categories"
+      className="sticky top-[65px] z-30 overflow-clip bg-background px-3 pb-5 pt-10 md:px-8 md:pt-20"
+    >
+      <div className="mx-auto max-w-[1856px]">
+        <div className="md:grid grid-cols-sidebar md:gap-10">
+          <div className="md:col-start-2">
+            <div className="flex gap-5 overflow-x-auto scrollbar-hide">
+              {categories.map((cat) => (
                 <a
+                  key={cat._id}
                   href={`#${cat.slug}`}
-                  className="font-sans text-sm font-semibold text-foreground underline underline-offset-4 transition-colors hover:text-accent md:text-base"
+                  className={`shrink-0 text-base uppercase leading-7 transition-colors ${
+                    activeSlug === cat.slug
+                      ? "text-accent underline"
+                      : "text-foreground hover:text-accent"
+                  }`}
                 >
                   {cat.title}
                 </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
-
-      <hr className="mt-6 border-border md:mt-8" />
-
-      {allergens.length > 0 && (
-        <aside aria-label="Allergen legend" className="mt-4 md:mt-6">
-          <p className="mb-2 font-sans text-xs text-muted">Allergens</p>
-          <ul className="flex flex-wrap gap-2">
-            {allergens.map((a) => (
-              <li key={a._id} className="flex items-center gap-1.5">
-                <AllergenBadge code={a.code} label={a.label} />
-                <span className="font-sans text-xs text-muted">{a.label}</span>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      )}
-    </header>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 }
