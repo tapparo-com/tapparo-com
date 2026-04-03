@@ -1,19 +1,19 @@
 import { ImageResponse } from "next/og";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import { BRAND_QUERY } from "@/sanity/lib/queries";
 
 export const alt = "Tapparo — Focacceria • Daybar";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OGImage() {
-  const settings = await sanityFetch<any>({
-    query: SITE_SETTINGS_QUERY,
-    tags: ["siteSettings"],
+  const brand = await sanityFetch<any>({
+    query: BRAND_QUERY,
+    tags: ["settingsBrand"],
   });
 
-  const name = settings?.restaurantName || "Tapparo";
-  const tagline = settings?.tagline || "Focacceria • Daybar";
+  const name = brand?.restaurantName || "Tapparo";
+  const tagline = brand?.tagline || "Focacceria • Daybar";
 
   return new ImageResponse(
     (

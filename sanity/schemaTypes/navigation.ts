@@ -1,7 +1,7 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
-import { MenuIcon } from "@sanity/icons";
+import { MenuIcon, ComposeIcon } from "@sanity/icons";
 
-// Shared item types used by both navigation and footer
+// Shared page link type
 const navPageLink = defineArrayMember({
   type: "object",
   name: "navPageLink",
@@ -34,102 +34,95 @@ const navPageLink = defineArrayMember({
   },
 });
 
-const navSocialLinks = defineArrayMember({
-  type: "object",
-  name: "navSocialLinks",
-  title: "Social Links",
-  description:
-    "Includes all social links defined in Site Settings.",
-  fields: [
-    defineField({
-      name: "placeholder",
-      title: "Info",
-      type: "string",
-      readOnly: true,
-      initialValue:
-        "Renders all social links from Site Settings. Add or remove social links there.",
-      description:
-        "No configuration needed — links are pulled from Site Settings automatically.",
-    }),
-  ],
-  preview: {
-    prepare() {
-      return {
-        title: "Social Links",
-        subtitle: "All social links from Site Settings",
-      };
-    },
-  },
-});
-
-const navPhoneLink = defineArrayMember({
-  type: "object",
-  name: "navPhoneLink",
-  title: "Phone Number",
-  description:
-    "Displays the phone number from Site Settings as a clickable call link.",
-  fields: [
-    defineField({
-      name: "placeholder",
-      title: "Info",
-      type: "string",
-      readOnly: true,
-      initialValue:
-        "Displays the phone number from Site Settings as a clickable call link.",
-      description:
-        "No configuration needed — the phone number is pulled from Site Settings.",
-    }),
-  ],
-  preview: {
-    prepare() {
-      return {
-        title: "Phone Number",
-        subtitle: "Clickable tel: link from Site Settings",
-      };
-    },
-  },
-});
-
-export const navigation = defineType({
-  name: "navigation",
-  title: "Navigation",
+export const navigationHeader = defineType({
+  name: "navigationHeader",
+  title: "Header Navigation",
   type: "document",
   icon: MenuIcon,
   fields: [
     defineField({
-      name: "menuItems",
-      title: "Navigation Links",
+      name: "pageLinks",
+      title: "Pages",
       type: "array",
       description:
-        "Links shown in the menu overlay when a user clicks 'Menu'. Drag to reorder.",
-      of: [navPageLink, navSocialLinks, navPhoneLink],
+        "Page links shown in the menu overlay. Drag to reorder.",
+      of: [navPageLink],
     }),
     defineField({
-      name: "footerItems",
-      title: "Footer Links",
+      name: "socialLinks",
+      title: "Social Links",
       type: "array",
       description:
-        "Page and social links shown in the site footer. Drag to reorder.",
-      of: [navPageLink, navSocialLinks],
+        "Select which social links to show in the menu overlay. Pick from Site Settings > Social Links.",
+      of: [
+        defineArrayMember({
+          type: "reference",
+          to: [{ type: "socialLink" }],
+        }),
+      ],
     }),
     defineField({
-      name: "footerShowPhone",
-      title: "Show Phone in Footer",
+      name: "showPhone",
+      title: "Show Phone Number",
       type: "boolean",
-      description: "Display the phone number from Site Settings in the footer contact column.",
-      initialValue: true,
-    }),
-    defineField({
-      name: "footerShowEmail",
-      title: "Show Email in Footer",
-      type: "boolean",
-      description: "Display the email address from Site Settings in the footer contact column.",
+      description:
+        "Display the phone number from Site Settings > Contact in the menu overlay.",
       initialValue: true,
     }),
   ],
   preview: {
     prepare() {
-      return { title: "Navigation" };
+      return { title: "Header Navigation" };
+    },
+  },
+});
+
+export const navigationFooter = defineType({
+  name: "navigationFooter",
+  title: "Footer",
+  type: "document",
+  icon: ComposeIcon,
+  fields: [
+    defineField({
+      name: "pageLinks",
+      title: "Pages",
+      type: "array",
+      description: "Page links shown in the first footer column.",
+      of: [navPageLink],
+    }),
+    defineField({
+      name: "socialLinks",
+      title: "Social Links",
+      type: "array",
+      description:
+        "Select which social links to show in the footer. Pick from Site Settings > Social Links.",
+      of: [
+        defineArrayMember({
+          type: "reference",
+          to: [{ type: "socialLink" }],
+        }),
+      ],
+    }),
+    defineField({
+      name: "showPhone",
+      title: "Show Phone in Footer",
+      type: "boolean",
+      description:
+        "Display the phone number from Site Settings > Contact in the footer.",
+      initialValue: true,
+    }),
+    defineField({
+      name: "showEmail",
+      title: "Show Email in Footer",
+      type: "boolean",
+      description:
+        "Display the email address from Site Settings > Contact in the footer.",
+      initialValue: true,
+    }),
+  ],
+  preview: {
+    prepare() {
+      return { title: "Footer" };
     },
   },
 });

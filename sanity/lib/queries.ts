@@ -3,47 +3,70 @@ import { defineQuery } from "next-sanity";
 // --- Shared image fragment ---
 const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt`;
 
-// --- Site Settings (layout, footer) ---
-export const SITE_SETTINGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "siteSettings"][0]{
+// --- Site Settings (split across 5 documents) ---
+export const BRAND_QUERY = defineQuery(/* groq */ `
+  *[_type == "settingsBrand"][0]{
     restaurantName,
     tagline,
-    isComingSoon,
-    comingSoonText,
-    logo,
-    email,
-    phone,
-    address,
-    mapUrl,
-    openingHours[]{ _key, day, hours },
-    socialLinks[]{ _key, platform, url },
-    seoDefaults{ title, description }
+    logo
   }
 `);
 
-// --- Navigation (menu overlay, footer) ---
-// Shared GROQ fragment for nav item resolution
-const navItemFields = /* groq */ `
-  _key,
-  _type,
-  _type == "navPageLink" => {
-    label,
-    "slug": page->slug.current
-  },
-  _type == "navSocialLinks" => {
-    "socialLinks": *[_type == "siteSettings"][0].socialLinks[]{ _key, platform, url }
-  },
-  _type == "navPhoneLink" => {
-    "phone": *[_type == "siteSettings"][0].phone
+export const CONTACT_QUERY = defineQuery(/* groq */ `
+  *[_type == "settingsContact"][0]{
+    email,
+    phone,
+    address,
+    mapUrl
   }
-`;
+`);
 
-export const NAVIGATION_QUERY = defineQuery(/* groq */ `
-  *[_type == "navigation"][0]{
-    menuItems[]{ ${navItemFields} },
-    footerItems[]{ ${navItemFields} },
-    footerShowPhone,
-    footerShowEmail
+export const HOURS_QUERY = defineQuery(/* groq */ `
+  *[_type == "settingsHours"][0]{
+    openingHours[]{ _key, day, hours }
+  }
+`);
+
+export const SOCIAL_QUERY = defineQuery(/* groq */ `
+  *[_type == "socialLink"]{ _id, label, url }
+`);
+
+export const SEO_QUERY = defineQuery(/* groq */ `
+  *[_type == "settingsSeo"][0]{
+    isComingSoon,
+    comingSoonText,
+    metaTitle,
+    metaDescription
+  }
+`);
+
+// --- Navigation ---
+export const HEADER_NAV_QUERY = defineQuery(/* groq */ `
+  *[_type == "navigationHeader"][0]{
+    pageLinks[]{
+      _key,
+      label,
+      "slug": page->slug.current
+    },
+    socialLinks[]->{ _id, label, url },
+    showPhone,
+    "phone": select(
+      showPhone == true => *[_type == "settingsContact"][0].phone,
+      null
+    )
+  }
+`);
+
+export const FOOTER_NAV_QUERY = defineQuery(/* groq */ `
+  *[_type == "navigationFooter"][0]{
+    pageLinks[]{
+      _key,
+      label,
+      "slug": page->slug.current
+    },
+    socialLinks[]->{ _id, label, url },
+    showPhone,
+    showEmail
   }
 `);
 

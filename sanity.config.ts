@@ -3,12 +3,23 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./sanity/schemaTypes";
-import { CogIcon, MenuIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
+import {
+  CogIcon,
+  MenuIcon,
+  TagIcon,
+  DocumentTextIcon,
+  ComposeIcon,
+} from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
 const HIDDEN_TYPES = [
-  "siteSettings",
-  "navigation",
+  "settingsBrand",
+  "settingsContact",
+  "settingsHours",
+  "socialLink",
+  "settingsSeo",
+  "navigationHeader",
+  "navigationFooter",
   "page",
   "menuCategory",
   "menuItem",
@@ -21,24 +32,78 @@ const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
-      // Site Settings singleton
+      // Site Settings group
       S.listItem()
         .title("Site Settings")
         .icon(CogIcon)
         .child(
-          S.document()
-            .schemaType("siteSettings")
-            .documentId("siteSettings")
+          S.list()
             .title("Site Settings")
+            .items([
+              S.listItem()
+                .title("Brand")
+                .icon(CogIcon)
+                .child(
+                  S.document()
+                    .schemaType("settingsBrand")
+                    .documentId("settingsBrand")
+                    .title("Brand")
+                ),
+              S.listItem()
+                .title("Contact")
+                .child(
+                  S.document()
+                    .schemaType("settingsContact")
+                    .documentId("settingsContact")
+                    .title("Contact")
+                ),
+              S.listItem()
+                .title("Opening Hours")
+                .child(
+                  S.document()
+                    .schemaType("settingsHours")
+                    .documentId("settingsHours")
+                    .title("Opening Hours")
+                ),
+              S.documentTypeListItem("socialLink").title("Social Links"),
+              S.listItem()
+                .title("SEO")
+                .child(
+                  S.document()
+                    .schemaType("settingsSeo")
+                    .documentId("settingsSeo")
+                    .title("SEO")
+                ),
+            ])
         ),
+
+      // Navigation group
       S.listItem()
         .title("Navigation")
         .icon(MenuIcon)
         .child(
-          S.document()
-            .schemaType("navigation")
-            .documentId("navigation")
+          S.list()
             .title("Navigation")
+            .items([
+              S.listItem()
+                .title("Header")
+                .icon(MenuIcon)
+                .child(
+                  S.document()
+                    .schemaType("navigationHeader")
+                    .documentId("navigationHeader")
+                    .title("Header Navigation")
+                ),
+              S.listItem()
+                .title("Footer")
+                .icon(ComposeIcon)
+                .child(
+                  S.document()
+                    .schemaType("navigationFooter")
+                    .documentId("navigationFooter")
+                    .title("Footer")
+                ),
+            ])
         ),
       S.divider(),
 

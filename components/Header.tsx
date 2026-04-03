@@ -5,25 +5,23 @@ import Link from "next/link";
 import { SanityLogo } from "@/components/ui/SanityLogo";
 import { MenuOverlay } from "@/components/MenuOverlay";
 
-type NavItem = {
-  _key: string;
-  _type: string;
-  label: string;
-  slug?: string;
-  url?: string;
-  phone?: string;
+type HeaderNav = {
+  pageLinks?: { _key: string; label: string; slug: string }[];
+  socialLinks?: { _id: string; label: string; url: string }[];
+  showPhone?: boolean;
+  phone?: string | null;
 };
 
 type HeaderProps = {
   restaurantName?: string;
   logo?: { asset?: { _id: string; url: string } } | null;
-  navigationItems?: NavItem[] | null;
+  headerNav?: HeaderNav | null;
 };
 
 export function Header({
   restaurantName,
   logo,
-  navigationItems,
+  headerNav,
 }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -60,7 +58,7 @@ export function Header({
       <MenuOverlay
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
-        items={navigationItems}
+        headerNav={headerNav}
       />
     </>
   );

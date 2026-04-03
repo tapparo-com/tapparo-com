@@ -1,5 +1,11 @@
-import { siteSettings } from "./site-settings";
-import { navigation } from "./navigation";
+import {
+  settingsBrand,
+  settingsContact,
+  settingsHours,
+  socialLink,
+  settingsSeo,
+} from "./site-settings";
+import { navigationHeader, navigationFooter } from "./navigation";
 import { page } from "./page";
 import { menuCategory } from "./menu-category";
 import { menuItem } from "./menu-item";
@@ -8,8 +14,13 @@ import { post } from "./post";
 import { author } from "./author";
 
 export const schemaTypes = [
-  siteSettings,
-  navigation,
+  settingsBrand,
+  settingsContact,
+  settingsHours,
+  socialLink,
+  settingsSeo,
+  navigationHeader,
+  navigationFooter,
   page,
   menuCategory,
   menuItem,

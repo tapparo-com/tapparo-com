@@ -4,50 +4,36 @@ import Link from "next/link";
 import { SanityLogo } from "@/components/ui/SanityLogo";
 
 type Settings = {
-  restaurantName: string;
+  restaurantName?: string;
   logo?: { asset?: { _id: string; url: string } } | null;
   email?: string;
   phone?: string;
   address?: string;
   mapUrl?: string;
   openingHours?: { _key: string; day: string; hours: string }[];
-  socialLinks?: { _key: string; platform: string; url: string }[];
 };
 
-type NavItem = {
-  _key: string;
-  _type: string;
-  label?: string;
-  slug?: string;
-  socialLinks?: { _key: string; platform: string; url: string }[];
-  phone?: string;
-};
-
-type FooterProps = {
-  settings?: Settings | null;
-  footerItems?: NavItem[] | null;
+type FooterNav = {
+  pageLinks?: { _key: string; label: string; slug: string }[];
+  socialLinks?: { _id: string; label: string; url: string }[];
   showPhone?: boolean;
   showEmail?: boolean;
 };
 
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+type FooterProps = {
+  settings?: Settings | null;
+  footerNav?: FooterNav | null;
+};
 
-export function Footer({ settings, footerItems, showPhone, showEmail }: FooterProps) {
+export function Footer({ settings, footerNav }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const pageLinks: NavItem[] = [];
-  const socialLinks: { _key: string; platform: string; url: string }[] = [];
-
-  footerItems?.forEach((item) => {
-    if (item._type === "navPageLink") pageLinks.push(item);
-    if (item._type === "navSocialLinks" && item.socialLinks) {
-      socialLinks.push(...item.socialLinks);
-    }
-  });
+  const pageLinks = footerNav?.pageLinks || [];
+  const socialLinks = footerNav?.socialLinks || [];
+  const showPhone = footerNav?.showPhone;
+  const showEmail = footerNav?.showEmail;
 
   return (
     <footer className="relative z-10 border-t border-accent bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
@@ -109,7 +95,7 @@ export function Footer({ settings, footerItems, showPhone, showEmail }: FooterPr
                         href={settings.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80"
+                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
                       >
                         Maps
                       </a>
@@ -117,7 +103,7 @@ export function Footer({ settings, footerItems, showPhone, showEmail }: FooterPr
                     {showEmail !== false && settings?.email && (
                       <a
                         href={`mailto:${settings.email}`}
-                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80"
+                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
                       >
                         {settings.email}
                       </a>
@@ -125,7 +111,7 @@ export function Footer({ settings, footerItems, showPhone, showEmail }: FooterPr
                     {showPhone !== false && settings?.phone && (
                       <a
                         href={`tel:${settings.phone.replace(/\s/g, "")}`}
-                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80"
+                        className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
                       >
                         {settings.phone}
                       </a>
@@ -159,13 +145,13 @@ export function Footer({ settings, footerItems, showPhone, showEmail }: FooterPr
                   <div className="flex flex-col">
                     {socialLinks.map((link) => (
                       <a
-                        key={link._key}
+                        key={link._id}
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
                       >
-                        {capitalize(link.platform)}
+                        {link.label}
                       </a>
                     ))}
                   </div>

@@ -3,29 +3,23 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
-type NavItem = {
-  _key: string;
-  _type: string;
-  // navPageLink
-  label?: string;
-  slug?: string;
-  // navSocialLinks
-  socialLinks?: { _key: string; platform: string; url: string }[];
-  // navPhoneLink
-  phone?: string;
+type HeaderNav = {
+  pageLinks?: { _key: string; label: string; slug: string }[];
+  socialLinks?: { _id: string; label: string; url: string }[];
+  showPhone?: boolean;
+  phone?: string | null;
 };
 
 type MenuOverlayProps = {
   isOpen: boolean;
   onClose: () => void;
-  items?: NavItem[] | null;
+  headerNav?: HeaderNav | null;
 };
 
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+const linkClass =
+  "font-sans text-[30px] font-medium tracking-tight text-foreground transition-colors hover:text-accent";
 
-export function MenuOverlay({ isOpen, onClose, items }: MenuOverlayProps) {
+export function MenuOverlay({ isOpen, onClose, headerNav }: MenuOverlayProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -42,48 +36,37 @@ export function MenuOverlay({ isOpen, onClose, items }: MenuOverlayProps) {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/75 backdrop-blur-sm">
       <nav className="flex flex-col items-center gap-4">
-        {items?.map((item) => {
-          if (item._type === "navPageLink" && item.slug) {
-            return (
-              <Link
-                key={item._key}
-                href={item.slug === "home" ? "/" : `/${item.slug}`}
-                onClick={onClose}
-                className="font-sans text-[30px] font-medium tracking-tight text-foreground transition-colors hover:text-accent"
-              >
-                {item.label}
-              </Link>
-            );
-          }
+        {headerNav?.pageLinks?.map((item) => (
+          <Link
+            key={item._key}
+            href={item.slug === "home" ? "/" : `/${item.slug}`}
+            onClick={onClose}
+            className={linkClass}
+          >
+            {item.label}
+          </Link>
+        ))}
 
-          if (item._type === "navSocialLinks" && item.socialLinks) {
-            return item.socialLinks.map((link) => (
-              <a
-                key={link._key}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-[30px] font-medium tracking-tight text-foreground transition-colors hover:text-accent"
-              >
-                {capitalize(link.platform)}
-              </a>
-            ));
-          }
+        {headerNav?.socialLinks?.map((link) => (
+          <a
+            key={link._id}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            {link.label}
+          </a>
+        ))}
 
-          if (item._type === "navPhoneLink" && item.phone) {
-            return (
-              <a
-                key={item._key}
-                href={`tel:${item.phone.replace(/\s/g, "")}`}
-                className="font-sans text-[30px] font-medium tracking-tight text-foreground transition-colors hover:text-accent"
-              >
-                {item.phone}
-              </a>
-            );
-          }
-
-          return null;
-        })}
+        {headerNav?.phone && (
+          <a
+            href={`tel:${headerNav.phone.replace(/\s/g, "")}`}
+            className={linkClass}
+          >
+            {headerNav.phone}
+          </a>
+        )}
       </nav>
     </div>
   );

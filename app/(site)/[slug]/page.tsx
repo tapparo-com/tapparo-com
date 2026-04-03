@@ -4,7 +4,8 @@ import {
   BLOG_POST_QUERY,
   BLOG_LIST_QUERY,
   PAGES_SLUGS_QUERY,
-  SITE_SETTINGS_QUERY,
+  BRAND_QUERY,
+  HOURS_QUERY,
 } from "@/sanity/lib/queries";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { PostBody } from "@/components/PostBody";
@@ -85,16 +86,14 @@ export default async function SlugPage({ params }: Props) {
   if (slug === "home") notFound();
 
   // --- Try CMS page ---
-  const [page, settings] = await Promise.all([
+  const [page, brand, hours] = await Promise.all([
     sanityFetch<any>({
       query: PAGE_BY_SLUG_QUERY,
       params: { slug },
       tags: ["page"],
     }),
-    sanityFetch<any>({
-      query: SITE_SETTINGS_QUERY,
-      tags: ["siteSettings"],
-    }),
+    sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
+    sanityFetch<any>({ query: HOURS_QUERY, tags: ["settingsHours"] }),
   ]);
 
   if (page) {
@@ -108,10 +107,10 @@ export default async function SlugPage({ params }: Props) {
         <SectionRenderer
           sections={page.sections || []}
           shared={{
-            restaurantName: settings?.restaurantName,
-            tagline: settings?.tagline,
-            logo: settings?.logo,
-            openingHours: settings?.openingHours,
+            restaurantName: brand?.restaurantName,
+            tagline: brand?.tagline,
+            logo: brand?.logo,
+            openingHours: hours?.openingHours,
           }}
         />
       </>
