@@ -9,6 +9,7 @@ import { SectionLargeText } from "@/components/sections/SectionLargeText";
 import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
 import { SectionRichText } from "@/components/sections/SectionRichText";
+import { SectionText } from "@/components/sections/SectionText";
 
 type Section = {
   _key: string;
@@ -137,6 +138,17 @@ export async function SectionRenderer({ sections, shared }: Props) {
               <SectionRichText
                 key={section._key}
                 body={section.body}
+              />
+            );
+
+          case "sectionText":
+            return (
+              <SectionText
+                key={section._key}
+                label={section.label}
+                body={section.body}
+                image={section.image}
+                imageFirst={section.imageFirst}
               />
             );
 

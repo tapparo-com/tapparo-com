@@ -135,6 +135,12 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionRichText" => {
         body
       },
+      _type == "sectionText" => {
+        label,
+        body,
+        image{ ${imageFields} },
+        imageFirst
+      },
     },
     seo{ title, description }
   }

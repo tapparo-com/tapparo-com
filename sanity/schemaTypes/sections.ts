@@ -428,6 +428,53 @@ export const sectionStoryHighlight = defineArrayMember({
   },
 });
 
+export const sectionText = defineArrayMember({
+  type: "object",
+  name: "sectionText",
+  title: "Text + Image",
+  icon: DocumentTextIcon,
+  fields: [
+    defineField({
+      name: "label",
+      title: "Section Label",
+      type: "string",
+      description:
+        "Small uppercase label shown in the left column on desktop.",
+    }),
+    defineField({
+      name: "body",
+      title: "Body",
+      type: "array",
+      description: "Rich text content. Supports headings, bold, italic, and links.",
+      of: [defineArrayMember({ type: "block" })],
+    }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      description: "Square image displayed alongside the text. Recommended 1:1 ratio.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+      ],
+    }),
+    defineField({
+      name: "imageFirst",
+      title: "Image First",
+      type: "boolean",
+      description:
+        "When enabled, the image appears on the left (desktop) or top (mobile). When disabled, the text comes first.",
+      initialValue: false,
+    }),
+  ],
+  preview: {
+    select: { subtitle: "label" },
+    prepare({ subtitle }) {
+      return { title: "Text + Image", subtitle };
+    },
+  },
+});
+
 export const allSectionTypes = [
   sectionHero,
   sectionSubhero,
@@ -438,4 +485,5 @@ export const allSectionTypes = [
   sectionGallery,
   sectionStories,
   sectionRichText,
+  sectionText,
 ];
