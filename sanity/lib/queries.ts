@@ -9,7 +9,8 @@ export const BRAND_QUERY = defineQuery(/* groq */ `
     restaurantName,
     tagline,
     logo,
-    supportingLogo{ asset->{_id, url} }
+    supportingLogo{ asset->{_id, url} },
+    supportingLogoTagline{ asset->{_id, url} }
   }
 `);
 
@@ -36,6 +37,7 @@ export const SEO_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsSeo"][0]{
     isComingSoon,
     comingSoonBody,
+    comingSoonShowAddress,
     comingSoonSocialLinks[]->{ _id, label, url },
     titleTemplate,
     metaTitle,

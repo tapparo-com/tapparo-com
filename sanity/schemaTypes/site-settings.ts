@@ -40,7 +40,14 @@ export const settingsBrand = defineType({
       title: "Supporting Logo",
       type: "image",
       description:
-        "Illustrative graphic used on the 404 page and other accent-background sections. Upload an SVG or PNG with a transparent background.",
+        "Illustrative graphic used on the 404 page. Upload an SVG or PNG with a transparent background.",
+    }),
+    defineField({
+      name: "supportingLogoTagline",
+      title: "Supporting Logo with Tagline",
+      type: "image",
+      description:
+        "Logo variant that includes the tagline (e.g. Tapparo + Focacceria . Daybar). Used on the Coming Soon page. Upload an SVG or PNG with a transparent background.",
     }),
   ],
   preview: {
@@ -187,6 +194,14 @@ export const settingsSeo = defineType({
       description:
         "Text shown on the Coming Soon page below the logo. Displayed in large type.",
       of: [{ type: "block" }],
+      hidden: ({ document }) => !document?.isComingSoon,
+    }),
+    defineField({
+      name: "comingSoonShowAddress",
+      title: "Show Address",
+      type: "boolean",
+      description: "Display the address from Site Settings > Contact on the Coming Soon page.",
+      initialValue: false,
       hidden: ({ document }) => !document?.isComingSoon,
     }),
     defineField({

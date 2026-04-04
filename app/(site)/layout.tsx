@@ -58,7 +58,9 @@ export default async function SiteLayout({
         settings={{
           restaurantName: brand?.restaurantName,
           logoSvg,
+          supportingLogoTagline: brand?.supportingLogoTagline,
           comingSoonBody: seo?.comingSoonBody,
+          address: seo?.comingSoonShowAddress ? contact?.address : undefined,
           socialLinks: seo?.comingSoonSocialLinks,
         }}
       />
