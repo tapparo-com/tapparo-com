@@ -69,6 +69,7 @@ export function SectionStoryHighlight({
                           src={urlFor(coverImage).width(624).height(624).url()}
                           alt={coverImage.alt || title || ""}
                           fill
+                          sizes="(max-width: 768px) 100vw, 624px"
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                           placeholder={
                             coverImage.asset.metadata?.lqip ? "blur" : undefined
@@ -113,6 +114,7 @@ export function SectionStoryHighlight({
                       src={urlFor(coverImage).width(624).height(624).url()}
                       alt={coverImage.alt || title || ""}
                       fill
+                      sizes="624px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       placeholder={
                         coverImage.asset.metadata?.lqip ? "blur" : undefined

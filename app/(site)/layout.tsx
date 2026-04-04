@@ -7,6 +7,7 @@ import {
   HEADER_NAV_QUERY,
   FOOTER_NAV_QUERY,
 } from "@/sanity/lib/queries";
+import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { ComingSoon } from "@/components/ComingSoon";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -48,12 +49,14 @@ export default async function SiteLayout({
       }),
     ]);
 
+  const logoSvg = await fetchLogoSvg(brand?.logo);
+
   if (seo?.isComingSoon) {
     return (
       <ComingSoon
         settings={{
           restaurantName: brand?.restaurantName,
-          logo: brand?.logo,
+          logoSvg,
           comingSoonBody: seo?.comingSoonBody,
           socialLinks: seo?.comingSoonSocialLinks,
         }}
@@ -65,14 +68,14 @@ export default async function SiteLayout({
     <>
       <Header
         restaurantName={brand?.restaurantName}
-        logo={brand?.logo}
+        logoSvg={logoSvg}
         headerNav={headerNav}
       />
-      <main>{children}</main>
+      <main className="min-h-svh">{children}</main>
       <Footer
         settings={{
           restaurantName: brand?.restaurantName,
-          logo: brand?.logo,
+          logoSvg,
           email: contact?.email,
           phone: contact?.phone,
           address: contact?.address,

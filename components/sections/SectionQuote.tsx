@@ -28,6 +28,7 @@ export function SectionQuote({ author, quote, image }: SectionQuoteProps) {
                       src={urlFor(image).width(624).height(624).url()}
                       alt={image.alt || ""}
                       fill
+                      sizes="(max-width: 1280px) 100vw, 624px"
                       className="object-cover"
                       placeholder={
                         image.asset.metadata?.lqip ? "blur" : undefined

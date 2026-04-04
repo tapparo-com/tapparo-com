@@ -5,6 +5,7 @@ import {
   HOURS_QUERY,
   PAGE_BY_SLUG_QUERY,
 } from "@/sanity/lib/queries";
+import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
 
 export default async function HomePage() {
@@ -45,7 +46,7 @@ export default async function HomePage() {
         shared={{
           restaurantName: brand?.restaurantName,
           tagline: brand?.tagline,
-          logo: brand?.logo,
+          logoSvg: await fetchLogoSvg(brand?.logo),
           openingHours: hours?.openingHours,
         }}
       />

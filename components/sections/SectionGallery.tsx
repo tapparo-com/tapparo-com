@@ -30,6 +30,7 @@ export function SectionGallery({ images, caption }: SectionGalleryProps) {
                   src={urlFor(img).width(730).height(1015).url()}
                   alt={img.alt || ""}
                   fill
+                  sizes="(max-width: 768px) 328px, (max-width: 1280px) 480px, 624px"
                   className="object-cover"
                   placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
                   blurDataURL={img.asset?.metadata?.lqip || undefined}

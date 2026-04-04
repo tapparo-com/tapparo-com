@@ -1,11 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import { SanityLogo } from "@/components/ui/SanityLogo";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 type Settings = {
   restaurantName?: string;
-  logo?: { asset?: { _id: string; url: string } } | null;
+  logoSvg?: string | null;
   email?: string;
   phone?: string;
   address?: string;
@@ -26,10 +25,6 @@ type FooterProps = {
 };
 
 export function Footer({ settings, footerNav }: FooterProps) {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const pageLinks = footerNav?.pageLinks || [];
   const socialLinks = footerNav?.socialLinks || [];
   const showPhone = footerNav?.showPhone;
@@ -42,9 +37,9 @@ export function Footer({ settings, footerNav }: FooterProps) {
           {/* Col-1: Logo */}
           <div className="md:row-start-1 md:col-start-1">
             <Link href="/">
-              {settings?.logo?.asset ? (
+              {settings?.logoSvg ? (
                 <SanityLogo
-                  logo={settings.logo}
+                  svgHtml={settings.logoSvg}
                   alt={`${settings.restaurantName || "Tapparo"} logo`}
                   className="h-12 w-[131px] text-foreground [&_svg]:h-full [&_svg]:w-auto"
                 />
@@ -165,26 +160,7 @@ export function Footer({ settings, footerNav }: FooterProps) {
         </div>
       </div>
 
-      {/* Scroll to top */}
-      <button
-        onClick={scrollToTop}
-        aria-label="Scroll to top"
-        className="absolute bottom-5 right-3 flex size-12 items-center justify-center bg-background/75 backdrop-blur-sm text-accent transition-colors hover:text-accent/80 md:right-8 xl:bottom-20"
-      >
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 32 32"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16 26V6M16 6L6 16M16 6L26 16"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-        </svg>
-      </button>
+      <ScrollToTop />
     </footer>
   );
 }

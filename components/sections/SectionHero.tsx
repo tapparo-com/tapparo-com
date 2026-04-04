@@ -14,14 +14,14 @@ type HeroImage = {
 type SectionHeroProps = {
   restaurantName: string;
   tagline?: string | null;
-  logo?: { asset?: { _id: string; url: string } } | null;
+  logoSvg?: string | null;
   heroImages?: HeroImage[] | null;
 };
 
 export function SectionHero({
   restaurantName,
   tagline,
-  logo,
+  logoSvg,
   heroImages,
 }: SectionHeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -36,7 +36,7 @@ export function SectionHero({
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 800);
+    }, 2000);
     return () => clearInterval(interval);
   }, [images.length]);
 
@@ -47,16 +47,18 @@ export function SectionHero({
         {images.map((img, i) => (
           <div
             key={img._key}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
+            className={`absolute inset-0 transition-opacity duration-0 ${
               i === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           >
             <Image
-              src={urlFor(img).width(1920).height(1080).url()}
+              src={urlFor(img).width(1920).quality(75).auto("format").url()}
               alt={img.alt || ""}
               fill
+              sizes="100vw"
               className="object-cover"
               priority={i === 0}
+              fetchPriority={i === 0 ? "high" : undefined}
               placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
               blurDataURL={img.asset?.metadata?.lqip || undefined}
             />
@@ -78,9 +80,9 @@ export function SectionHero({
               <h1 className="sr-only">{restaurantName}</h1>
 
               <div className="flex max-w-gutter flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]">
-                {logo?.asset ? (
+                {logoSvg ? (
                   <SanityLogo
-                    logo={logo}
+                    svgHtml={logoSvg}
                     alt={`${restaurantName} logo`}
                     className="w-full text-background [&_svg]:w-full [&_svg]:h-auto"
                   />

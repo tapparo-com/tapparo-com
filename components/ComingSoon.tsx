@@ -4,7 +4,7 @@ import { SanityLogo } from "@/components/ui/SanityLogo";
 type Props = {
   settings: {
     restaurantName?: string;
-    logo?: any;
+    logoSvg?: string | null;
     comingSoonBody?: any[];
     socialLinks?: { _id: string; label: string; url: string }[];
   };
@@ -14,9 +14,9 @@ export function ComingSoon({ settings }: Props) {
   return (
     <main className="flex min-h-svh flex-col items-center justify-center bg-accent px-6 text-center">
       <div className="flex flex-col items-center gap-[60px]">
-        {settings.logo?.asset ? (
+        {settings.logoSvg ? (
           <SanityLogo
-            logo={settings.logo}
+            svgHtml={settings.logoSvg}
             alt={settings.restaurantName || "Logo"}
             className="h-16 w-auto text-background sm:h-20 [&_svg]:h-full [&_svg]:w-auto"
           />

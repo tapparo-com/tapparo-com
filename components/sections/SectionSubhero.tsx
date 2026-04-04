@@ -25,6 +25,7 @@ function ImageBlock({
         src={urlFor(image).width(730).height(1015).url()}
         alt={image.alt || ""}
         fill
+        sizes="(max-width: 1280px) 100vw, 624px"
         className="object-cover transition-transform duration-500 group-hover:scale-105"
         placeholder={image.asset?.metadata?.lqip ? "blur" : undefined}
         blurDataURL={image.asset?.metadata?.lqip || undefined}

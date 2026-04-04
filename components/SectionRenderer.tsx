@@ -20,7 +20,7 @@ type Section = {
 type SharedData = {
   restaurantName?: string;
   tagline?: string;
-  logo?: any;
+  logoSvg?: string | null;
   openingHours?: { _key: string; day: string; hours: string }[];
 };
 
@@ -55,7 +55,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
           key={heroSection._key}
           restaurantName={shared?.restaurantName || "Tapparo"}
           tagline={shared?.tagline}
-          logo={shared?.logo}
+          logoSvg={shared?.logoSvg}
           heroImages={heroSection.heroImages}
         />
       )}

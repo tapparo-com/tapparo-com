@@ -172,6 +172,7 @@ export function SectionMenuCategory({
                       src={urlFor(images[imageIndex]).width(624).height(624).url()}
                       alt={images[imageIndex]?.alt || title}
                       fill
+                      sizes="(max-width: 1280px) 100vw, 624px"
                       className="object-cover"
                     />
                   </div>

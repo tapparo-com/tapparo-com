@@ -31,6 +31,7 @@ export function PostCard({ post }: { post: Post }) {
                 src={urlFor(post.coverImage).width(624).height(624).url()}
                 alt={post.title}
                 fill
+                sizes="(max-width: 1280px) 100vw, 624px"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (

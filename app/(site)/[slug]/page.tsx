@@ -10,6 +10,7 @@ import {
   LEGAL_PAGE_QUERY,
   LEGAL_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
+import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { PostBody } from "@/components/PostBody";
 import { SectionRelatedStories } from "@/components/sections/SectionRelatedStories";
@@ -131,7 +132,7 @@ export default async function SlugPage({ params }: Props) {
           shared={{
             restaurantName: brand?.restaurantName,
             tagline: brand?.tagline,
-            logo: brand?.logo,
+            logoSvg: await fetchLogoSvg(brand?.logo),
             openingHours: hours?.openingHours,
           }}
         />
@@ -206,6 +207,7 @@ export default async function SlugPage({ params }: Props) {
                               .url()}
                             alt={post.title}
                             fill
+                            sizes="(max-width: 768px) 100vw, 624px"
                             className="object-cover"
                             priority
                           />
@@ -242,6 +244,7 @@ export default async function SlugPage({ params }: Props) {
                             .url()}
                           alt={post.title}
                           fill
+                          sizes="624px"
                           className="object-cover"
                         />
                       </div>

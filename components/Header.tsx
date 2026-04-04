@@ -14,13 +14,13 @@ type HeaderNav = {
 
 type HeaderProps = {
   restaurantName?: string;
-  logo?: { asset?: { _id: string; url: string } } | null;
+  logoSvg?: string | null;
   headerNav?: HeaderNav | null;
 };
 
 export function Header({
   restaurantName,
-  logo,
+  logoSvg,
   headerNav,
 }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,9 +31,9 @@ export function Header({
         <div className="mx-auto max-w-[1856px]">
           <div className="flex items-center justify-between md:grid grid-cols-sidebar md:gap-10">
             <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center">
-              {logo?.asset ? (
+              {logoSvg ? (
                 <SanityLogo
-                  logo={logo}
+                  svgHtml={logoSvg}
                   alt={`${restaurantName || "Tapparo"} logo`}
                   className="h-12 w-[131px] text-foreground [&_svg]:h-full [&_svg]:w-auto"
                 />
