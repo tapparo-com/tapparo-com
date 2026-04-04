@@ -43,7 +43,7 @@ export function SectionHero({
   return (
     <>
       {/* Fixed background carousel — stays locked to viewport */}
-      <div className="fixed inset-0 z-0 h-svh overflow-hidden">
+      <div className="fixed inset-0 top-[65px] z-0 overflow-hidden">
         {images.map((img, i) => (
           <div
             key={img._key}
@@ -70,7 +70,7 @@ export function SectionHero({
       </div>
 
       {/* Hero content — takes up viewport height, scrolls naturally */}
-      <section className="relative z-10 flex h-svh items-end overflow-hidden py-12">
+      <section className="relative z-10 flex h-[calc(100svh-65px)] items-end overflow-hidden py-12">
         <div className="mx-auto w-full max-w-[1856px] px-3 md:px-8">
           {/* Grid: empty left col + logo right col on desktop. Full-width on mobile. */}
           <div className="md:grid grid-cols-sidebar md:gap-10">
