@@ -1,38 +1,31 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import {
+  BRAND_QUERY,
+  CONTACT_QUERY,
+  HOURS_QUERY,
+  SEO_QUERY,
+  HEADER_NAV_QUERY,
+  FOOTER_NAV_QUERY,
+} from "@/sanity/lib/queries";
+import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
+import { PageTransitionProvider } from "@/components/ui/PageTransition";
 import { ComingSoon } from "@/components/ComingSoon";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import type { Metadata } from "next";
 
-type SiteSettings = {
-  restaurantName: string;
-  tagline: string;
-  isComingSoon: boolean;
-  comingSoonText: string;
-  logo?: { asset?: { _id: string; url: string } };
-  heroImages?: any[];
-  email: string;
-  phone: string;
-  address: string;
-  mapUrl?: string;
-  openingHours: { _key: string; day: string; hours: string }[];
-  socialLinks: { _key: string; platform: string; url: string }[];
-  seoDefaults: { title: string; description: string };
-};
-
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await sanityFetch<SiteSettings>({
-    query: SITE_SETTINGS_QUERY,
-    tags: ["siteSettings"],
+  const seo = await sanityFetch<any>({
+    query: SEO_QUERY,
+    tags: ["settingsSeo"],
   });
 
   return {
     title: {
-      default: settings?.seoDefaults?.title || "Tapparo",
-      template: "%s — Tapparo",
+      default: seo?.metaTitle || "Tapparo",
+      template: seo?.titleTemplate || "%s — Tapparo",
     },
-    description:
-      settings?.seoDefaults?.description || "Day bar & focacceria",
+    description: seo?.metaDescription || "Day bar & focacceria",
   };
 }
 
@@ -41,19 +34,59 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await sanityFetch<SiteSettings>({
-    query: SITE_SETTINGS_QUERY,
-    tags: ["siteSettings"],
-  });
+  const [brand, contact, hours, seo, headerNav, footerNav] =
+    await Promise.all([
+      sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
+      sanityFetch<any>({ query: CONTACT_QUERY, tags: ["settingsContact"] }),
+      sanityFetch<any>({ query: HOURS_QUERY, tags: ["settingsHours"] }),
+      sanityFetch<any>({ query: SEO_QUERY, tags: ["settingsSeo"] }),
+      sanityFetch<any>({
+        query: HEADER_NAV_QUERY,
+        tags: ["navigationHeader", "socialLink", "settingsContact"],
+      }),
+      sanityFetch<any>({
+        query: FOOTER_NAV_QUERY,
+        tags: ["navigationFooter", "socialLink"],
+      }),
+    ]);
 
-  if (settings?.isComingSoon) {
-    return <ComingSoon settings={settings} />;
+  const logoSvg = await fetchLogoSvg(brand?.logo);
+
+  if (seo?.isComingSoon) {
+    return (
+      <ComingSoon
+        settings={{
+          restaurantName: brand?.restaurantName,
+          logoSvg,
+          supportingLogoTagline: brand?.supportingLogoTagline,
+          comingSoonBody: seo?.comingSoonBody,
+          address: seo?.comingSoonShowAddress ? contact?.address : undefined,
+          socialLinks: seo?.comingSoonSocialLinks,
+        }}
+      />
+    );
   }
 
   return (
-    <>
-      <main>{children}</main>
-      <Footer settings={settings} />
-    </>
+    <PageTransitionProvider>
+      <Header
+        restaurantName={brand?.restaurantName}
+        logoSvg={logoSvg}
+        headerNav={headerNav}
+      />
+      <main className="min-h-svh">{children}</main>
+      <Footer
+        settings={{
+          restaurantName: brand?.restaurantName,
+          logoSvg,
+          email: contact?.email,
+          phone: contact?.phone,
+          address: contact?.address,
+          mapUrl: contact?.mapUrl,
+          openingHours: hours?.openingHours,
+        }}
+        footerNav={footerNav}
+      />
+    </PageTransitionProvider>
   );
 }

@@ -4,11 +4,68 @@ import {
   BlockContentIcon,
   DocumentTextIcon,
   PlayIcon,
-  TagIcon,
-  ComponentIcon,
   StarIcon,
   BlockquoteIcon,
 } from "@sanity/icons";
+
+// Reusable button array member — opens in a modal when editing
+const buttonLink = defineArrayMember({
+  type: "object",
+  name: "buttonLink",
+  title: "Button",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Label",
+      type: "string",
+      description: "Text shown on the button, e.g. 'View the menu'.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "page",
+      title: "Page",
+      type: "reference",
+      description: "Select an internal page, story, or legal page.",
+      to: [
+        { type: "page" },
+        { type: "post" },
+        { type: "legalPage" },
+        { type: "menuPage" },
+        { type: "storiesPage" },
+      ],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "variant",
+      title: "Style",
+      type: "string",
+      description: "Visual style of the button.",
+      options: {
+        list: [
+          { title: "Filled (accent background)", value: "filled" },
+          { title: "Outline (accent border)", value: "outline" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "filled",
+    }),
+  ],
+  preview: {
+    select: { title: "label", slug: "page.slug.current", pageType: "page._type" },
+    prepare({ title, slug, pageType }) {
+      const resolvedSlug =
+        pageType === "menuPage"
+          ? "menu"
+          : pageType === "storiesPage"
+            ? "stories"
+            : slug;
+      return {
+        title: title || "Button",
+        subtitle: resolvedSlug ? `/${resolvedSlug}` : "No page selected",
+      };
+    },
+  },
+});
 
 export const sectionHero = defineArrayMember({
   type: "object",
@@ -39,12 +96,18 @@ export const sectionHero = defineArrayMember({
   },
 });
 
-export const sectionIntro = defineArrayMember({
+export const sectionSubhero = defineArrayMember({
   type: "object",
-  name: "sectionIntro",
-  title: "Intro",
+  name: "sectionSubhero",
+  title: "SubHero",
   icon: DocumentTextIcon,
   fields: [
+    defineField({
+      name: "label",
+      title: "Section Label",
+      type: "string",
+      description: "Small uppercase label shown in the left column on desktop, e.g. 'ABOUT'.",
+    }),
     defineField({
       name: "heading",
       title: "Heading",
@@ -53,26 +116,35 @@ export const sectionIntro = defineArrayMember({
       of: [defineArrayMember({ type: "block" })],
     }),
     defineField({
-      name: "body",
-      title: "Body Text",
-      type: "text",
-      rows: 4,
-      description: "Paragraph text shown below the heading and 'View Menu' button.",
-    }),
-    defineField({
-      name: "menuImage",
-      title: "Menu Image",
+      name: "image",
+      title: "Image",
       type: "image",
-      description: "Illustration or photo shown on the left. Links to the menu page. Recommended aspect ratio 4:5 (portrait).",
+      description: "Illustration or photo displayed alongside the text. Portrait orientation recommended (roughly 3:4 ratio).",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", title: "Alt Text", type: "string" }),
       ],
     }),
+    defineField({
+      name: "button",
+      title: "Button",
+      type: "array",
+      description: "Optional call-to-action button. Add one to display it below the heading.",
+      of: [buttonLink],
+      validation: (rule) => rule.max(1).error("Only one button allowed."),
+    }),
+    defineField({
+      name: "showOpeningHours",
+      title: "Show Opening Hours",
+      type: "boolean",
+      description: "Toggle to display opening hours from Site Settings below the content.",
+      initialValue: false,
+    }),
   ],
   preview: {
-    prepare() {
-      return { title: "Intro" };
+    select: { subtitle: "label" },
+    prepare({ subtitle }) {
+      return { title: "SubHero", subtitle };
     },
   },
 });
@@ -126,17 +198,27 @@ export const sectionQuote = defineArrayMember({
   icon: BlockquoteIcon,
   fields: [
     defineField({
-      name: "quote",
-      title: "Quote",
-      type: "text",
-      rows: 3,
-      description: "Displayed in large editorial text.",
-    }),
-    defineField({
       name: "author",
       title: "Author",
       type: "string",
-      description: "Attribution shown in red before the quote on desktop, below on mobile. Use UPPERCASE for style.",
+      description: "Attribution shown in accent color above the quote text.",
+    }),
+    defineField({
+      name: "quote",
+      title: "Quote",
+      type: "text",
+      rows: 4,
+      description: "Large editorial text displayed next to the image.",
+    }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      description: "Square image shown alongside the quote. Recommended 1:1 ratio.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+      ],
     }),
   ],
   preview: {
@@ -182,7 +264,7 @@ export const sectionGallery = defineArrayMember({
       name: "images",
       title: "Gallery Images",
       type: "array",
-      description: "Auto-scrolling horizontal gallery. Upload a mix of landscape and portrait images for visual variety.",
+      description: "Portrait images displayed in a horizontal row that bleeds off-screen. Recommended 3:4 ratio, at least 4 images.",
       of: [
         defineArrayMember({
           type: "image",
@@ -193,10 +275,17 @@ export const sectionGallery = defineArrayMember({
         }),
       ],
     }),
+    defineField({
+      name: "caption",
+      title: "Caption",
+      type: "string",
+      description: "Large text shown below the image row.",
+    }),
   ],
   preview: {
-    prepare() {
-      return { title: "Gallery" };
+    select: { subtitle: "caption" },
+    prepare({ subtitle }) {
+      return { title: "Gallery", subtitle };
     },
   },
 });
@@ -209,16 +298,16 @@ export const sectionStories = defineArrayMember({
   fields: [
     defineField({
       name: "heading",
-      title: "Heading",
+      title: "Section Label",
       type: "string",
-      description: "Label shown above the blog card carousel. Example: 'OUR STORIES'.",
+      description: "Small uppercase label shown in the left column, e.g. 'OUR STORIES'.",
     }),
     defineField({
-      name: "count",
-      title: "Number of Posts",
-      type: "number",
-      initialValue: 6,
-      description: "Number of recent blog posts to display. Cards are shown in a horizontal scroll.",
+      name: "pinnedStory",
+      title: "Pinned Story",
+      type: "reference",
+      description: "Optional. Pick a story to always show first in the grid. Leave empty to sort by date only.",
+      to: [{ type: "post" }],
     }),
   ],
   preview: {
@@ -229,98 +318,149 @@ export const sectionStories = defineArrayMember({
   },
 });
 
-export const sectionRichText = defineArrayMember({
+// Button variant without a page reference — link comes from the parent section
+const storyButton = defineArrayMember({
   type: "object",
-  name: "sectionRichText",
-  title: "Rich Text",
+  name: "storyButton",
+  title: "Button",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Label",
+      type: "string",
+      description: "Text shown on the button, e.g. 'Learn more'.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "variant",
+      title: "Style",
+      type: "string",
+      description: "Visual style of the button.",
+      options: {
+        list: [
+          { title: "Filled (accent background)", value: "filled" },
+          { title: "Outline (accent border)", value: "outline" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "outline",
+    }),
+  ],
+  preview: {
+    select: { title: "label" },
+    prepare({ title }) {
+      return { title: title || "Button" };
+    },
+  },
+});
+
+export const sectionStoryHighlight = defineArrayMember({
+  type: "object",
+  name: "sectionStoryHighlight",
+  title: "Story Highlight",
+  icon: StarIcon,
+  fields: [
+    defineField({
+      name: "label",
+      title: "Section Label",
+      type: "string",
+      description: "Small uppercase label shown in the left column on desktop, e.g. 'HIGHLIGHT'.",
+    }),
+    defineField({
+      name: "story",
+      title: "Story",
+      type: "reference",
+      description: "Select a blog post to highlight. Its title, excerpt, and cover image are used automatically.",
+      to: [{ type: "post" }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "titleOverride",
+      title: "Title Override",
+      type: "string",
+      description: "Leave empty to use the post's title. Set a value to override it.",
+    }),
+    defineField({
+      name: "excerptOverride",
+      title: "Excerpt Override",
+      type: "text",
+      rows: 4,
+      description: "Leave empty to use the post's excerpt. Set a value to override it.",
+    }),
+    defineField({
+      name: "buttonLabel",
+      title: "Button Label",
+      type: "string",
+      description: "Text shown on the button, e.g. 'Learn more'. Links to the selected story.",
+      validation: (rule) => rule.required(),
+    }),
+  ],
+  preview: {
+    select: { subtitle: "label", storyTitle: "story.title" },
+    prepare({ subtitle, storyTitle }) {
+      return {
+        title: "Story Highlight",
+        subtitle: subtitle || storyTitle,
+      };
+    },
+  },
+});
+
+export const sectionText = defineArrayMember({
+  type: "object",
+  name: "sectionText",
+  title: "Text + Image",
   icon: DocumentTextIcon,
   fields: [
+    defineField({
+      name: "label",
+      title: "Section Label",
+      type: "string",
+      description:
+        "Small uppercase label shown in the left column on desktop.",
+    }),
     defineField({
       name: "body",
       title: "Body",
       type: "array",
-      of: [
-        defineArrayMember({ type: "block" }),
-        defineArrayMember({
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({ name: "alt", title: "Alt Text", type: "string" }),
-            defineField({
-              name: "caption",
-              title: "Caption",
-              type: "string",
-            }),
-          ],
-        }),
+      description: "Rich text content. Supports headings, bold, italic, and links.",
+      of: [defineArrayMember({ type: "block" })],
+    }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      description: "Square image displayed alongside the text. Recommended 1:1 ratio.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string" }),
       ],
     }),
-  ],
-  preview: {
-    prepare() {
-      return { title: "Rich Text" };
-    },
-  },
-});
-
-export const sectionMenuHeader = defineArrayMember({
-  type: "object",
-  name: "sectionMenuHeader",
-  title: "Menu Header",
-  icon: TagIcon,
-  fields: [
     defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "subtitle",
-      title: "Subtitle",
-      type: "text",
-      rows: 2,
+      name: "imageFirst",
+      title: "Image First",
+      type: "boolean",
+      description:
+        "When enabled, the image appears on the left (desktop) or top (mobile). When disabled, the text comes first.",
+      initialValue: false,
     }),
   ],
   preview: {
-    select: { subtitle: "title" },
+    select: { subtitle: "label" },
     prepare({ subtitle }) {
-      return { title: "Menu Header", subtitle };
-    },
-  },
-});
-
-export const sectionMenuCategories = defineArrayMember({
-  type: "object",
-  name: "sectionMenuCategories",
-  title: "Menu Categories",
-  icon: ComponentIcon,
-  fields: [
-    defineField({
-      name: "placeholder",
-      title: "Info",
-      type: "string",
-      readOnly: true,
-      initialValue: "This section renders all menu categories and items automatically.",
-      description: "No configuration needed — categories are pulled from the Menu collection.",
-    }),
-  ],
-  preview: {
-    prepare() {
-      return { title: "Menu Categories (auto)" };
+      return { title: "Text + Image", subtitle };
     },
   },
 });
 
 export const allSectionTypes = [
   sectionHero,
-  sectionIntro,
+  sectionSubhero,
+  sectionStoryHighlight,
   sectionMoodImages,
   sectionQuote,
   sectionLargeText,
   sectionGallery,
   sectionStories,
-  sectionRichText,
-  sectionMenuHeader,
-  sectionMenuCategories,
+  sectionText,
 ];

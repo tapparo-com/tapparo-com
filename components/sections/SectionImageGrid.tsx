@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { Reveal } from "@/components/ui/Reveal";
 
 type GridImage = {
   _key: string;
@@ -16,6 +17,7 @@ export function SectionImageGrid({ title, images }: SectionImageGridProps) {
   const hasImages = images && images.length > 0;
 
   return (
+    <Reveal>
     <section className="bg-background">
       <div className="mx-auto max-w-[1856px] px-3 py-24 md:px-8 md:py-24 xl:py-[180px]">
         <div className="grid gap-8 md:grid-cols-[1fr_3fr]">
@@ -49,5 +51,6 @@ export function SectionImageGrid({ title, images }: SectionImageGridProps) {
         </div>
       </div>
     </section>
+    </Reveal>
   );
 }

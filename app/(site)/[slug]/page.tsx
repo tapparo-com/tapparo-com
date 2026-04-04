@@ -4,13 +4,18 @@ import {
   BLOG_POST_QUERY,
   BLOG_LIST_QUERY,
   PAGES_SLUGS_QUERY,
-  SITE_SETTINGS_QUERY,
+  BRAND_QUERY,
+  HOURS_QUERY,
+  RELATED_STORIES_QUERY,
+  LEGAL_PAGE_QUERY,
+  LEGAL_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
+import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { PostBody } from "@/components/PostBody";
+import { SectionRelatedStories } from "@/components/sections/SectionRelatedStories";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -19,7 +24,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const [pages, posts] = await Promise.all([
+  const [pages, posts, legalPages] = await Promise.all([
     sanityFetch<{ slug: string }[]>({
       query: PAGES_SLUGS_QUERY,
       tags: ["page"],
@@ -28,11 +33,16 @@ export async function generateStaticParams() {
       query: BLOG_LIST_QUERY,
       tags: ["post"],
     }),
+    sanityFetch<{ slug: string }[]>({
+      query: LEGAL_SLUGS_QUERY,
+      tags: ["legalPage"],
+    }),
   ]);
 
   return [
     ...(pages ?? []).map((p) => ({ slug: p.slug })),
     ...(posts ?? []).map((p) => ({ slug: p.slug })),
+    ...(legalPages ?? []).map((p) => ({ slug: p.slug })),
   ];
 }
 
@@ -67,6 +77,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  // Try legal page
+  const legal = await sanityFetch<any>({
+    query: LEGAL_PAGE_QUERY,
+    params: { slug },
+    tags: ["legalPage"],
+  });
+
+  if (legal) {
+    return {
+      title: legal.seo?.title || legal.title,
+      description: legal.seo?.description,
+    };
+  }
+
   return {};
 }
 
@@ -85,16 +109,14 @@ export default async function SlugPage({ params }: Props) {
   if (slug === "home") notFound();
 
   // --- Try CMS page ---
-  const [page, settings] = await Promise.all([
+  const [page, brand, hours] = await Promise.all([
     sanityFetch<any>({
       query: PAGE_BY_SLUG_QUERY,
       params: { slug },
       tags: ["page"],
     }),
-    sanityFetch<any>({
-      query: SITE_SETTINGS_QUERY,
-      tags: ["siteSettings"],
-    }),
+    sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
+    sanityFetch<any>({ query: HOURS_QUERY, tags: ["settingsHours"] }),
   ]);
 
   if (page) {
@@ -108,10 +130,10 @@ export default async function SlugPage({ params }: Props) {
         <SectionRenderer
           sections={page.sections || []}
           shared={{
-            restaurantName: settings?.restaurantName,
-            tagline: settings?.tagline,
-            logo: settings?.logo,
-            openingHours: settings?.openingHours,
+            restaurantName: brand?.restaurantName,
+            tagline: brand?.tagline,
+            logoSvg: await fetchLogoSvg(brand?.logo),
+            openingHours: hours?.openingHours,
           }}
         />
       </>
@@ -125,46 +147,159 @@ export default async function SlugPage({ params }: Props) {
     tags: ["post"],
   });
 
+  // Fetch related stories when enabled (default: true)
+  let relatedPosts: any[] | null = null;
+  if (post && post.showRelatedStories !== false) {
+    relatedPosts = post.relatedStories?.length
+      ? post.relatedStories
+      : await sanityFetch<any[]>({
+          query: RELATED_STORIES_QUERY,
+          params: { slug },
+          tags: ["post"],
+        });
+  }
+
   if (post) {
     return (
-      <article className="mx-auto max-w-2xl px-6 py-20">
-        <Link
-          href="/"
-          className="text-sm text-muted transition-colors hover:text-foreground"
-        >
-          &larr; Back
-        </Link>
+      <div className="relative z-10 bg-background">
+        {/* Article */}
+        <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
+          <div className="mx-auto max-w-[1856px]">
+            <div className="md:grid grid-cols-sidebar md:gap-10">
+              {/* Col-1: Author + Date (md+) */}
+              <div className="hidden md:flex md:col-start-1 flex-col gap-7">
+                {post.author?.name && (
+                  <div className="flex flex-col">
+                    <span className="text-base text-muted">Author</span>
+                    <span className="text-base uppercase text-foreground">
+                      {post.author.name}
+                    </span>
+                  </div>
+                )}
+                {post.publishedAt && (
+                  <div className="flex flex-col">
+                    <span className="text-base text-muted">Published</span>
+                    <span className="text-base uppercase text-muted">
+                      {formatDate(post.publishedAt)}
+                    </span>
+                  </div>
+                )}
+              </div>
 
-        <header className="mt-8">
-          <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
-          <div className="mt-4 flex items-center gap-4 text-sm text-muted">
-            {post.author && (
-              <span className="font-medium text-foreground">
-                {post.author.name}
-              </span>
-            )}
-            {post.publishedAt && <time>{formatDate(post.publishedAt)}</time>}
-          </div>
-        </header>
+              {/* Col-2: Article content */}
+              <div className="md:col-start-2">
+                <div className="flex flex-col gap-[60px] xl:flex-row xl:gap-10">
+                  {/* Text column */}
+                  <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
+                    {/* Title block */}
+                    <div className="flex flex-col gap-7">
+                      <h1 className="text-[30px] font-medium leading-[1.1] tracking-[-0.6px] text-foreground md:text-[38px] md:tracking-[-0.84px] xl:text-[42px]">
+                        {post.title}
+                      </h1>
 
-        {post.coverImage && (
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-lg">
-            <Image
-              src={urlFor(post.coverImage).width(1200).height(675).url()}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-            />
+                      {/* Cover image (mobile + tablet) */}
+                      {post.coverImage && (
+                        <div className="relative aspect-square overflow-hidden xl:hidden">
+                          <Image
+                            src={urlFor(post.coverImage)
+                              .width(624)
+                              .height(624)
+                              .url()}
+                            alt={post.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 624px"
+                            className="object-cover"
+                            priority
+                          />
+                        </div>
+                      )}
+
+                      {/* Author + Date inline (mobile only) */}
+                      <div className="flex items-center gap-4 md:hidden">
+                        {post.author?.name && (
+                          <span className="text-base uppercase text-foreground">
+                            {post.author.name}
+                          </span>
+                        )}
+                        {post.publishedAt && (
+                          <time className="text-base uppercase text-muted">
+                            {formatDate(post.publishedAt)}
+                          </time>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Body */}
+                    {post.body && <PostBody value={post.body} />}
+                  </div>
+
+                  {/* Cover image column (desktop only) */}
+                  {post.coverImage && (
+                    <div className="hidden max-w-gutter xl:block xl:flex-1">
+                      <div className="relative aspect-square overflow-hidden">
+                        <Image
+                          src={urlFor(post.coverImage)
+                            .width(624)
+                            .height(624)
+                            .url()}
+                          alt={post.title}
+                          fill
+                          sizes="624px"
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
+        </section>
+
+        {/* Related Stories */}
+        {relatedPosts && relatedPosts.length > 0 && (
+          <SectionRelatedStories posts={relatedPosts} />
         )}
+      </div>
+    );
+  }
 
-        {post.body && (
-          <div className="prose prose-neutral mt-12 max-w-none">
-            <PostBody value={post.body} />
+  // --- Try legal page ---
+  const legal = await sanityFetch<any>({
+    query: LEGAL_PAGE_QUERY,
+    params: { slug },
+    tags: ["legalPage"],
+  });
+
+  if (legal) {
+    return (
+      <div className="relative z-10 bg-background">
+        <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
+          <div className="mx-auto max-w-[1856px]">
+            <div className="md:grid grid-cols-sidebar md:gap-10">
+              {/* Col-1: Updated date (md+) */}
+              {legal.updatedAt && (
+                <div className="hidden md:flex md:col-start-1 flex-col">
+                  <span className="text-base text-muted">Updated</span>
+                  <span className="text-base uppercase text-muted">
+                    {formatDate(legal.updatedAt)}
+                  </span>
+                </div>
+              )}
+
+              {/* Col-2: Title + Body */}
+              <div className="md:col-start-2">
+                <div className="flex max-w-gutter flex-col gap-[60px]">
+                  <h1 className="text-[30px] font-medium leading-[1.1] tracking-[-0.6px] text-foreground md:text-[38px] md:tracking-[-0.84px] xl:text-[42px]">
+                    {legal.title}
+                  </h1>
+                  {legal.body && <PostBody value={legal.body} />}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-      </article>
+        </section>
+      </div>
     );
   }
 

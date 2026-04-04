@@ -3,32 +3,110 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./sanity/schemaTypes";
-import { CogIcon, TagIcon, DocumentTextIcon } from "@sanity/icons";
+import {
+  CogIcon,
+  MenuIcon,
+  TagIcon,
+  DocumentTextIcon,
+  ComposeIcon,
+} from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
 const HIDDEN_TYPES = [
-  "siteSettings",
+  "settingsBrand",
+  "settingsContact",
+  "settingsHours",
+  "socialLink",
+  "settingsSeo",
+  "navigationHeader",
+  "navigationFooter",
   "page",
+  "menuPage",
   "menuCategory",
   "menuItem",
   "allergen",
   "post",
   "author",
+  "legalPage",
+  "storiesPage",
 ];
 
 const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
-      // Site Settings singleton
+      // Site Settings group
       S.listItem()
         .title("Site Settings")
         .icon(CogIcon)
         .child(
-          S.document()
-            .schemaType("siteSettings")
-            .documentId("siteSettings")
+          S.list()
             .title("Site Settings")
+            .items([
+              S.listItem()
+                .title("Brand")
+                .icon(CogIcon)
+                .child(
+                  S.document()
+                    .schemaType("settingsBrand")
+                    .documentId("settingsBrand")
+                    .title("Brand")
+                ),
+              S.listItem()
+                .title("Contact")
+                .child(
+                  S.document()
+                    .schemaType("settingsContact")
+                    .documentId("settingsContact")
+                    .title("Contact")
+                ),
+              S.listItem()
+                .title("Opening Hours")
+                .child(
+                  S.document()
+                    .schemaType("settingsHours")
+                    .documentId("settingsHours")
+                    .title("Opening Hours")
+                ),
+              S.documentTypeListItem("socialLink").title("Social Links"),
+              S.listItem()
+                .title("SEO")
+                .child(
+                  S.document()
+                    .schemaType("settingsSeo")
+                    .documentId("settingsSeo")
+                    .title("SEO")
+                ),
+            ])
+        ),
+
+      // Navigation group
+      S.listItem()
+        .title("Navigation")
+        .icon(MenuIcon)
+        .child(
+          S.list()
+            .title("Navigation")
+            .items([
+              S.listItem()
+                .title("Header")
+                .icon(MenuIcon)
+                .child(
+                  S.document()
+                    .schemaType("navigationHeader")
+                    .documentId("navigationHeader")
+                    .title("Header Navigation")
+                ),
+              S.listItem()
+                .title("Footer")
+                .icon(ComposeIcon)
+                .child(
+                  S.document()
+                    .schemaType("navigationFooter")
+                    .documentId("navigationFooter")
+                    .title("Footer")
+                ),
+            ])
         ),
       S.divider(),
 
@@ -44,6 +122,15 @@ const structure: StructureResolver = (S) =>
           S.list()
             .title("Menu")
             .items([
+              S.listItem()
+                .title("Menu Page")
+                .icon(TagIcon)
+                .child(
+                  S.document()
+                    .schemaType("menuPage")
+                    .documentId("menuPage")
+                    .title("Menu Page")
+                ),
               S.documentTypeListItem("menuCategory").title("Categories"),
               S.documentTypeListItem("menuItem").title("Items"),
               S.documentTypeListItem("allergen").title("Allergens"),
@@ -58,10 +145,22 @@ const structure: StructureResolver = (S) =>
           S.list()
             .title("Stories")
             .items([
+              S.listItem()
+                .title("Stories Page")
+                .icon(DocumentTextIcon)
+                .child(
+                  S.document()
+                    .schemaType("storiesPage")
+                    .documentId("storiesPage")
+                    .title("Stories Page")
+                ),
               S.documentTypeListItem("post").title("Posts"),
               S.documentTypeListItem("author").title("Authors"),
             ])
         ),
+
+      // Legal group
+      S.documentTypeListItem("legalPage").title("Legal"),
     ]);
 
 export default defineConfig({

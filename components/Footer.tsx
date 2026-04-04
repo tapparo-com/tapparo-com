@@ -1,200 +1,166 @@
-"use client";
-
-import Link from "next/link";
 import { SanityLogo } from "@/components/ui/SanityLogo";
+import { TransitionLink } from "@/components/ui/TransitionLink";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 type Settings = {
-  restaurantName: string;
-  logo?: { asset?: { _id: string; url: string } } | null;
+  restaurantName?: string;
+  logoSvg?: string | null;
   email?: string;
   phone?: string;
   address?: string;
   mapUrl?: string;
   openingHours?: { _key: string; day: string; hours: string }[];
-  socialLinks?: { _key: string; platform: string; url: string }[];
+};
+
+type FooterNav = {
+  pageLinks?: { _key: string; label: string; slug: string }[];
+  socialLinks?: { _id: string; label: string; url: string }[];
+  showPhone?: boolean;
+  showEmail?: boolean;
 };
 
 type FooterProps = {
   settings?: Settings | null;
+  footerNav?: FooterNav | null;
 };
 
-export function Footer({ settings }: FooterProps) {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+export function Footer({ settings, footerNav }: FooterProps) {
+  const pageLinks = footerNav?.pageLinks || [];
+  const socialLinks = footerNav?.socialLinks || [];
+  const showPhone = footerNav?.showPhone;
+  const showEmail = footerNav?.showEmail;
 
   return (
-    <footer className="relative z-10 border-t border-accent bg-background">
-      <div className="mx-auto max-w-[1856px] px-3 pt-24 pb-12 md:px-8 md:pt-24 xl:pt-[280px] xl:pb-20">
-        <div className="grid gap-12 md:grid-cols-[1fr_2fr] xl:gap-16">
-          {/* Left column: Logo + scroll-to-top */}
-          <div className="flex flex-col items-start gap-8">
-            <Link href="/">
-              {settings?.logo?.asset ? (
+    <footer className="relative z-10 border-t border-accent bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
+      <div className="mx-auto max-w-[1856px]">
+        <div className="flex flex-col gap-10 md:grid grid-cols-sidebar md:gap-10">
+          {/* Col-1: Logo */}
+          <div className="md:row-start-1 md:col-start-1">
+            <TransitionLink href="/">
+              {settings?.logoSvg ? (
                 <SanityLogo
-                  logo={settings.logo}
+                  svgHtml={settings.logoSvg}
                   alt={`${settings.restaurantName || "Tapparo"} logo`}
-                  className="w-full max-w-[280px] text-foreground [&_svg]:w-full [&_svg]:h-auto"
+                  className="h-12 w-[131px] text-foreground [&_svg]:h-full [&_svg]:w-auto"
                 />
               ) : (
-                <span className="font-display text-3xl font-bold text-foreground">
+                <span className="text-lg font-bold text-foreground">
                   {settings?.restaurantName || "Tapparo"}
                 </span>
               )}
-            </Link>
-            <button
-              onClick={scrollToTop}
-              aria-label="Scroll to top"
-              className="hidden h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-foreground hover:text-background md:flex"
-            >
-              &uarr;
-            </button>
+            </TransitionLink>
           </div>
 
-          {/* Right column: 4-col grid (2x2 on mobile/tablet) */}
-          <div className="grid grid-cols-2 gap-8 xl:grid-cols-4 xl:gap-12">
-            {/* Restaurant nav */}
-            <nav aria-label="Site navigation">
-              <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
-                Restaurant
-              </h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/menu"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Menu
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Stories
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/imprint"
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
-                    Imprint
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+          {/* Col-2: 4 info columns */}
+          <div className="md:row-start-1 md:col-start-2">
+            {/* Mobile: 2 rows (Hours+Pages, Contact+Follow) sized to content.
+                XL: single row reordered (Pages, Contact, Hours, Follow) via order. */}
+            <div className="flex flex-col gap-20 xl:flex-row">
+              {/* Row 1 mobile: Hours + Pages */}
+              <div className="grid grid-cols-[fit-content(100%)_1fr] gap-x-8 xl:contents">
+                {settings?.openingHours && settings.openingHours.length > 0 && (
+                  <div className="flex flex-col gap-7 xl:order-3">
+                    <span className="text-base text-muted">Hours</span>
+                    <dl className="flex flex-col">
+                      {settings.openingHours.map((entry) => (
+                        <div
+                          key={entry._key}
+                          className="flex gap-2 text-base uppercase leading-7 text-foreground"
+                        >
+                          <dt className="w-[88px]">{entry.day}</dt>
+                          <dd className="whitespace-nowrap">{entry.hours}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                )}
 
-            {/* Contact */}
-            <div>
-              <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
-                Contact
-              </h4>
-              <address className="space-y-2 text-sm not-italic text-muted">
-                <p className="font-medium uppercase text-foreground">
-                  {settings?.restaurantName || "Tapparo"}
-                </p>
-                {settings?.address && (
-                  <p className="whitespace-pre-line">{settings.address}</p>
+                {pageLinks.length > 0 && (
+                  <div className="flex flex-col gap-7 xl:order-1">
+                    <span className="text-base text-muted">Pages</span>
+                    <nav className="flex flex-col">
+                      {pageLinks.map((item) => (
+                        <TransitionLink
+                          key={item._key}
+                          href={item.slug === "home" ? "/" : `/${item.slug}`}
+                          className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
+                        >
+                          {item.label}
+                        </TransitionLink>
+                      ))}
+                    </nav>
+                  </div>
                 )}
-                {settings?.mapUrl && (
-                  <p>
-                    <a
-                      href={settings.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground underline underline-offset-2 transition-colors hover:text-accent"
-                    >
-                      See map
-                    </a>
-                  </p>
-                )}
-                {settings?.phone && (
-                  <p>
-                    <a
-                      href={`tel:${settings.phone.replace(/\s/g, "")}`}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {settings.phone}
-                    </a>
-                  </p>
-                )}
-                {settings?.email && (
-                  <p>
-                    <a
-                      href={`mailto:${settings.email}`}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {settings.email}
-                    </a>
-                  </p>
-                )}
-              </address>
-            </div>
+              </div>
 
-            {/* Hours */}
-            <div>
-              <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
-                Hours
-              </h4>
-              {settings?.openingHours && settings.openingHours.length > 0 && (
-                <dl className="space-y-1 text-sm text-muted">
-                  {settings.openingHours.map((entry) => (
-                    <div key={entry._key} className="flex justify-between gap-4">
-                      <dt>{entry.day}</dt>
-                      <dd>{entry.hours}</dd>
+              {/* Row 2 mobile: Contact + Follow */}
+              <div className="grid grid-cols-[fit-content(100%)_1fr] gap-x-8 xl:contents">
+                <div className="flex flex-col gap-7 xl:order-2">
+                  <span className="text-base text-muted">Contact</span>
+                  <div className="flex flex-col">
+                    {settings?.address && (
+                      <p className="text-base uppercase leading-7 text-foreground whitespace-pre-line">
+                        {settings.restaurantName}
+                        {"\n"}
+                        {settings.address}
+                      </p>
+                    )}
+                    <div className="flex flex-col pt-7">
+                      {settings?.mapUrl && (
+                        <a
+                          href={settings.mapUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
+                        >
+                          Maps
+                        </a>
+                      )}
+                      {showEmail !== false && settings?.email && (
+                        <a
+                          href={`mailto:${settings.email}`}
+                          className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
+                        >
+                          {settings.email}
+                        </a>
+                      )}
+                      {showPhone !== false && settings?.phone && (
+                        <a
+                          href={`tel:${settings.phone.replace(/\s/g, "")}`}
+                          className="text-base uppercase leading-7 text-accent transition-colors hover:text-accent/80 hover:underline"
+                        >
+                          {settings.phone}
+                        </a>
+                      )}
                     </div>
-                  ))}
-                </dl>
-              )}
-            </div>
+                  </div>
+                </div>
 
-            {/* Follow */}
-            <div>
-              <h4 className="mb-4 font-sans text-xs font-medium uppercase tracking-widest text-foreground">
-                Follow
-              </h4>
-              {settings?.socialLinks && settings.socialLinks.length > 0 && (
-                <ul className="space-y-2 text-sm">
-                  {settings.socialLinks.map((link) => (
-                    <li key={link._key}>
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted transition-colors hover:text-foreground"
-                      >
-                        {link.platform.charAt(0).toUpperCase() +
-                          link.platform.slice(1)}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                {socialLinks.length > 0 && (
+                  <div className="flex flex-col gap-7 xl:order-4">
+                    <span className="text-base text-muted">Follow</span>
+                    <div className="flex flex-col">
+                      {socialLinks.map((link) => (
+                        <a
+                          key={link._id}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile scroll-to-top */}
-        <div className="mt-8 flex justify-end md:hidden">
-          <button
-            onClick={scrollToTop}
-            aria-label="Scroll to top"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground"
-          >
-            &uarr;
-          </button>
         </div>
       </div>
+
+      <ScrollToTop />
     </footer>
   );
 }

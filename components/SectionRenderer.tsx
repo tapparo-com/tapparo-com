@@ -1,15 +1,14 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { STORIES_QUERY, ALLERGENS_QUERY, MENU_QUERY } from "@/sanity/lib/queries";
+import { STORIES_QUERY } from "@/sanity/lib/queries";
 import { SectionHero } from "@/components/sections/SectionHero";
-import { SectionIntro } from "@/components/sections/SectionIntro";
+import { SectionSubhero } from "@/components/sections/SectionSubhero";
+import { SectionStoryHighlight } from "@/components/sections/SectionStoryHighlight";
 import { SectionImageGrid } from "@/components/sections/SectionImageGrid";
 import { SectionQuote } from "@/components/sections/SectionQuote";
 import { SectionLargeText } from "@/components/sections/SectionLargeText";
 import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
-import { SectionMenuHeader } from "@/components/sections/SectionMenuHeader";
-import { SectionMenuCategory } from "@/components/sections/SectionMenuCategory";
-import { SectionRichText } from "@/components/sections/SectionRichText";
+import { SectionText } from "@/components/sections/SectionText";
 
 type Section = {
   _key: string;
@@ -20,7 +19,7 @@ type Section = {
 type SharedData = {
   restaurantName?: string;
   tagline?: string;
-  logo?: any;
+  logoSvg?: string | null;
   openingHours?: { _key: string; day: string; hours: string }[];
 };
 
@@ -34,33 +33,13 @@ export async function SectionRenderer({ sections, shared }: Props) {
 
   // Pre-fetch data needed by dynamic sections
   const needsStories = sections.some((s) => s._type === "sectionStories");
-  const needsMenu = sections.some((s) => s._type === "sectionMenuCategories");
-  const needsAllergens = sections.some((s) => s._type === "sectionMenuHeader");
 
-  const [stories, allergens, menuCategories] = await Promise.all([
-    needsStories
-      ? sanityFetch<any[]>({
-          query: STORIES_QUERY,
-          params: {
-            count:
-              sections.find((s) => s._type === "sectionStories")?.count ?? 6,
-          },
-          tags: ["post"],
-        })
-      : null,
-    needsAllergens
-      ? sanityFetch<any[]>({
-          query: ALLERGENS_QUERY,
-          tags: ["allergen"],
-        })
-      : null,
-    needsMenu
-      ? sanityFetch<any[]>({
-          query: MENU_QUERY,
-          tags: ["menuCategory", "menuItem", "allergen"],
-        })
-      : null,
-  ]);
+  const stories = needsStories
+    ? await sanityFetch<any[]>({
+        query: STORIES_QUERY,
+        tags: ["post"],
+      })
+    : null;
 
   const heroIndex = sections.findIndex((s) => s._type === "sectionHero");
   const heroSection = heroIndex !== -1 ? sections[heroIndex] : null;
@@ -75,21 +54,35 @@ export async function SectionRenderer({ sections, shared }: Props) {
           key={heroSection._key}
           restaurantName={shared?.restaurantName || "Tapparo"}
           tagline={shared?.tagline}
-          logo={shared?.logo}
+          logoSvg={shared?.logoSvg}
           heroImages={heroSection.heroImages}
         />
       )}
       <div className="relative z-10 bg-background">
       {restSections.map((section) => {
         switch (section._type) {
-          case "sectionIntro":
+          case "sectionSubhero":
             return (
-              <SectionIntro
+              <SectionSubhero
                 key={section._key}
+                label={section.label}
                 heading={section.heading}
-                body={section.body}
-                menuImage={section.menuImage}
+                image={section.image}
+                button={section.button}
+                showOpeningHours={section.showOpeningHours}
                 openingHours={shared?.openingHours}
+              />
+            );
+
+          case "sectionStoryHighlight":
+            return (
+              <SectionStoryHighlight
+                key={section._key}
+                label={section.label}
+                story={section.story}
+                titleOverride={section.titleOverride}
+                excerptOverride={section.excerptOverride}
+                buttonLabel={section.buttonLabel}
               />
             );
 
@@ -106,8 +99,9 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return (
               <SectionQuote
                 key={section._key}
-                quote={section.quote}
                 author={section.author}
+                quote={section.quote}
+                image={section.image}
               />
             );
 
@@ -124,6 +118,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
               <SectionGallery
                 key={section._key}
                 images={section.images}
+                caption={section.caption}
               />
             );
 
@@ -133,48 +128,19 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 key={section._key}
                 heading={section.heading}
                 posts={stories || []}
+                pinnedStoryId={section.pinnedStoryId}
               />
             );
 
-          case "sectionRichText":
+          case "sectionText":
             return (
-              <SectionRichText
+              <SectionText
                 key={section._key}
+                label={section.label}
                 body={section.body}
+                image={section.image}
+                imageFirst={section.imageFirst}
               />
-            );
-
-          case "sectionMenuHeader":
-            return (
-              <SectionMenuHeader
-                key={section._key}
-                title={section.title}
-                subtitle={section.subtitle}
-                allergens={allergens || []}
-                categories={
-                  menuCategories?.map((c: any) => ({
-                    _id: c._id,
-                    title: c.title,
-                    slug: c.slug,
-                  })) || []
-                }
-              />
-            );
-
-          case "sectionMenuCategories":
-            return (
-              <div key={section._key}>
-                {menuCategories?.map((category: any) => (
-                  <SectionMenuCategory
-                    key={category._id}
-                    title={category.title}
-                    slug={category.slug}
-                    description={category.description}
-                    items={category.items}
-                    extras={category.extras}
-                  />
-                ))}
-              </div>
             );
 
           default:

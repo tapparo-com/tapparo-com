@@ -1,6 +1,13 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
 @theme {
   --font-sans: "Instrument Sans", sans-serif;
   --font-display: "Space Grotesk", sans-serif;
@@ -13,8 +20,59 @@
 }
 
 @layer base {
+  :root {
+    --gutter: 624px;
+    --content-gap: 40px;
+  }
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+@utility grid-cols-sidebar {
+  grid-template-columns: 288px minmax(0, 1fr);
+
+  @media (min-width: 1280px) {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+}
+
+@utility max-w-gutter {
+  max-width: var(--gutter);
+
+  @media (min-width: 768px) {
+    max-width: var(--gutter);
+  }
+
+  @media (min-width: 1280px) {
+    max-width: var(--gutter);
+  }
+}
+
+@utility max-w-content {
+  max-width: var(--gutter);
+
+  @media (min-width: 1280px) {
+    max-width: calc(var(--gutter) * 2 + var(--content-gap));
+  }
+}
+
+@utility text-section-heading {
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.52px;
+
+  @media (min-width: 768px) {
+    font-size: 30px;
+    letter-spacing: -0.62px;
+  }
+
+  @media (min-width: 1280px) {
+    font-size: 38px;
+    letter-spacing: -0.84px;
   }
 }
 

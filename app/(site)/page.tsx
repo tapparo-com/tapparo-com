@@ -1,13 +1,18 @@
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { SITE_SETTINGS_QUERY, PAGE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
+import {
+  BRAND_QUERY,
+  CONTACT_QUERY,
+  HOURS_QUERY,
+  PAGE_BY_SLUG_QUERY,
+} from "@/sanity/lib/queries";
+import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
 
 export default async function HomePage() {
-  const [settings, pageData] = await Promise.all([
-    sanityFetch<any>({
-      query: SITE_SETTINGS_QUERY,
-      tags: ["siteSettings"],
-    }),
+  const [brand, contact, hours, pageData] = await Promise.all([
+    sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
+    sanityFetch<any>({ query: CONTACT_QUERY, tags: ["settingsContact"] }),
+    sanityFetch<any>({ query: HOURS_QUERY, tags: ["settingsHours"] }),
     sanityFetch<any>({
       query: PAGE_BY_SLUG_QUERY,
       params: { slug: "home" },
@@ -18,13 +23,13 @@ export default async function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
-    name: settings?.restaurantName || "Tapparo",
-    description: settings?.tagline,
-    ...(settings?.address && { address: settings.address }),
-    ...(settings?.phone && { telephone: settings.phone }),
-    ...(settings?.openingHours &&
-      settings.openingHours.length > 0 && {
-        openingHours: settings.openingHours.map(
+    name: brand?.restaurantName || "Tapparo",
+    description: brand?.tagline,
+    ...(contact?.address && { address: contact.address }),
+    ...(contact?.phone && { telephone: contact.phone }),
+    ...(hours?.openingHours &&
+      hours.openingHours.length > 0 && {
+        openingHours: hours.openingHours.map(
           (entry: any) => `${entry.day} ${entry.hours}`
         ),
       }),
@@ -39,10 +44,10 @@ export default async function HomePage() {
       <SectionRenderer
         sections={pageData?.sections || []}
         shared={{
-          restaurantName: settings?.restaurantName,
-          tagline: settings?.tagline,
-          logo: settings?.logo,
-          openingHours: settings?.openingHours,
+          restaurantName: brand?.restaurantName,
+          tagline: brand?.tagline,
+          logoSvg: await fetchLogoSvg(brand?.logo),
+          openingHours: hours?.openingHours,
         }}
       />
     </>

@@ -3,7 +3,18 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { useEffect, useState } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+} from "motion/react";
 import { SanityLogo } from "@/components/ui/SanityLogo";
+import {
+  HERO_CROSSFADE,
+  HERO_LOGO_DURATION,
+  HERO_LOGO_DELAY,
+  REVEAL_EASE,
+} from "@/lib/animation";
 
 type HeroImage = {
   _key: string;
@@ -14,84 +25,113 @@ type HeroImage = {
 type SectionHeroProps = {
   restaurantName: string;
   tagline?: string | null;
-  logo?: { asset?: { _id: string; url: string } } | null;
+  logoSvg?: string | null;
   heroImages?: HeroImage[] | null;
 };
 
 export function SectionHero({
   restaurantName,
   tagline,
-  logo,
+  logoSvg,
   heroImages,
 }: SectionHeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = heroImages ?? [];
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (images.length <= 1) return;
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (prefersReducedMotion) return;
+    if (images.length <= 1 || prefersReducedMotion) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 800);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [images.length, prefersReducedMotion]);
 
   return (
     <>
-      {/* Fixed background carousel — stays locked to viewport */}
-      <div className="fixed inset-0 z-0 h-svh overflow-hidden">
-        {images.map((img, i) => (
-          <div
-            key={img._key}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              i === currentIndex ? "opacity-100" : "opacity-0"
-            }`}
+      {/* Fixed background carousel */}
+      <div className="fixed inset-0 top-[65px] z-0 overflow-hidden">
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={images[currentIndex]?._key || "fallback"}
+            className="absolute inset-0"
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : HERO_CROSSFADE }}
           >
-            <Image
-              src={urlFor(img).width(1920).height(1080).url()}
-              alt={img.alt || ""}
-              fill
-              className="object-cover"
-              priority={i === 0}
-              placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
-              blurDataURL={img.asset?.metadata?.lqip || undefined}
-            />
-          </div>
-        ))}
-
-        {/* Fallback background if no images */}
-        {images.length === 0 && (
-          <div className="absolute inset-0 bg-foreground" />
-        )}
+            {images[currentIndex] ? (
+              <Image
+                src={urlFor(images[currentIndex])
+                  .width(1920)
+                  .quality(75)
+                  .auto("format")
+                  .url()}
+                alt={images[currentIndex].alt || ""}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={currentIndex === 0}
+                fetchPriority={currentIndex === 0 ? "high" : undefined}
+                placeholder={
+                  images[currentIndex].asset?.metadata?.lqip
+                    ? "blur"
+                    : undefined
+                }
+                blurDataURL={
+                  images[currentIndex].asset?.metadata?.lqip || undefined
+                }
+              />
+            ) : (
+              <div className="absolute inset-0 bg-foreground" />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* Hero content — takes up viewport height, scrolls naturally */}
-      <section className="relative z-10 flex h-svh flex-col items-center justify-end pb-12 md:pb-16 xl:pb-20">
-        <h1 className="sr-only">{restaurantName}</h1>
+      {/* Hero content */}
+      <section className="relative z-10 flex h-[calc(100svh-65px)] items-end overflow-hidden py-12">
+        <div className="mx-auto w-full max-w-[1856px] px-3 md:px-8">
+          <div className="md:grid grid-cols-sidebar md:gap-10">
+            <div className="col-start-2 pb-20 md:pb-0">
+              <h1 className="sr-only">{restaurantName}</h1>
 
-        {logo?.asset && (
-          <SanityLogo
-            logo={logo}
-            alt={`${restaurantName} logo`}
-            className="mb-6 w-[calc(100%-48px)] max-w-[752px] text-background md:mb-8 [&_svg]:w-full [&_svg]:h-auto"
-          />
-        )}
+              <motion.div
+                className="flex max-w-gutter flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]"
+                initial={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0, scale: 0.95 }
+                }
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: prefersReducedMotion ? 0 : HERO_LOGO_DURATION,
+                  ease: REVEAL_EASE,
+                  delay: prefersReducedMotion ? 0 : HERO_LOGO_DELAY,
+                }}
+              >
+                {logoSvg ? (
+                  <SanityLogo
+                    svgHtml={logoSvg}
+                    alt={`${restaurantName} logo`}
+                    className="w-full text-background [&_svg]:w-full [&_svg]:h-auto"
+                  />
+                ) : (
+                  <span className="text-4xl font-bold text-white md:text-6xl xl:text-8xl">
+                    {restaurantName}
+                  </span>
+                )}
 
-        {!logo?.asset && (
-          <span className="mb-6 text-4xl font-bold text-white md:mb-8 md:text-6xl xl:text-8xl">
-            {restaurantName}
-          </span>
-        )}
-
-        {tagline && (
-          <p className="font-display text-[17.5px] font-medium tracking-[0.5em] text-white drop-shadow-lg md:text-xl md:tracking-[0.83em] xl:text-4xl xl:tracking-[13.32px]">
-            {tagline}
-          </p>
-        )}
+                {tagline && (
+                  <p className="font-display text-[18px] font-medium tracking-[6.66px] text-background md:text-[28px] md:tracking-[10.36px] xl:text-[36px] xl:tracking-[13.32px]">
+                    {tagline}
+                  </p>
+                )}
+              </motion.div>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );
