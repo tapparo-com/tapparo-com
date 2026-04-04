@@ -12,7 +12,7 @@ export default async function NotFound() {
   });
 
   return (
-    <main className="flex min-h-svh items-center bg-accent px-3 py-14 md:px-8 md:py-20">
+    <main className="selection-invert flex min-h-svh items-center bg-accent px-3 py-14 md:px-8 md:py-20">
       <div className="mx-auto w-full max-w-[1856px]">
         <div className="md:grid grid-cols-sidebar md:gap-10">
           {/* Col-1: Label */}
