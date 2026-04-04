@@ -12,9 +12,17 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: "Tapparo",
   description: "Day bar & focacceria",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Tapparo",
+  },
 };
 
 export default function RootLayout({
