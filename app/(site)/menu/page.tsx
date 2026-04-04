@@ -4,10 +4,18 @@ import { SectionPageIntro } from "@/components/sections/SectionPageIntro";
 import { SectionMenuHeader } from "@/components/sections/SectionMenuHeader";
 import { SectionMenuCategory } from "@/components/sections/SectionMenuCategory";
 import { SectionAllergensLegend } from "@/components/sections/SectionAllergensLegend";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Menu",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await sanityFetch<any>({
+    query: MENU_PAGE_QUERY,
+    tags: ["menuPage"],
+  });
+  return {
+    title: data?.seo?.title || "Menu",
+    description: data?.seo?.description,
+  };
+}
 
 export default async function MenuPage() {
   const [menuData, allergens] = await Promise.all([

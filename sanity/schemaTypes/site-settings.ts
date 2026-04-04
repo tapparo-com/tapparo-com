@@ -35,6 +35,13 @@ export const settingsBrand = defineType({
       description:
         "SVG file used in the hero (light) and header/footer (dark). Upload a single-color SVG — the site applies colors automatically.",
     }),
+    defineField({
+      name: "supportingLogo",
+      title: "Supporting Logo",
+      type: "image",
+      description:
+        "Illustrative graphic used on the 404 page and other accent-background sections. Upload an SVG or PNG with a transparent background.",
+    }),
   ],
   preview: {
     prepare() {
@@ -190,6 +197,14 @@ export const settingsSeo = defineType({
         "Social links shown on the Coming Soon page. Pick from Site Settings > Social Links.",
       of: [{ type: "reference", to: [{ type: "socialLink" }] }],
       hidden: ({ document }) => !document?.isComingSoon,
+    }),
+    defineField({
+      name: "titleTemplate",
+      title: "Title Template",
+      type: "string",
+      description:
+        'Pattern for browser tab titles. Use %s as a placeholder for the page title, e.g. "%s — Tapparo" produces "Menu — Tapparo".',
+      placeholder: "%s — Tapparo",
     }),
     defineField({
       name: "metaTitle",

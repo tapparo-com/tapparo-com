@@ -8,7 +8,8 @@ export const BRAND_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsBrand"][0]{
     restaurantName,
     tagline,
-    logo
+    logo,
+    supportingLogo{ asset->{_id, url} }
   }
 `);
 
@@ -36,6 +37,7 @@ export const SEO_QUERY = defineQuery(/* groq */ `
     isComingSoon,
     comingSoonBody,
     comingSoonSocialLinks[]->{ _id, label, url },
+    titleTemplate,
     metaTitle,
     metaDescription
   }
@@ -96,7 +98,11 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         image{ ${imageFields} },
         "button": button[0]{
           label,
-          "slug": page->slug.current,
+          "slug": select(
+            page->_type == "menuPage" => "menu",
+            page->_type == "storiesPage" => "stories",
+            page->slug.current
+          ),
           variant
         },
         showOpeningHours
@@ -169,6 +175,7 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
   *[_type == "menuPage"][0]{
     title,
     description,
+    seo{ title, description },
     categories[]->{
       _id,
       title,
@@ -193,7 +200,8 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
 export const STORIES_PAGE_QUERY = defineQuery(/* groq */ `
   *[_type == "storiesPage"][0]{
     title,
-    description
+    description,
+    seo{ title, description }
   }
 `);
 

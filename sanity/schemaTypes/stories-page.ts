@@ -20,6 +20,26 @@ export const storiesPage = defineType({
       rows: 3,
       description: "Optional introductory text below the title",
     }),
+    defineField({
+      name: "seo",
+      title: "SEO",
+      type: "object",
+      fields: [
+        defineField({
+          name: "title",
+          title: "Meta Title",
+          type: "string",
+          description: "Custom browser tab title. If empty, uses 'Stories'.",
+        }),
+        defineField({
+          name: "description",
+          title: "Meta Description",
+          type: "text",
+          rows: 3,
+          description: "Custom meta description for search engines.",
+        }),
+      ],
+    }),
   ],
   preview: {
     prepare() {

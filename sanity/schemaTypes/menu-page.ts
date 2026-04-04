@@ -33,6 +33,26 @@ export const menuPage = defineType({
         }),
       ],
     }),
+    defineField({
+      name: "seo",
+      title: "SEO",
+      type: "object",
+      fields: [
+        defineField({
+          name: "title",
+          title: "Meta Title",
+          type: "string",
+          description: "Custom browser tab title. If empty, uses 'Menu'.",
+        }),
+        defineField({
+          name: "description",
+          title: "Meta Description",
+          type: "text",
+          rows: 3,
+          description: "Custom meta description for search engines.",
+        }),
+      ],
+    }),
   ],
   preview: {
     prepare() {

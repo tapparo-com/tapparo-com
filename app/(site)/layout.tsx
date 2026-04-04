@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: {
       default: seo?.metaTitle || "Tapparo",
-      template: "%s — Tapparo",
+      template: seo?.titleTemplate || "%s — Tapparo",
     },
     description: seo?.metaDescription || "Day bar & focacceria",
   };
