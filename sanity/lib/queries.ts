@@ -29,9 +29,6 @@ export const HOURS_QUERY = defineQuery(/* groq */ `
   }
 `);
 
-export const SOCIAL_QUERY = defineQuery(/* groq */ `
-  *[_type == "socialLink"]{ _id, label, url }
-`);
 
 export const SEO_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsSeo"][0]{
@@ -140,9 +137,6 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionStories" => {
         heading,
         "pinnedStoryId": pinnedStory->_id
-      },
-      _type == "sectionRichText" => {
-        body
       },
       _type == "sectionText" => {
         label,

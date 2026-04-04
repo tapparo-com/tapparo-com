@@ -318,40 +318,6 @@ export const sectionStories = defineArrayMember({
   },
 });
 
-export const sectionRichText = defineArrayMember({
-  type: "object",
-  name: "sectionRichText",
-  title: "Rich Text",
-  icon: DocumentTextIcon,
-  fields: [
-    defineField({
-      name: "body",
-      title: "Body",
-      type: "array",
-      of: [
-        defineArrayMember({ type: "block" }),
-        defineArrayMember({
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({ name: "alt", title: "Alt Text", type: "string" }),
-            defineField({
-              name: "caption",
-              title: "Caption",
-              type: "string",
-            }),
-          ],
-        }),
-      ],
-    }),
-  ],
-  preview: {
-    prepare() {
-      return { title: "Rich Text" };
-    },
-  },
-});
-
 // Button variant without a page reference — link comes from the parent section
 const storyButton = defineArrayMember({
   type: "object",
@@ -496,6 +462,5 @@ export const allSectionTypes = [
   sectionLargeText,
   sectionGallery,
   sectionStories,
-  sectionRichText,
   sectionText,
 ];

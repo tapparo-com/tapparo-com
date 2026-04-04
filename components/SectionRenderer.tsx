@@ -8,7 +8,6 @@ import { SectionQuote } from "@/components/sections/SectionQuote";
 import { SectionLargeText } from "@/components/sections/SectionLargeText";
 import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
-import { SectionRichText } from "@/components/sections/SectionRichText";
 import { SectionText } from "@/components/sections/SectionText";
 
 type Section = {
@@ -130,14 +129,6 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 heading={section.heading}
                 posts={stories || []}
                 pinnedStoryId={section.pinnedStoryId}
-              />
-            );
-
-          case "sectionRichText":
-            return (
-              <SectionRichText
-                key={section._key}
-                body={section.body}
               />
             );
 
