@@ -1,3 +1,5 @@
+import { Reveal } from "@/components/ui/Reveal";
+
 type Allergen = {
   _id: string;
   code: string;
@@ -14,6 +16,7 @@ export function SectionAllergensLegend({
   if (allergens.length === 0) return null;
 
   return (
+    <Reveal>
     <section
       aria-label="Allergens legend"
       className="overflow-clip bg-background px-3 py-20 md:px-8"
@@ -40,5 +43,6 @@ export function SectionAllergensLegend({
         </div>
       </div>
     </section>
+    </Reveal>
   );
 }

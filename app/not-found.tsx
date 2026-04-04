@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Reveal } from "@/components/ui/Reveal";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { BRAND_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
@@ -25,6 +26,7 @@ export default async function NotFound() {
           <div className="md:col-start-2">
             <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
               {/* Text */}
+              <Reveal>
               <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
                 <p className="text-section-heading font-medium text-background">
                   We didn&apos;t find the page you were looking for.{" "}
@@ -33,19 +35,22 @@ export default async function NotFound() {
                   </Link>
                 </p>
               </div>
+              </Reveal>
 
               {/* Supporting logo */}
               {brand?.supportingLogo?.asset && (
-                <div className="max-w-gutter xl:flex-1">
-                  <div className="relative aspect-square w-48 md:w-64">
-                    <Image
-                      src={urlFor(brand.supportingLogo).width(512).url()}
-                      alt=""
-                      fill
-                      className="object-contain object-left-bottom"
-                    />
+                <Reveal delay={0.1}>
+                  <div className="max-w-gutter xl:flex-1">
+                    <div className="relative aspect-square w-48 md:w-64">
+                      <Image
+                        src={urlFor(brand.supportingLogo).width(512).url()}
+                        alt=""
+                        fill
+                        className="object-contain object-left-bottom"
+                      />
+                    </div>
                   </div>
-                </div>
+                </Reveal>
               )}
             </div>
           </div>

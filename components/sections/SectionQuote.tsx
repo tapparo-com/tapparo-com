@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { Reveal } from "@/components/ui/Reveal";
 
 type SectionQuoteProps = {
   author?: string | null;
@@ -14,6 +15,7 @@ export function SectionQuote({ author, quote, image }: SectionQuoteProps) {
   if (!quote) return null;
 
   return (
+    <Reveal>
     <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
       <div className="mx-auto max-w-[1856px]">
         <div className="pb-20 md:grid grid-cols-sidebar md:gap-10">
@@ -73,5 +75,6 @@ export function SectionQuote({ author, quote, image }: SectionQuoteProps) {
         </div>
       </div>
     </section>
+    </Reveal>
   );
 }

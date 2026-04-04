@@ -8,6 +8,7 @@ import {
   FOOTER_NAV_QUERY,
 } from "@/sanity/lib/queries";
 import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
+import { PageTransitionProvider } from "@/components/ui/PageTransition";
 import { ComingSoon } from "@/components/ComingSoon";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -65,7 +66,7 @@ export default async function SiteLayout({
   }
 
   return (
-    <>
+    <PageTransitionProvider>
       <Header
         restaurantName={brand?.restaurantName}
         logoSvg={logoSvg}
@@ -84,6 +85,6 @@ export default async function SiteLayout({
         }}
         footerNav={footerNav}
       />
-    </>
+    </PageTransitionProvider>
   );
 }

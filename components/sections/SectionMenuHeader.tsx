@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { TAB_SPRING } from "@/lib/animation";
 
 type Category = {
   _id: string;
@@ -21,6 +23,7 @@ export function SectionMenuHeader({
   const [activeSlug, setActiveSlug] = useState<string | null>(
     categories[0]?.slug ?? null
   );
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (categories.length === 0) return;
@@ -58,13 +61,20 @@ export function SectionMenuHeader({
                 <a
                   key={cat._id}
                   href={`#${cat.slug}`}
-                  className={`shrink-0 text-base uppercase leading-7 transition-colors ${
+                  className={`relative shrink-0 text-base uppercase leading-7 transition-colors ${
                     activeSlug === cat.slug
-                      ? "text-accent underline"
+                      ? "text-accent"
                       : "text-foreground hover:text-accent"
                   }`}
                 >
                   {cat.title}
+                  {activeSlug === cat.slug && (
+                    <motion.div
+                      layoutId="active-menu-tab"
+                      className="absolute -bottom-0.5 left-0 right-0 h-px bg-accent"
+                      transition={prefersReducedMotion ? { duration: 0 } : TAB_SPRING}
+                    />
+                  )}
                 </a>
               ))}
             </div>

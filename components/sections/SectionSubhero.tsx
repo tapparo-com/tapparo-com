@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Reveal } from "@/components/ui/Reveal";
 import type { PortableTextBlock } from "@portabletext/types";
 
 type ImageAsset = {
@@ -94,6 +95,7 @@ export function SectionSubhero({
     : undefined;
 
   return (
+    <Reveal>
     <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
       <div className="mx-auto max-w-[1856px]">
         {/* Desktop/Tablet: grid with label sidebar. Mobile: stacked. */}
@@ -174,5 +176,6 @@ export function SectionSubhero({
         </div>
       </div>
     </section>
+    </Reveal>
   );
 }

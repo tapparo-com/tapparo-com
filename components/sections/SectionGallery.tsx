@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { Reveal } from "@/components/ui/Reveal";
 
 type GalleryImage = {
   _key: string;
@@ -16,6 +17,7 @@ export function SectionGallery({ images, caption }: SectionGalleryProps) {
   if (!images || images.length === 0) return null;
 
   return (
+    <Reveal>
     <section className="overflow-clip bg-background px-3 py-10 md:px-8 md:py-10 xl:py-10">
       {/* Horizontal image row — overflows off-screen */}
       <div className="mx-auto max-w-[1856px]">
@@ -54,5 +56,6 @@ export function SectionGallery({ images, caption }: SectionGalleryProps) {
         </div>
       )}
     </section>
+    </Reveal>
   );
 }

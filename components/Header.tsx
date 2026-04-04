@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { SanityLogo } from "@/components/ui/SanityLogo";
+import { TransitionLink } from "@/components/ui/TransitionLink";
 import { MenuOverlay } from "@/components/MenuOverlay";
 
 type HeaderNav = {
@@ -30,7 +30,7 @@ export function Header({
       <header className="sticky top-0 z-50 border-b border-accent bg-background px-3 py-2 md:px-8 ">
         <div className="mx-auto max-w-[1856px]">
           <div className="flex items-center justify-between md:grid grid-cols-sidebar md:gap-10">
-            <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center">
+            <TransitionLink href="/" onClick={() => setMenuOpen(false)} className="flex items-center">
               {logoSvg ? (
                 <SanityLogo
                   svgHtml={logoSvg}
@@ -42,7 +42,7 @@ export function Header({
                   {restaurantName || "Tapparo"}
                 </span>
               )}
-            </Link>
+            </TransitionLink>
             <div className="flex items-center justify-end max-w-content">
               <button
                 onClick={() => setMenuOpen((prev) => !prev)}

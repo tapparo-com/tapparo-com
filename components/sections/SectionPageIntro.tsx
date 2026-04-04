@@ -1,3 +1,5 @@
+import { Reveal } from "@/components/ui/Reveal";
+
 type SectionPageIntroProps = {
   title: string;
   description?: string | null;
@@ -5,6 +7,7 @@ type SectionPageIntroProps = {
 
 export function SectionPageIntro({ title, description }: SectionPageIntroProps) {
   return (
+    <Reveal>
     <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
       <div className="mx-auto max-w-[1856px]">
         <div className="md:grid grid-cols-sidebar md:gap-10">
@@ -23,5 +26,6 @@ export function SectionPageIntro({ title, description }: SectionPageIntroProps) 
         </div>
       </div>
     </section>
+    </Reveal>
   );
 }

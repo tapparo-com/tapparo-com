@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/ui/TransitionLink";
 
 type ButtonLinkProps = {
   href: string;
@@ -22,9 +22,9 @@ export function ButtonLink({
   };
 
   return (
-    <Link href={href} className={`${base} ${variants[variant]}`}>
+    <TransitionLink href={href} className={`${base} ${variants[variant]}`}>
       <span>{label}</span>
       <span>{"->"}</span>
-    </Link>
+    </TransitionLink>
   );
 }

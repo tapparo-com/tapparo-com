@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink } from "@/components/ui/TransitionLink";
 import { urlFor } from "@/sanity/lib/image";
 
 export type Post = {
@@ -23,7 +23,7 @@ function formatDate(dateStr: string) {
 export function PostCard({ post }: { post: Post }) {
   return (
     <article>
-      <Link href={`/${post.slug}`} className="group block">
+      <TransitionLink href={`/${post.slug}`} className="group block">
         <div className="flex flex-col gap-5">
           <div className="relative aspect-square overflow-hidden">
             {post.coverImage ? (
@@ -71,7 +71,7 @@ export function PostCard({ post }: { post: Post }) {
             </span>
           </div>
         </div>
-      </Link>
+      </TransitionLink>
     </article>
   );
 }

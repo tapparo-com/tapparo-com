@@ -3,7 +3,18 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { useEffect, useState } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+} from "motion/react";
 import { SanityLogo } from "@/components/ui/SanityLogo";
+import {
+  HERO_CROSSFADE,
+  HERO_LOGO_DURATION,
+  HERO_LOGO_DELAY,
+  REVEAL_EASE,
+} from "@/lib/animation";
 
 type HeroImage = {
   _key: string;
@@ -26,60 +37,80 @@ export function SectionHero({
 }: SectionHeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = heroImages ?? [];
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (images.length <= 1) return;
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (prefersReducedMotion) return;
+    if (images.length <= 1 || prefersReducedMotion) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 2000);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [images.length, prefersReducedMotion]);
 
   return (
     <>
-      {/* Fixed background carousel — stays locked to viewport */}
+      {/* Fixed background carousel */}
       <div className="fixed inset-0 top-[65px] z-0 overflow-hidden">
-        {images.map((img, i) => (
-          <div
-            key={img._key}
-            className={`absolute inset-0 transition-opacity duration-0 ${
-              i === currentIndex ? "opacity-100" : "opacity-0"
-            }`}
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={images[currentIndex]?._key || "fallback"}
+            className="absolute inset-0"
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : HERO_CROSSFADE }}
           >
-            <Image
-              src={urlFor(img).width(1920).quality(75).auto("format").url()}
-              alt={img.alt || ""}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority={i === 0}
-              fetchPriority={i === 0 ? "high" : undefined}
-              placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
-              blurDataURL={img.asset?.metadata?.lqip || undefined}
-            />
-          </div>
-        ))}
-
-        {/* Fallback background if no images */}
-        {images.length === 0 && (
-          <div className="absolute inset-0 bg-foreground" />
-        )}
+            {images[currentIndex] ? (
+              <Image
+                src={urlFor(images[currentIndex])
+                  .width(1920)
+                  .quality(75)
+                  .auto("format")
+                  .url()}
+                alt={images[currentIndex].alt || ""}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={currentIndex === 0}
+                fetchPriority={currentIndex === 0 ? "high" : undefined}
+                placeholder={
+                  images[currentIndex].asset?.metadata?.lqip
+                    ? "blur"
+                    : undefined
+                }
+                blurDataURL={
+                  images[currentIndex].asset?.metadata?.lqip || undefined
+                }
+              />
+            ) : (
+              <div className="absolute inset-0 bg-foreground" />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* Hero content — takes up viewport height, scrolls naturally */}
+      {/* Hero content */}
       <section className="relative z-10 flex h-[calc(100svh-65px)] items-end overflow-hidden py-12">
         <div className="mx-auto w-full max-w-[1856px] px-3 md:px-8">
-          {/* Grid: empty left col + logo right col on desktop. Full-width on mobile. */}
           <div className="md:grid grid-cols-sidebar md:gap-10">
             <div className="col-start-2 pb-20 md:pb-0">
               <h1 className="sr-only">{restaurantName}</h1>
 
-              <div className="flex max-w-gutter flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]">
+              <motion.div
+                className="flex max-w-gutter flex-col items-center gap-5 drop-shadow-[0_0_20px_rgba(0,0,0,0.55)]"
+                initial={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0, scale: 0.95 }
+                }
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: prefersReducedMotion ? 0 : HERO_LOGO_DURATION,
+                  ease: REVEAL_EASE,
+                  delay: prefersReducedMotion ? 0 : HERO_LOGO_DELAY,
+                }}
+              >
                 {logoSvg ? (
                   <SanityLogo
                     svgHtml={logoSvg}
@@ -97,7 +128,7 @@ export function SectionHero({
                     {tagline}
                   </p>
                 )}
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { SanityLogo } from "@/components/ui/SanityLogo";
+import { TransitionLink } from "@/components/ui/TransitionLink";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 type Settings = {
@@ -36,7 +36,7 @@ export function Footer({ settings, footerNav }: FooterProps) {
         <div className="flex flex-col gap-10 md:grid grid-cols-sidebar md:gap-10">
           {/* Col-1: Logo */}
           <div className="md:row-start-1 md:col-start-1">
-            <Link href="/">
+            <TransitionLink href="/">
               {settings?.logoSvg ? (
                 <SanityLogo
                   svgHtml={settings.logoSvg}
@@ -48,7 +48,7 @@ export function Footer({ settings, footerNav }: FooterProps) {
                   {settings?.restaurantName || "Tapparo"}
                 </span>
               )}
-            </Link>
+            </TransitionLink>
           </div>
 
           {/* Col-2: 4 info columns */}
@@ -80,13 +80,13 @@ export function Footer({ settings, footerNav }: FooterProps) {
                     <span className="text-base text-muted">Pages</span>
                     <nav className="flex flex-col">
                       {pageLinks.map((item) => (
-                        <Link
+                        <TransitionLink
                           key={item._key}
                           href={item.slug === "home" ? "/" : `/${item.slug}`}
                           className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
                         >
                           {item.label}
-                        </Link>
+                        </TransitionLink>
                       ))}
                     </nav>
                   </div>

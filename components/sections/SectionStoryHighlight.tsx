@@ -1,7 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink } from "@/components/ui/TransitionLink";
 import { urlFor } from "@/sanity/lib/image";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Reveal } from "@/components/ui/Reveal";
 
 type Story = {
   title: string;
@@ -36,6 +37,7 @@ export function SectionStoryHighlight({
   const coverImage = story.coverImage;
 
   return (
+    <Reveal>
     <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
       <div className="mx-auto max-w-[1856px]">
         <div className="flex flex-col gap-10 pb-20 md:grid grid-cols-sidebar md:gap-10">
@@ -63,7 +65,7 @@ export function SectionStoryHighlight({
 
                   {/* Image — shown on md/sm only */}
                   {coverImage?.asset && (
-                    <Link href={storyHref} className="group xl:hidden">
+                    <TransitionLink href={storyHref} className="group xl:hidden">
                       <div className="relative aspect-square overflow-hidden">
                         <Image
                           src={urlFor(coverImage).width(624).height(624).url()}
@@ -79,7 +81,7 @@ export function SectionStoryHighlight({
                           }
                         />
                       </div>
-                    </Link>
+                    </TransitionLink>
                   )}
                 </div>
 
@@ -105,7 +107,7 @@ export function SectionStoryHighlight({
 
               {/* Image column — visible on desktop only */}
               {coverImage?.asset && (
-                <Link
+                <TransitionLink
                   href={storyHref}
                   className="group hidden max-w-gutter xl:block xl:flex-1"
                 >
@@ -124,12 +126,13 @@ export function SectionStoryHighlight({
                       }
                     />
                   </div>
-                </Link>
+                </TransitionLink>
               )}
             </div>
           </div>
         </div>
       </div>
     </section>
+    </Reveal>
   );
 }
