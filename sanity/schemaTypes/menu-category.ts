@@ -82,6 +82,10 @@ export const menuCategory = defineType({
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
+          validation: (rule) =>
+            rule
+              .assetRequired()
+              .error("Upload an image — items without an image are not shown on the website."),
           fields: [
             defineField({ name: "alt", title: "Alt Text", type: "string" }),
           ],

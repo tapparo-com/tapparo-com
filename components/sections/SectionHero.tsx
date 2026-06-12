@@ -18,7 +18,7 @@ import {
 
 type HeroImage = {
   _key: string;
-  asset: { _id: string; url: string; metadata?: { lqip?: string } };
+  asset?: { _id: string; url: string; metadata?: { lqip?: string } } | null;
   alt?: string;
 };
 
@@ -36,7 +36,7 @@ export function SectionHero({
   heroImages,
 }: SectionHeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = heroImages ?? [];
+  const images = (heroImages ?? []).filter((img) => img.asset);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 type GridImage = {
   _key: string;
-  asset: { _id: string; url: string; metadata?: { lqip?: string } };
+  asset?: { _id: string; url: string; metadata?: { lqip?: string } } | null;
   alt?: string;
 };
 
@@ -14,7 +14,8 @@ type SectionImageGridProps = {
 };
 
 export function SectionImageGrid({ title, images }: SectionImageGridProps) {
-  const hasImages = images && images.length > 0;
+  const validImages = (images ?? []).filter((img) => img.asset);
+  const hasImages = validImages.length > 0;
 
   return (
     <Reveal>
@@ -26,7 +27,7 @@ export function SectionImageGrid({ title, images }: SectionImageGridProps) {
           )}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {hasImages
-              ? images.map((img) => (
+              ? validImages.map((img) => (
                   <div key={img._key} className="aspect-[4/5] overflow-hidden">
                     <Image
                       src={urlFor(img).width(624).height(780).url()}

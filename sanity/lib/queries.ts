@@ -89,7 +89,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _key,
       _type,
       _type == "sectionHero" => {
-        heroImages[]{ _key, ${imageFields} }
+        heroImages[defined(asset)]{ _key, ${imageFields} }
       },
       _type == "sectionSubhero" => {
         label,
@@ -120,7 +120,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       },
       _type == "sectionMoodImages" => {
         title,
-        images[]{ _key, ${imageFields} }
+        images[defined(asset)]{ _key, ${imageFields} }
       },
       _type == "sectionQuote" => {
         author,
@@ -131,7 +131,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         text
       },
       _type == "sectionGallery" => {
-        images[]{ _key, ${imageFields} },
+        images[defined(asset)]{ _key, ${imageFields} },
         caption
       },
       _type == "sectionStories" => {
@@ -187,7 +187,7 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
         "allergens": allergens[]->{ _id, code, label }
       },
       extras[]{ _key, name, price },
-      images[]{ _key, asset->{_id, url}, alt }
+      images[defined(asset)]{ _key, asset->{_id, url}, alt }
     }
   }
 `);
