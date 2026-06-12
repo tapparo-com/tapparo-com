@@ -80,8 +80,9 @@ export function SectionMenuCategory({
   images,
 }: SectionMenuCategoryProps) {
   const [imageIndex, setImageIndex] = useState(0);
-  const hasImages = images && images.length > 0;
-  const hasMultipleImages = images && images.length > 1;
+  const validImages = (images ?? []).filter((img) => img.asset);
+  const hasImages = validImages.length > 0;
+  const hasMultipleImages = validImages.length > 1;
 
   return (
     <Reveal>
@@ -181,8 +182,8 @@ export function SectionMenuCategory({
                           className="absolute inset-0"
                         >
                           <Image
-                            src={urlFor(images[imageIndex]).width(624).height(624).url()}
-                            alt={images[imageIndex]?.alt || title}
+                            src={urlFor(validImages[imageIndex]).width(624).height(624).url()}
+                            alt={validImages[imageIndex]?.alt || title}
                             fill
                             sizes="(max-width: 1280px) 100vw, 624px"
                             className="object-cover"
@@ -195,7 +196,7 @@ export function SectionMenuCategory({
                         <button
                           onClick={() =>
                             setImageIndex((prev) =>
-                              prev === 0 ? images.length - 1 : prev - 1
+                              prev === 0 ? validImages.length - 1 : prev - 1
                             )
                           }
                           aria-label="Previous image"
@@ -217,7 +218,7 @@ export function SectionMenuCategory({
                         <button
                           onClick={() =>
                             setImageIndex((prev) =>
-                              prev === images.length - 1 ? 0 : prev + 1
+                              prev === validImages.length - 1 ? 0 : prev + 1
                             )
                           }
                           aria-label="Next image"

@@ -4,7 +4,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 type GalleryImage = {
   _key: string;
-  asset: { _id: string; url: string; metadata?: { lqip?: string } };
+  asset?: { _id: string; url: string; metadata?: { lqip?: string } } | null;
   alt?: string;
 };
 
@@ -14,7 +14,8 @@ type SectionGalleryProps = {
 };
 
 export function SectionGallery({ images, caption }: SectionGalleryProps) {
-  if (!images || images.length === 0) return null;
+  const validImages = (images ?? []).filter((img) => img.asset);
+  if (validImages.length === 0) return null;
 
   return (
     <Reveal>
@@ -22,7 +23,7 @@ export function SectionGallery({ images, caption }: SectionGalleryProps) {
       {/* Horizontal image row — overflows off-screen */}
       <div className="mx-auto max-w-[1856px]">
         <div className="flex items-center gap-3 md:gap-10">
-          {images.map((img) => (
+          {validImages.map((img) => (
             <div
               key={img._key}
               className="w-[328px] shrink-0 md:w-[480px] xl:w-[624px]"

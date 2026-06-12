@@ -82,6 +82,10 @@ export const sectionHero = defineArrayMember({
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
+          validation: (rule) =>
+            rule
+              .assetRequired()
+              .error("Upload an image — items without an image are not shown on the website."),
           fields: [
             defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for screen readers and SEO. Example: 'Bar counter with focaccia and wine glasses'" }),
           ],
@@ -170,6 +174,10 @@ export const sectionMoodImages = defineArrayMember({
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
+          validation: (rule) =>
+            rule
+              .assetRequired()
+              .error("Upload an image — items without an image are not shown on the website."),
           fields: [
             defineField({
               name: "alt",
@@ -269,6 +277,10 @@ export const sectionGallery = defineArrayMember({
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
+          validation: (rule) =>
+            rule
+              .assetRequired()
+              .error("Upload an image — items without an image are not shown on the website."),
           fields: [
             defineField({ name: "alt", title: "Alt Text", type: "string" }),
           ],
