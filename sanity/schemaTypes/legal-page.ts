@@ -1,3 +1,4 @@
+import { slugField } from "./slug-field";
 import { defineType, defineField, defineArrayMember } from "sanity";
 import { DocumentTextIcon } from "@sanity/icons";
 
@@ -14,14 +15,7 @@ export const legalPage = defineType({
       description: "Page heading, e.g. Imprint, Privacy Policy",
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      description: "URL path, e.g. 'imprint' becomes tapparo.com/imprint",
-      options: { source: "title", maxLength: 96 },
-      validation: (rule) => rule.required(),
-    }),
+    slugField("Lowercase URL slug, e.g. 'impressum'. Must be unique across pages, posts, and legal pages."),
     defineField({
       name: "body",
       title: "Body",

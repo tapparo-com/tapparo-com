@@ -1,3 +1,4 @@
+import { slugField } from "./slug-field";
 import { defineType, defineField, defineArrayMember } from "sanity";
 import { TagIcon } from "@sanity/icons";
 
@@ -14,14 +15,7 @@ export const menuCategory = defineType({
       description: "Category name shown in the sidebar and tabs, e.g. 'Classica'.",
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      options: { source: "title", maxLength: 96 },
-      description: "Used for anchor links in the tab navigation.",
-      validation: (rule) => rule.required(),
-    }),
+    slugField("Lowercase anchor used in menu navigation, e.g. 'focaccia'. Must be unique among menu categories."),
     defineField({
       name: "description",
       title: "Description",

@@ -1,3 +1,4 @@
+import { slugField } from "./slug-field";
 import { defineType, defineField } from "sanity";
 import { DocumentIcon } from "@sanity/icons";
 import { allSectionTypes } from "./sections";
@@ -15,17 +16,7 @@ export const page = defineType({
       description: "Internal name for this page. Also shown as a heading on non-menu pages.",
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      description: "URL path for this page, e.g. 'menu' becomes tapparo.com/menu. The slug 'home' is reserved for the homepage (served at tapparo.com/).",
-      options: {
-        source: "title",
-        maxLength: 96,
-      },
-      validation: (rule) => rule.required(),
-    }),
+    slugField("URL slug in lowercase, e.g. 'about'. 'home' identifies the homepage at /. Menu, stories, order, and system routes are reserved. Unique across pages, posts, and legal pages."),
     defineField({
       name: "sections",
       title: "Sections",

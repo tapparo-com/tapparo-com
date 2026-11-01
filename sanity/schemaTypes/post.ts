@@ -1,3 +1,4 @@
+import { slugField } from "./slug-field";
 import { defineType, defineField } from "sanity";
 import { DocumentTextIcon } from "@sanity/icons";
 
@@ -14,17 +15,7 @@ export const post = defineType({
       description: "Blog post headline. Also used in the Stories carousel cards.",
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      description: "URL path for this post, e.g. 'focaccia-di-recco' becomes tapparo.com/focaccia-di-recco. Must be unique across all pages and posts.",
-      options: {
-        source: "title",
-        maxLength: 96,
-      },
-      validation: (rule) => rule.required(),
-    }),
+    slugField("Lowercase URL slug, e.g. 'focaccia-di-recco'. Must be unique across pages, posts, and legal pages. Keep published URLs stable; renaming requires a redirect."),
     defineField({
       name: "excerpt",
       title: "Excerpt",
