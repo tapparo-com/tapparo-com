@@ -3,7 +3,7 @@
 Created: 31 October 2026  
 Last updated: 1 November 2026
 
-Status: Milestone 1 is committed and locally validated, with the development slug migrated. All further implementation and content work will use development. Production rollout is deferred until the full result is approved; later commits still require explicit lock-in. Later milestones have not started.
+Status: Milestones 1 and 2 are committed and locally validated, with the development slug migrated and the ordering route verified against development. All further implementation and content work will use development. Production rollout is deferred until the full result is approved; later commits still require explicit lock-in. Milestones 3–8 have not started.
 
 ## Working agreement
 
@@ -20,7 +20,7 @@ Status: Milestone 1 is committed and locally validated, with the development slu
 | Milestone | Status | Locked in | Commit / release |
 | --- | --- | --- | --- |
 | 1. URL normalization | Committed — production deferred to final release | Yes — 1 November 2026 | `ad16b6d`, `9ea6df0`, `8cef96a` / not released |
-| 2. Ordering route | Not started | No | — |
+| 2. Ordering route | Committed — production deferred to final release | Yes — 1 November 2026 | `c9ca238` / not released |
 | 3. Design and motion direction | Not started | No | — |
 | 4. Sanity enhancements | Not started | No | — |
 | 5. Hero, carousel, and shared motion | Not started | No | — |
@@ -145,11 +145,15 @@ Implementation references: [Next.js 15 middleware](https://nextjs.org/docs/15/ap
 
 ## 2. Establish `/order`
 
-- [ ] Add a server-side `307` redirect from `/order` to `https://order.degaso.de/1b33fef5-2777-434b-8960-03889fcfb1d7`.
-- [ ] Route every “jetzt bestellen” CTA through `/order`.
-- [ ] Keep menu-viewing links pointed at `/menu`.
-- [ ] Treat ordering as an outbound journey in the transition system, without an overlay delaying or trapping navigation.
-- [ ] Verify direct visits, CTA clicks, new tabs, and the destination's availability without placing an order.
+- [x] Add a server-side `307` redirect from `/order` to `https://order.degaso.de/1b33fef5-2777-434b-8960-03889fcfb1d7`.
+- [x] Audit existing ordering CTAs and establish `/order` as their destination. No existing “jetzt bestellen” CTAs were found in the code or current development content; the planned SVG hero CTA will use this route in milestone 5.
+- [x] Keep menu-viewing links pointed at `/menu`.
+- [x] Treat ordering as an outbound journey in the transition system, without an overlay delaying or trapping navigation.
+- [x] Verify direct visits, CTA clicks, new tabs, and the destination's availability without placing an order.
+
+Implementation: `app/order/route.ts` returns an uncached `307` to the fixed destination in `lib/ordering.ts`, independent of CMS availability and the site's Coming Soon layout. Query parameters cannot replace the destination. `TransitionLink` disables prefetch for ordering links and uses full document navigation; `ButtonLink` inherits that behavior. Existing menu links and their transitions are preserved. No CMS content changes or migration were needed.
+
+Verification: all 11 existing regression tests, TypeScript checks, and an isolated production build using the development dataset pass. HTTP checks cover the redirect, uppercase/encoded variants, query strings, `HEAD`, unchanged public pages, and exclusion from the sitemap. Browser checks use a temporary fixture outside the repository to exercise the shared button/link components: normal clicks, query/object hrefs, new tabs, browser back, prevented clicks, no ordering prefetch or overlay, and the retained menu transition. The actual Degaso destination returned `200` and displayed Tapparo's ordering page; repeated interaction checks intercepted only the external destination response. No order was placed. Local evidence: `.sanity-backups/order-verification.json`.
 
 Acceptance: all ordering entry points reach the specified Degaso destination. The temporary redirect allows the provider destination to change later without permanently cached redirects.
 
@@ -260,3 +264,5 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 | 31 October 2026 | User clarified that all work stays on the development dataset until the full result is satisfactory. Production updates are deferred to the approved final release, including URL normalization. Individual milestone lock-in still controls commits and does not authorize production rollout. |
 | 1 November 2026 | User explicitly authorized a series of commits for step 1. Committed URL routing and metadata (`ad16b6d`), Studio slug validation (`9ea6df0`), and migration tooling with regression checks (`8cef96a`). Updated the plan and rollout documentation in the accompanying documentation commit. |
 | 1 November 2026 | Before committing, reran all 11 tests, TypeScript validation, and the development published-slug audit; all pass, with no pending development slug changes. Production remains unchanged. No push or deployment performed; later milestones remain unstarted pending the requested check-in. |
+| 1 November 2026 | Step 2 authorized and implemented: `/order` redirects to Degaso with `307` and `Cache-Control: no-store`; shared ordering links bypass prefetch and page-transition overlays. Verified against development with regression tests, type checking, an isolated build, HTTP checks, and browser interactions. Existing menu links are unchanged. No CMS mutations, commit, push, or deployment performed; ready for review. |
+| 1 November 2026 | User explicitly authorized commits for step 2. Committed the ordering route and navigation behavior as `c9ca238`; recorded completion and verification in the accompanying documentation commit. No CMS changes, push, or deployment performed. |

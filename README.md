@@ -12,6 +12,8 @@ The site is split into two parts:
 - **Public website** at `/` — server-rendered pages built from CMS content
 - **Content studio** at `/studio` — Sanity Studio where editors manage all content
 
+Ordering links use `/order`, which returns a temporary `307` redirect to the Degaso destination defined in `lib/ordering.ts`. The route works independently of CMS content and Coming Soon mode. Use `ORDER_PATH` for ordering CTAs; `TransitionLink` and `ButtonLink` bypass prefetch and internal page transitions for this route. Menu-viewing links continue to use `/menu`.
+
 ### Tech stack
 
 - **Next.js 15** (App Router, React 19, TypeScript)
@@ -30,6 +32,7 @@ app/
     [slug]/page.tsx    # Dynamic pages (CMS pages, blog posts, legal pages)
     menu/page.tsx      # Menu page
     stories/page.tsx   # Stories listing page
+  order/route.ts       # Temporary redirect to Degaso ordering
   studio/              # Sanity Studio (admin interface)
   layout.tsx           # Root layout (fonts, metadata)
   not-found.tsx        # 404 page
@@ -58,6 +61,8 @@ sanity/
 
 lib/
   animation.ts         # Shared animation timing constants
+  ordering.ts          # Ordering path, destination, and link detection
+  urls.ts              # Shared URL normalization and slug rules
 ```
 
 ## Content management (Sanity Studio)
