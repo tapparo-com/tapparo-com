@@ -2,6 +2,9 @@
 
 Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Next.js, Sanity CMS, and Tailwind CSS. Deployed to Vercel.
 
+- [Implementation plan and progress](PROJECT_PLAN.md)
+- [URL policy, validation, and migration rollout](docs/url-normalization.md)
+
 ## Architecture
 
 The site is split into two parts:

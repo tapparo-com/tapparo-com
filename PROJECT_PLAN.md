@@ -1,15 +1,17 @@
 # Tapparo website — implementation plan
 
 Created: 31 October 2026  
-Last updated: 31 October 2026  
-Status: Assessment complete; implementation has not started. The sequence and design proposals below are awaiting review.
+Last updated: 1 November 2026
+
+Status: Milestone 1 is committed and locally validated, with the development slug migrated. All further implementation and content work will use development. Production rollout is deferred until the full result is approved; later commits still require explicit lock-in. Later milestones have not started.
 
 ## Working agreement
 
 - Work through the milestones in sequence, starting with the urgent URL fix.
-- Keep each milestone independently reviewable. Separate the urgent fixes from the redesign release.
+- Keep each milestone independently reviewable while completing the work in development.
 - **Do not commit work until the user explicitly locks it in.** Writing this plan does not constitute approval of an implementation.
-- Apply production content changes and releases according to the agreed milestone review.
+- **Use the `development` dataset for implementation, content changes, migrations, and review previews. Keep production unchanged until the user is happy with the full result and approves the production rollout.** Locking in an individual milestone does not authorize production changes.
+- At final release, apply reviewed, targeted migrations to production with fresh backups and verification. Do not replace production wholesale with development or overwrite intervening owner edits.
 - Update this file as work progresses: record completed tasks, review decisions, validation evidence, and any resulting commit or release reference.
 - Preserve the owner's simple Sanity workflow: Site Settings, Navigation, and reusable sections that build pages, alongside the dedicated menu, stories, and legal editing workflows.
 
@@ -17,7 +19,7 @@ Status: Assessment complete; implementation has not started. The sequence and de
 
 | Milestone | Status | Locked in | Commit / release |
 | --- | --- | --- | --- |
-| 1. URL normalization | Not started — urgent | No | — |
+| 1. URL normalization | Committed — production deferred to final release | Yes — 1 November 2026 | `ad16b6d`, `9ea6df0`, `8cef96a` / not released |
 | 2. Ordering route | Not started | No | — |
 | 3. Design and motion direction | Not started | No | — |
 | 4. Sanity enhancements | Not started | No | — |
@@ -117,21 +119,25 @@ Keep Tapparo's identity and content. Adapt the reference's prolonged introductio
 
 ## 1. Fix URL normalization
 
-Priority: urgent. Deliver independently of the redesign.
+Priority: first implementation milestone. Review in development; production rollout waits for approval of the full result.
 
-- [ ] Export production content and capture the route/content inventory, including drafts and asset references.
-- [ ] Define the URL policy: lowercase public paths, consistent trailing slashes, clean URL joining, reserved routes, and a consistent convention for newly generated slugs.
-- [ ] Implement conditional `308` redirects in `middleware.ts`, suitable for Next.js 15.
-- [ ] Preserve query parameters; exclude Studio, API, framework, and asset paths; redirect only when the destination differs.
-- [ ] Add shared slug generation and validation for pages, posts, and legal pages, covering manual edits and generated values.
-- [ ] Enforce case-insensitive uniqueness across their shared namespace, excluding the same document's draft/published pair, and protect reserved routes.
-- [ ] Validate menu-category slugs in their separate anchor namespace.
-- [ ] Add validation to migration/import workflows; Studio validation alone does not govern every API write.
-- [ ] Introduce compatible lookup behavior before migrating the uppercase production slug, so the lowercase destination remains available throughout rollout.
-- [ ] Dry-run and review the `Impressum` → `impressum` migration in development, then apply the agreed production migration without publishing unrelated drafts.
-- [ ] Update internal URL construction, navigation links, sitemap generation, and canonical metadata consistently.
-- [ ] Preserve existing story slugs; use explicit redirect aliases for future substantive slug renames.
-- [ ] Verify mixed-case URLs, trailing slashes, repeated slashes, query strings, unknown routes, reserved routes, collisions, and redirect-loop prevention.
+- [x] Export production content and capture the route/content inventory, including drafts and asset references.
+- [x] Define the URL policy: lowercase public paths, consistent trailing slashes, clean URL joining, reserved routes, and a consistent convention for newly generated slugs.
+- [x] Implement conditional `308` redirects in `middleware.ts`, suitable for Next.js 15.
+- [x] Preserve query parameters; exclude Studio, API, framework, and asset paths; redirect only when the destination differs.
+- [x] Add shared slug generation and validation for pages, posts, and legal pages, covering manual edits and generated values.
+- [x] Enforce case-insensitive uniqueness across their shared namespace, excluding the same document's draft/published pair, and protect reserved routes.
+- [x] Validate menu-category slugs in their separate anchor namespace.
+- [x] Add validation to migration/import workflows; Studio validation alone does not govern every API write.
+- [x] Introduce compatible lookup behavior before migrating the uppercase production slug, so the lowercase destination remains available throughout rollout.
+- [x] Dry-run the migration against both datasets; apply and verify `Impressum` → `impressum` in development without publishing drafts.
+- [ ] At the approved final release (milestone 8), deploy the locked-in compatible code, then apply the production migration and verify the live site.
+- [ ] Remove the temporary build exception for the existing production `Impressum` document after rollout; review that cleanup before committing.
+- [x] Update internal URL construction, navigation links, sitemap generation, and canonical metadata consistently.
+- [x] Preserve existing story slugs; use explicit redirect aliases for future substantive slug renames.
+- [x] Verify mixed-case URLs, trailing slashes, repeated slashes, query strings, unknown routes, reserved routes, collisions, and redirect-loop prevention.
+
+Local implementation and verification are complete. See [rollout instructions and test evidence](docs/url-normalization.md). Continue subsequent milestones in development; production remains unchanged until the approved final release.
 
 Acceptance: old uppercase links resolve correctly; canonical lowercase URLs return content; the sitemap contains clean canonical URLs; invalid or colliding slugs are caught before publication.
 
@@ -222,12 +228,14 @@ Review point: all page types are approved, with content preservation verified ag
 - [ ] Test opening-hour boundaries, closures, holiday handling, daylight-saving changes, and overnight schedules.
 - [ ] Test slow-loading images and navigation failures.
 - [ ] Check loading speed, layout stability, image sizing, and animation responsiveness.
-- [ ] Verify the owner's workflow: edit ticker text, reorder carousel images, change hours, update a menu item, and publish a story in the appropriate test environment.
+- [ ] Verify the owner's workflow in development: edit ticker text, reorder carousel images, change hours, update a menu item, and publish a story.
 - [ ] Confirm that CMS updates reach the website with the expected cache/revalidation behavior.
 - [ ] Complete the final visual and functional review.
+- [ ] Obtain approval of the full result and the production rollout; individual milestone lock-in does not authorize this release.
+- [ ] Take fresh production backups, compare current production content with the baseline, and dry-run targeted migrations that preserve drafts and intervening owner edits. Do not copy development over production wholesale.
 - [ ] Prepare rollback instructions for code and any content migrations.
 - [ ] Commit only the work explicitly locked in by the user, and record the commit reference here.
-- [ ] Perform the agreed release, run production smoke checks, and record the release reference here.
+- [ ] Perform the agreed release, deploying compatible code before the production slug migration as documented in `docs/url-normalization.md`; run production smoke checks and record the release reference here.
 
 Acceptance: content preservation, functional behavior, visual quality, performance, and CMS usability pass review, with a clear rollback path.
 
@@ -247,3 +255,8 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 | 31 October 2026 | Repository, production data, live routes, reference site, and both Figma hero sketches assessed. No implementation or production content changes made. |
 | 31 October 2026 | User clarified that the leading hero image must be a quickly animating carousel with owner-selected CMS images. Added to the plan. |
 | 31 October 2026 | Plan saved in the repository at the user's request. Implementation milestones remain unstarted and uncommitted. |
+| 31 October 2026 | Step 1 authorized. Saved raw snapshots (production: 198 documents / 5 drafts; development: 200 documents / 6 drafts). Implemented middleware, shared URL rules, Studio validation, normalized queries/links/canonicals/sitemap, build audit, and revision-guarded migration tooling. |
+| 31 October 2026 | Development imprint slug normalized and verified as the only content change. Production dry run proposes the same single change; production has not been mutated. 11 tests, TypeScript, a production-data build, and HTTP checks for all 14 public pages pass. Work remains uncommitted and undeployed. |
+| 31 October 2026 | User clarified that all work stays on the development dataset until the full result is satisfactory. Production updates are deferred to the approved final release, including URL normalization. Individual milestone lock-in still controls commits and does not authorize production rollout. |
+| 1 November 2026 | User explicitly authorized a series of commits for step 1. Committed URL routing and metadata (`ad16b6d`), Studio slug validation (`9ea6df0`), and migration tooling with regression checks (`8cef96a`). Updated the plan and rollout documentation in the accompanying documentation commit. |
+| 1 November 2026 | Before committing, reran all 11 tests, TypeScript validation, and the development published-slug audit; all pass, with no pending development slug changes. Production remains unchanged. No push or deployment performed; later milestones remain unstarted pending the requested check-in. |
