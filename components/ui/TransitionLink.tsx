@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePageTransition } from "@/components/ui/PageTransition";
+import { isOrderingHref } from "@/lib/ordering";
 
 type TransitionLinkProps = Omit<
   React.ComponentProps<typeof Link>,
@@ -19,22 +20,33 @@ export function TransitionLink({
 }: TransitionLinkProps) {
   const { navigateTo } = usePageTransition();
   const pathname = usePathname();
+  const url = typeof href === "string" ? href : href.pathname || "/";
+  const isOrdering = isOrderingHref(url);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
     if (e.defaultPrevented) return;
-
-    const url = typeof href === "string" ? href : href.pathname || "/";
 
     // Let external links, new tabs, and modifier keys pass through
     if (
       url.startsWith("http") ||
       url.startsWith("mailto:") ||
       url.startsWith("tel:") ||
+      e.button !== 0 ||
       e.metaKey ||
       e.ctrlKey ||
-      e.shiftKey
+      e.shiftKey ||
+      e.altKey ||
+      (props.target && props.target !== "_self") ||
+      props.download !== undefined
     ) {
+      return;
+    }
+
+    // /order leaves the site. Use a full navigation without the internal-page overlay.
+    if (isOrdering) {
+      e.preventDefault();
+      window.location.assign(e.currentTarget.href);
       return;
     }
 
@@ -49,7 +61,7 @@ export function TransitionLink({
   };
 
   return (
-    <Link href={href} onClick={handleClick} {...props}>
+    <Link href={href} onClick={handleClick} {...props} prefetch={isOrdering ? false : props.prefetch}>
       {children}
     </Link>
   );
