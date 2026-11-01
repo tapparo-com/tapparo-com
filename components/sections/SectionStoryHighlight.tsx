@@ -1,3 +1,4 @@
+import { pathForSlug } from "@/lib/urls";
 import Image from "next/image";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { urlFor } from "@/sanity/lib/image";
@@ -33,7 +34,7 @@ export function SectionStoryHighlight({
 
   const title = titleOverride || story.title;
   const excerpt = excerptOverride || story.excerpt;
-  const storyHref = `/${story.slug}`;
+  const storyHref = pathForSlug(story.slug);
   const coverImage = story.coverImage;
 
   return (

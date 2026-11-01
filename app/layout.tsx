@@ -1,3 +1,4 @@
+import { siteOrigin } from "@/lib/urls";
 import type { Metadata } from "next";
 import { Instrument_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -12,10 +13,8 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
+  metadataBase: new URL(siteOrigin()),
   title: "Tapparo",
   description: "Day bar & focacceria",
   openGraph: {

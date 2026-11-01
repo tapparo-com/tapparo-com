@@ -1,3 +1,4 @@
+import { absoluteSiteUrl } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { STORIES_QUERY, STORIES_PAGE_QUERY } from "@/sanity/lib/queries";
 import { SectionPageIntro } from "@/components/sections/SectionPageIntro";
@@ -10,6 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
     tags: ["storiesPage"],
   });
   return {
+    alternates: { canonical: absoluteSiteUrl("/stories") },
     title: data?.seo?.title || "Stories",
     description: data?.seo?.description,
   };

@@ -1,3 +1,4 @@
+import { PortableTextLink } from "@/components/ui/PortableTextLink";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
@@ -26,7 +27,7 @@ export function SectionText({
   const textColumn = (
     <div className={`flex max-w-gutter flex-col gap-5${hasImage ? " xl:flex-1" : ""}`}>
       <div className="text-section-heading font-medium text-foreground">
-        <PortableText value={body} />
+        <PortableText value={body} components={{ marks: { link: PortableTextLink } }} />
       </div>
     </div>
   );

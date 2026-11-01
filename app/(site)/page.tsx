@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { absoluteSiteUrl } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   BRAND_QUERY,
@@ -7,6 +9,10 @@ import {
 } from "@/sanity/lib/queries";
 import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
+
+export const metadata: Metadata = {
+  alternates: { canonical: absoluteSiteUrl("/") },
+};
 
 export default async function HomePage() {
   const [brand, contact, hours, pageData] = await Promise.all([

@@ -1,5 +1,6 @@
 "use client";
 
+import { pathForSlug } from "@/lib/urls";
 import { useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
@@ -44,7 +45,7 @@ export function MenuOverlay({ isOpen, onClose, headerNav }: MenuOverlayProps) {
       key: item._key,
       content: (
         <TransitionLink
-          href={item.slug === "home" ? "/" : `/${item.slug}`}
+          href={pathForSlug(item.slug)}
           onClick={onClose}
           className={linkClass}
         >

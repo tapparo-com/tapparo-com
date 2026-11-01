@@ -1,3 +1,4 @@
+import { pathForSlug } from "@/lib/urls";
 import { SanityLogo } from "@/components/ui/SanityLogo";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
@@ -82,7 +83,7 @@ export function Footer({ settings, footerNav }: FooterProps) {
                       {pageLinks.map((item) => (
                         <TransitionLink
                           key={item._key}
-                          href={item.slug === "home" ? "/" : `/${item.slug}`}
+                          href={pathForSlug(item.slug)}
                           className="text-base uppercase leading-7 text-foreground transition-colors hover:text-accent"
                         >
                           {item.label}

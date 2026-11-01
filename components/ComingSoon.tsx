@@ -1,3 +1,4 @@
+import { PortableTextLink } from "@/components/ui/PortableTextLink";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
@@ -48,7 +49,7 @@ export function ComingSoon({ settings }: Props) {
                 {settings.comingSoonBody &&
                   settings.comingSoonBody.length > 0 && (
                     <div className="text-section-heading font-medium text-background">
-                      <PortableText value={settings.comingSoonBody} />
+                      <PortableText value={settings.comingSoonBody} components={{ marks: { link: PortableTextLink } }} />
                     </div>
                   )}
 

@@ -1,3 +1,4 @@
+import { pathForSlug } from "@/lib/urls";
 import Image from "next/image";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { urlFor } from "@/sanity/lib/image";
@@ -23,7 +24,7 @@ function formatDate(dateStr: string) {
 export function PostCard({ post }: { post: Post }) {
   return (
     <article>
-      <TransitionLink href={`/${post.slug}`} className="group block">
+      <TransitionLink href={pathForSlug(post.slug)} className="group block">
         <div className="flex flex-col gap-5">
           <div className="relative aspect-square overflow-hidden">
             {post.coverImage ? (

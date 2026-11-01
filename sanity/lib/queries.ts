@@ -51,7 +51,7 @@ export const HEADER_NAV_QUERY = defineQuery(/* groq */ `
       "slug": select(
         page->_type == "menuPage" => "menu",
         page->_type == "storiesPage" => "stories",
-        page->slug.current
+        lower(page->slug.current)
       )
     },
     socialLinks[]->{ _id, label, url },
@@ -71,7 +71,7 @@ export const FOOTER_NAV_QUERY = defineQuery(/* groq */ `
       "slug": select(
         page->_type == "menuPage" => "menu",
         page->_type == "storiesPage" => "stories",
-        page->slug.current
+        lower(page->slug.current)
       )
     },
     socialLinks[]->{ _id, label, url },
@@ -82,7 +82,7 @@ export const FOOTER_NAV_QUERY = defineQuery(/* groq */ `
 
 // --- Page by slug (page builder) ---
 export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
-  *[_type == "page" && slug.current == $slug][0]{
+  *[_type == "page" && lower(slug.current) == $slug][0]{
     _id,
     title,
     sections[]{
@@ -100,7 +100,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
           "slug": select(
             page->_type == "menuPage" => "menu",
             page->_type == "storiesPage" => "stories",
-            page->slug.current
+            lower(page->slug.current)
           ),
           variant
         },
@@ -114,7 +114,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
           title,
           excerpt,
           coverImage{ ${imageFields} },
-          "slug": slug.current
+          "slug": lower(slug.current)
         },
         buttonLabel
       },
@@ -157,7 +157,7 @@ export const STORIES_QUERY = defineQuery(/* groq */ `
     excerpt,
     coverImage,
     publishedAt,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     "authorName": author->name
   }
 `);
@@ -175,7 +175,7 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
     categories[]->{
       _id,
       title,
-      "slug": slug.current,
+      "slug": lower(slug.current),
       description,
       "items": items[@->available != false]->{
         _id,
@@ -203,23 +203,23 @@ export const STORIES_PAGE_QUERY = defineQuery(/* groq */ `
 
 // --- Related stories (excludes current post) ---
 export const RELATED_STORIES_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current != $slug && defined(slug.current)] | order(publishedAt desc)[0...2]{
+  *[_type == "post" && lower(slug.current) != $slug && defined(slug.current)] | order(publishedAt desc)[0...2]{
     _id,
     title,
     excerpt,
     coverImage,
     publishedAt,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     "authorName": author->name
   }
 `);
 
 // --- Legal pages ---
 export const LEGAL_PAGE_QUERY = defineQuery(/* groq */ `
-  *[_type == "legalPage" && slug.current == $slug][0]{
+  *[_type == "legalPage" && lower(slug.current) == $slug][0]{
     _id,
     title,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     body,
     updatedAt,
     seo{ title, description }
@@ -227,20 +227,21 @@ export const LEGAL_PAGE_QUERY = defineQuery(/* groq */ `
 `);
 
 export const LEGAL_SLUGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "legalPage" && defined(slug.current)]{ "slug": slug.current }
+  *[_type == "legalPage" && defined(slug.current)]{ _updatedAt, "slug": lower(slug.current) }
 `);
 
 // --- Page slugs (for static params + sitemap) ---
 export const PAGES_SLUGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "page" && slug.current != "home"]{ "slug": slug.current }
+  *[_type == "page" && defined(slug.current) && lower(slug.current) != "home"]{ _updatedAt, "slug": lower(slug.current) }
 `);
 
 // --- Blog ---
 export const BLOG_LIST_QUERY = defineQuery(/* groq */ `
   *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
     _id,
+    _updatedAt,
     title,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     excerpt,
     coverImage,
     publishedAt
@@ -248,10 +249,11 @@ export const BLOG_LIST_QUERY = defineQuery(/* groq */ `
 `);
 
 export const BLOG_POST_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current == $slug][0]{
+  *[_type == "post" && lower(slug.current) == $slug][0]{
     _id,
+    _updatedAt,
     title,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     excerpt,
     body,
     coverImage,
@@ -264,7 +266,7 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
       excerpt,
       coverImage,
       publishedAt,
-      "slug": slug.current,
+      "slug": lower(slug.current),
       "authorName": author->name
     },
     seo{ title, description }

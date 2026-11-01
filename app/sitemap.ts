@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { absoluteSiteUrl, pathForSlug, validateSlug } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   BLOG_LIST_QUERY,
@@ -6,45 +7,33 @@ import {
   LEGAL_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com";
+type Entry = { slug: string; _updatedAt?: string };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [pages, posts, legalPages] = await Promise.all([
-    sanityFetch<{ slug: string }[]>({
+    sanityFetch<Entry[]>({
       query: PAGES_SLUGS_QUERY,
       tags: ["page"],
     }),
-    sanityFetch<{ slug: string; publishedAt?: string }[]>({
+    sanityFetch<Entry[]>({
       query: BLOG_LIST_QUERY,
       tags: ["post"],
     }),
-    sanityFetch<{ slug: string }[]>({
+    sanityFetch<Entry[]>({
       query: LEGAL_SLUGS_QUERY,
       tags: ["legalPage"],
     }),
   ]);
 
-  const pageEntries = (pages ?? []).map((page) => ({
-    url: `${BASE_URL}/${page.slug}`,
-    lastModified: new Date(),
+  const entries: MetadataRoute.Sitemap = ["/", "/menu", "/stories"].map((path) => ({
+    url: absoluteSiteUrl(path),
   }));
-
-  const postEntries = (posts ?? []).map((post) => ({
-    url: `${BASE_URL}/${post.slug}`,
-    lastModified: post.publishedAt ? new Date(post.publishedAt) : new Date(),
-  }));
-
-  const legalEntries = (legalPages ?? []).map((page) => ({
-    url: `${BASE_URL}/${page.slug}`,
-    lastModified: new Date(),
-  }));
-
-  return [
-    { url: BASE_URL, lastModified: new Date() },
-    { url: `${BASE_URL}/menu`, lastModified: new Date() },
-    { url: `${BASE_URL}/stories`, lastModified: new Date() },
-    ...pageEntries,
-    ...postEntries,
-    ...legalEntries,
-  ];
+  for (const entry of [...(pages ?? []), ...(posts ?? []), ...(legalPages ?? [])]) {
+    if (validateSlug(entry.slug, "post") !== true) continue;
+    entries.push({
+      url: absoluteSiteUrl(pathForSlug(entry.slug)),
+      ...(entry._updatedAt ? { lastModified: entry._updatedAt } : {}),
+    });
+  }
+  return [...new Map(entries.map((entry) => [entry.url, entry])).values()];
 }

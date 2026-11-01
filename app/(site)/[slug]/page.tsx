@@ -1,3 +1,4 @@
+import { absoluteSiteUrl, pathForSlug, validateSlug } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   PAGE_BY_SLUG_QUERY,
@@ -39,15 +40,15 @@ export async function generateStaticParams() {
     }),
   ]);
 
-  return [
-    ...(pages ?? []).map((p) => ({ slug: p.slug })),
-    ...(posts ?? []).map((p) => ({ slug: p.slug })),
-    ...(legalPages ?? []).map((p) => ({ slug: p.slug })),
-  ];
+  const slugs = [...(pages ?? []), ...(posts ?? []), ...(legalPages ?? [])]
+    .map((entry) => entry.slug?.toLowerCase())
+    .filter((slug) => slug && validateSlug(slug, "post") === true);
+  return [...new Set(slugs)].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if (validateSlug(slug, "post") !== true) notFound();
 
   // Try CMS page first
   const page = await sanityFetch<any>({
@@ -58,6 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (page) {
     return {
+      alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
       title: page.seo?.title || page.title,
       description: page.seo?.description,
     };
@@ -72,6 +74,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (post) {
     return {
+      alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
       title: post.seo?.title || post.title,
       description: post.seo?.description || post.excerpt,
     };
@@ -86,6 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (legal) {
     return {
+      alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
       title: legal.seo?.title || legal.title,
       description: legal.seo?.description,
     };
@@ -104,9 +108,7 @@ function formatDate(dateString: string) {
 
 export default async function SlugPage({ params }: Props) {
   const { slug } = await params;
-
-  // "home" is served at / only — block /home
-  if (slug === "home") notFound();
+  if (validateSlug(slug, "post") !== true) notFound();
 
   // --- Try CMS page ---
   const [page, brand, hours] = await Promise.all([

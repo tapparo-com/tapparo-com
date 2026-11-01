@@ -1,3 +1,4 @@
+import { absoluteSiteUrl } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { MENU_PAGE_QUERY, ALLERGENS_QUERY } from "@/sanity/lib/queries";
 import { SectionPageIntro } from "@/components/sections/SectionPageIntro";
@@ -12,6 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     tags: ["menuPage"],
   });
   return {
+    alternates: { canonical: absoluteSiteUrl("/menu") },
     title: data?.seo?.title || "Menu",
     description: data?.seo?.description,
   };

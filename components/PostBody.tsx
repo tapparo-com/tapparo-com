@@ -1,8 +1,10 @@
+import { PortableTextLink } from "@/components/ui/PortableTextLink";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 
 const components: PortableTextComponents = {
+  marks: { link: PortableTextLink },
   block: {
     normal: ({ children }) => (
       <p className="text-base leading-7 text-foreground">{children}</p>

@@ -1,3 +1,5 @@
+import { PortableTextLink } from "@/components/ui/PortableTextLink";
+import { pathForSlug } from "@/lib/urls";
 import Image from "next/image";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
@@ -74,6 +76,7 @@ const headingComponents = {
     ),
   },
   marks: {
+    link: PortableTextLink,
     strong: ({ children }: { children?: React.ReactNode }) => (
       <span className="text-accent">{children}</span>
     ),
@@ -89,9 +92,7 @@ export function SectionSubhero({
   openingHours,
 }: SectionSubheroProps) {
   const buttonHref = button?.slug
-    ? button.slug === "home"
-      ? "/"
-      : `/${button.slug}`
+    ? pathForSlug(button.slug)
     : undefined;
 
   return (
