@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# Local content snapshots and migration backups (never publish or commit)
+/.sanity-backups/
+
 # next.js
 /.next/
 /out/
