@@ -4,6 +4,9 @@ Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Ne
 
 - [Implementation plan and progress](PROJECT_PLAN.md)
 - [URL policy, validation, and migration rollout](docs/url-normalization.md)
+- [Approved design and motion direction](docs/design-direction.md)
+
+The development-only [design preview](http://localhost:3000/design-preview) reads ticker phrases from **Pages → Home → Hero → Ticker phrases** in the local Studio. Add one word or phrase per item and drag to reorder; the website adds `•` separators with 8 px spacing automatically. An empty list hides the ticker. The original public homepage remains in place until the approved redesign is integrated in step 5. The design preview and ticker field are committed (`fb0c54c`, `d9d30c8`); structured opening hours are the next milestone.
 
 ## Architecture
 

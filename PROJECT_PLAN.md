@@ -1,9 +1,9 @@
 # Tapparo website — implementation plan
 
 Created: 31 October 2026  
-Last updated: 1 November 2026
+Last updated: 2 November 2026
 
-Status: Milestones 1 and 2 are committed and locally validated, with the development slug migrated and the ordering route verified against development. All further implementation and content work will use development. Production rollout is deferred until the full result is approved; later commits still require explicit lock-in. Milestones 3–8 have not started.
+Status: Milestones 1–3 are locked in, committed, and locally validated. Milestone 3 was approved for commit on 2 November 2026 (`d9d30c8`, `fb0c54c`). Milestone 4 is next: structured opening hours, exceptions, closures, and carousel editing guidance; the ticker field is already complete. All implementation and content work uses development. Production rollout remains deferred until the full result is approved. Further implementation commits require explicit lock-in.
 
 ## Working agreement
 
@@ -21,8 +21,8 @@ Status: Milestones 1 and 2 are committed and locally validated, with the develop
 | --- | --- | --- | --- |
 | 1. URL normalization | Committed — production deferred to final release | Yes — 1 November 2026 | `ad16b6d`, `9ea6df0`, `8cef96a` / not released |
 | 2. Ordering route | Committed — production deferred to final release | Yes — 1 November 2026 | `c9ca238` / not released |
-| 3. Design and motion direction | Not started | No | — |
-| 4. Sanity enhancements | Not started | No | — |
+| 3. Design and motion direction | Committed — approved direction, production integration in step 5 | Yes — 2 November 2026 | `d9d30c8`, `fb0c54c` / not released |
+| 4. Sanity enhancements | In progress — continuing after step 3 approval | No | Ticker field: `d9d30c8` |
 | 5. Hero, carousel, and shared motion | Not started | No | — |
 | 6. Remaining homepage sections | Not started | No | — |
 | 7. Stories, menu, and imprint | Not started | No | — |
@@ -41,6 +41,14 @@ Suggested status progression: Not started → In progress → Ready for review �
 - Global brand, contact, map, opening-hours, social, and SEO settings as the sources of shared information.
 - Every “jetzt bestellen” CTA leads to `/order`, which redirects to Degaso. Menu-viewing links remain `/menu`.
 - The hero's leading image is a carousel whose images and order are controlled in Sanity, with quick, polished transitions.
+- Hero content fits the viewport height, including ordering and status. All redesigned content uses a shared maximum width of 2100 px; the desktop image has its own narrower cap.
+- Carousel: 100 ms crossfade every 2.5 seconds, no visible controls. Ticker: autoplay without a pause button. Both respect reduced motion.
+- Hero and menu share the status indicator (green open, dark grey red closed). Menu labels have no numbers or arrows; the stationary handdrawn toggle animates between open/close; both ordering SVGs change only color on hover.
+- The hero image has zero left inset, including above the 2100 px content cap. A 1 px orange outline surrounds the viewport and remains visible with the menu open.
+- Ordering and status retain their original viewport-relative arrangement in the menu on mobile and desktop; the menu’s separate logo and ordering artwork animate into and out of those layout positions. The menu uses the same responsive grid independently of page scroll, so its logo and status remain visible; closing preserves the underlying scroll position. Social links use the same treatment as the main navigation.
+- Ticker content is an ordered CMS array of phrases. The renderer adds `•` with 8 px on each side; editors do not enter separators.
+- The ticker sits at the bottom on mobile as well as desktop. Mobile logo/menu move up into the space previously occupied by the ticker.
+- Motion follows the supplied `villas.mov` reference: dedicated first-visit welcome, photograph handoff into the hero, and staggered element reveals. Repeat visits get a shorter entrance; reduced motion gets immediate content.
 
 ## Assessment baseline — 31 October 2026
 
@@ -159,20 +167,71 @@ Acceptance: all ordering entry points reach the specified Degaso destination. Th
 
 ## 3. Lock design and motion direction
 
-- [ ] Preserve the desktop sketch's composition: image left; status/address upper right; logo and ordering artwork below; ticker along the bottom.
-- [ ] Preserve the mobile sketch's composition: ticker; logo/navigation; image; ordering artwork; status/address.
-- [ ] Specify tablet, narrow-screen, and shorter-screen behavior rather than simply scaling the desktop frame.
-- [ ] Agree on image crops, spacing, navigation behavior, and the treatment of the brand SVG assets.
-- [ ] Prototype carousel cadence and transition style.
-- [ ] Define the first-entry sequence, internal page transitions, section reveals, and reduced-motion alternatives.
-- [ ] Review the hero and one representative content section before expanding the design across the site.
+Revision sequence requested 1 November 2026 (hero and navigation only):
 
-Review point: responsive hero composition and representative content treatment are locked in.
+1. Fit the hero to the viewport height, reserve room for ordering and status, and establish a shared 2100 px content cap with a narrower desktop photograph.
+2. Remove carousel/ticker controls; use a 100 ms crossfade every 2.5 seconds and respect reduced motion.
+3. Keep a stationary menu toggle with animated original handdrawn strokes; simplify CMS navigation, add the small logo, shared status, and ordering artwork with orange-only hover.
+4. Remove About from this preview, then verify responsive geometry, menu accessibility, playback, and hover behavior. Preserve the real homepage and all its content.
+
+All four correction passes are implemented and verified in the development preview. They supersede the earlier carousel alternatives and representative About-section review. Commit authorization was subsequently given on 2 November; production changes remain deferred.
+
+Second review sequence requested 1 November 2026:
+
+1. Restore the flush-left image and orange frame around the viewport.
+2. Keep the actual ordering link and status mounted at unchanged coordinates while the menu opens around them.
+3. Present social links alongside the primary navigation with identical treatment.
+4. Add the ordered CMS ticker phrase field and automatic bullets with 8 px spacing on each side.
+5. Verify responsive geometry, continuity throughout animation, keyboard access, and development content preservation.
+
+All five passes are implemented. The ticker field is the only milestone-4 work brought forward; live status and the remaining schema work are still deferred.
+
+Motion review sequence requested 2 November 2026:
+
+1. Sample the supplied `villas.mov` recording, distinguish the first-visit intro from individual element entrances, and map the applicable motion to Tapparo.
+2. Build the dedicated first-visit welcome and image handoff, followed by masked logo/ordering reveals and staggered status/address/menu/ticker. Provide a shorter repeat-load entrance and reduced-motion behavior.
+3. Move the mobile ticker to the bottom and move logo/menu up, preserving viewport fit and stationary ordering/status through menu changes.
+4. Verify first/repeat visits, slow images, early interaction, resizing, no-JavaScript behavior, reduced motion, and the existing layout/playback guarantees.
+
+All four passes are implemented. The [design direction](docs/design-direction.md#video-study--2-november-2026) records the timed video analysis and mapping. The user approved these development changes for commit on 2 November.
+
+- [x] Preserve the desktop sketch's composition: image left; status/address upper right; logo and ordering artwork below; ticker along the bottom.
+- [x] Preserve the mobile sketch's artwork and responsive composition, with the latest requested order: logo/navigation; image; ordering artwork; status/address; ticker at the bottom.
+- [x] Specify tablet, narrow-screen, and shorter-screen behavior rather than simply scaling the desktop frame.
+- [x] Agree on image crops, spacing, navigation behavior, and the treatment of the brand SVG assets.
+- [x] Prototype carousel cadence and transition style.
+- [x] Define the first-entry sequence, internal page-transition sample, and reduced-motion alternatives.
+- [x] Implement viewport-height sizing, shared 2100 px content cap, and narrower desktop image.
+- [x] Remove carousel/ticker controls and apply the requested 100 ms / 2.5-second cadence.
+- [x] Rebuild the menu with a stationary animated handdrawn toggle, plain CMS links, small CMS logo, shared status, and ordering SVG.
+- [x] Use green open / dark grey red closed indicators and orange-only ordering hover with no movement.
+- [x] Keep About outside the hero and this milestone's preview.
+- [x] Restore zero left image inset and a persistent orange viewport outline.
+- [x] Match the original hero arrangement in a viewport-relative menu grid; keep its logo, ordering, and status visible after scrolling, and preserve the page position on close.
+- [x] Animate the menu’s own logo and ordering artwork through masks; reveal/hide the entire opaque panel together, keeping the original hero painted underneath to avoid overlapping artwork and position snaps.
+- [x] Style CMS social links exactly like the primary navigation.
+- [x] Connect the ticker to an ordered CMS phrase array; automatically add bullets with 8 px spacing and enough repetition for wide screens.
+- [x] Analyze the supplied first-visit recording and implement the welcome, photograph handoff, masked artwork, and staggered detail reveals.
+- [x] Distinguish first visits from repeat loads and provide replay for both in the review panel.
+- [x] Move the mobile ticker to the bottom and move logo/menu up without sacrificing above-the-fold ordering/status.
+- [x] Review and lock the revised hero and navigation before proceeding to milestone 4 — authorized 2 November 2026.
+
+Review at [the local development preview](http://localhost:3000/design-preview); read the [design and motion direction](docs/design-direction.md) for responsive rules, asset provenance, reference mapping, and review decisions. The preview is development-only and excluded from indexing. It uses the original Figma artwork and development navigation/brand/contact/ticker data. Review-only settings below the hero allow status and reduced-motion checks. Open/closed status is a labeled example, not a live hours calculation. The demonstration image sequence does not change the CMS hero selection. About remains a separate, unchanged section on the real homepage. Ticker phrases are editable under **Pages → Home → Hero → Ticker phrases** in the development Studio.
+
+User-specified carousel motion remains a 100 ms crossfade every 2.5 seconds, without visible carousel or ticker controls. The 2 November video study led to a dedicated 2.85-second first-visit welcome, once per tab session, and a 1.15-second repeat-load hero entrance. The welcome uses the existing logo and CMS tagline, “Tagesbar & Focacceria.” The image reveals horizontally, then settles into the carousel slot as the intact logo/ordering SVGs rise through masks and smaller details follow. Autoplay begins after the entrance settles. Early interaction, resizing, or reduced motion finishes/skips the entrance; slow images use a short fallback, and no JavaScript leaves content visible. The menu retains its 350 ms stroke animation and 450 ms panel reveal. Its own logo and ordering artwork rise through masks over 500 ms; on close, they leave in 180 ms before the panel finishes its 400 ms retraction (120 ms lead-in). Ordering SVG hover changes only color. Full hero CMS integration, live status, and production shared components remain in milestones 4–5.
+
+Verification: 11 regression tests, TypeScript, the development slug audit, and an isolated production build using development data pass. Chrome checks cover nine sizes from 320 × 568 through 3840 × 1080: viewport fitting, width caps, flush-left image, four-sided frame, no overflow, stationary toggle/order/status, focus/Escape, CMS links/logo, social typography, exact 8 px separator spacing, and a complete ticker loop at the widest cap. Initial frame-by-frame checks at the page top confirmed zero ordering/status movement. The later scroll correction supersedes the same-element implementation with a separate viewport grid using the same components. Normal-motion checks measure 100 ms fades and 2508–2509 ms between transition starts; hover playback, reduced motion, orange-only hover, rapid menu reversal, and `/order` 307 all pass. No runtime/hydration errors were observed. Evidence: `.sanity-backups/hero-continuity-verification.json` and `.sanity-backups/hero-motion-verification.json`.
+
+Review completed: the user authorized commits and continuation to step 4 on 2 November. Commits: `d9d30c8` (CMS ticker phrases), `fb0c54c` (responsive hero, navigation, artwork, and motion preview). About and other content sections remain in milestone 6.
+
+Additional 2 November verification: timed desktop/mobile screenshots and browser checks confirm the dedicated first visit, short repeat visit, both replay actions, bottom-aligned ticker, early Escape/Tab, resize recovery, slow-image fallback, live system reduced-motion changes, and useful no-JavaScript rendering. Nine viewport checks and frame-by-frame menu continuity still pass. Carousel remains 100 ms / approximately 2508 ms, with no controls added. All 11 regressions and the isolated development-data build/type checks pass. Evidence: `.sanity-backups/hero-entrance-verification.json`, `.sanity-backups/hero-entrance-recovery.json`, and the existing continuity/motion reports. No CMS mutation was required for this revision.
+
+Menu scroll clarification: the menu now uses the hero’s responsive grid in its own viewport layer. Logo, status, ordering, and links keep their initial viewport arrangement instead of inheriting the hero’s scrolled document coordinates. The hero remains in normal flow underneath, inert while covered; closing preserves scroll and returns focus to the toggle. Checks pass at three scroll depths across nine viewports, with normal-motion frame sampling at three sizes and open-menu resizing. Evidence: `.sanity-backups/menu-scroll-verification.json`. No CMS changes were needed.
 
 ## 4. Extend Sanity without complicating editing
 
 - [ ] Reuse `sectionHero.heroImages`; update labels and guidance for the new leading-image carousel.
-- [ ] Add an ordered list of owner-editable ticker phrases to the hero section.
+- [x] Add an ordered list of owner-editable ticker phrases to the hero section. Brought forward during step 3 at the user's request: local schema/query and preview rendering implemented; development Home hero seeded with the existing six phrases. Separators and spacing are frontend-owned.
 - [ ] Keep brand assets, contact information, map URL, hours, and SEO in their existing settings documents.
 - [ ] Add an easy structured weekly opening schedule, date exceptions, and temporary closures.
 - [ ] Agree how holiday closures are represented, preserving the current intent that holidays are closed.
@@ -182,19 +241,24 @@ Review point: responsive hero composition and representative content treatment a
 
 Acceptance: the new features are editable through the existing simple CMS organization, with global information maintained in one place.
 
+Ticker development change: `f803c306-580e-4053-9b34-84d9cda1f91a`, hero key `s1`, field `tickerPhrases`. A revision-guarded draft was created from the published development document, checked against the original, and published only to development. There was no existing homepage draft. The only content difference is the six-phrase array; all other changes are Sanity revision metadata. Before/after backups are in `.sanity-backups/development-ticker-before.json` and `.sanity-backups/development-ticker-after.json`. At final production rollout, add the field with a fresh backup and a guarded `setIfMissing`, preserving any newer owner values and all existing drafts.
+
 ## 5. Build the hero, carousel, and shared motion
 
 - [ ] Implement both Figma compositions as responsive layouts.
 - [ ] Use the supplied logo and “jetzt bestellen” SVG artwork, with an accessible link label and the correct `/order` destination.
 - [ ] Render the selected Sanity images in their owner-defined order inside the leading-image area.
-- [ ] Prototype quick transitions: approximately 250–450 ms changes and 1.5–2.5 second holds. These are starting values, not approved timings.
+- [ ] Carry over the requested 100 ms crossfade on a 2.5-second start-to-start cadence.
 - [ ] Keep the logo, address, live status, and ordering CTA stable during image changes.
-- [ ] Add manual navigation, touch support, and pause behavior.
+- [ ] Keep the carousel free of visible controls, counters, and manual gestures; autoplay unless motion is reduced.
 - [ ] Handle a single image as a static hero and provide a safe empty-image fallback.
 - [ ] Preload the next image, respect Sanity crops/hotspots, and prevent layout shifts.
 - [ ] Pause autoplay when offscreen or when the tab is hidden; support reduced motion.
-- [ ] Implement the owner-controlled moving ticker with pause/reduced-motion behavior.
-- [ ] Build a short first-entry sequence, provisionally once per browser session.
+- [ ] Implement the owner-controlled moving ticker without a pause button; respect reduced motion and background visibility.
+- [ ] Carry over the shared 2100 px content cap, viewport-fitting hero, and narrower desktop image cap.
+- [ ] Carry over the stationary handdrawn menu toggle, small CMS logo, plain navigation labels, shared status, and orange-only SVG ordering hover.
+- [ ] Carry over zero left image inset, the viewport outline, stationary ordering/status during menu transitions, main-link social styling, and automatic 8 px ticker separators.
+- [ ] Carry over the reviewed first-visit welcome and image handoff, shorter repeat-load entrance, and reduced-motion/interaction fallbacks.
 - [ ] Coordinate internal page transitions, navigation overlay, and section motion using shared timings and easing.
 - [ ] Verify keyboard use, focus management, anchors, browser back/forward, modifier-key links, and recovery from failed navigation.
 
@@ -228,7 +292,7 @@ Review point: all page types are approved, with content preservation verified ag
 
 - [ ] Compare document IDs, text, images, references, and draft state against the baseline; do not rely on counts alone.
 - [ ] Recheck all routes, redirects, internal links, canonical tags, sitemap entries, and ordering CTAs.
-- [ ] Test desktop and mobile browsers, keyboard navigation, reduced motion, and carousel controls.
+- [ ] Test desktop and mobile browsers, keyboard navigation, reduced motion, and automatic carousel/ticker playback.
 - [ ] Test opening-hour boundaries, closures, holiday handling, daylight-saving changes, and overnight schedules.
 - [ ] Test slow-loading images and navigation failures.
 - [ ] Check loading speed, layout stability, image sizing, and animation responsiveness.
@@ -245,8 +309,7 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 
 ## Decisions still to lock in
 
-- Final carousel transition style and cadence.
-- First-entry animation duration and replay policy; current proposal is once per browser session.
+- First-entry animation duration and replay policy; current preview is a 2.85 s welcome once per tab session and 1.15 s repeat-load entrance.
 - Tablet and shorter-screen hero behavior.
 - Holiday-closure representation and temporary-closure controls.
 - Placement of existing homepage content, including whether the standalone address section remains.
@@ -266,3 +329,11 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 | 1 November 2026 | Before committing, reran all 11 tests, TypeScript validation, and the development published-slug audit; all pass, with no pending development slug changes. Production remains unchanged. No push or deployment performed; later milestones remain unstarted pending the requested check-in. |
 | 1 November 2026 | Step 2 authorized and implemented: `/order` redirects to Degaso with `307` and `Cache-Control: no-store`; shared ordering links bypass prefetch and page-transition overlays. Verified against development with regression tests, type checking, an isolated build, HTTP checks, and browser interactions. Existing menu links are unchanged. No CMS mutations, commit, push, or deployment performed; ready for review. |
 | 1 November 2026 | User explicitly authorized commits for step 2. Committed the ordering route and navigation behavior as `c9ca238`; recorded completion and verification in the accompanying documentation commit. No CMS changes, push, or deployment performed. |
+| 1 November 2026 | Step 3 authorized. Re-read both Figma sketches, downloaded the original artwork, and examined the reference site's desktop/mobile layout and motion. Prepared `/design-preview` with responsive hero, carousel alternatives, ticker controls, sample status, navigation, and the complete existing About section. Added `docs/design-direction.md`. The direction awaits user review; no CMS mutations, commits, push, or deployment performed. |
+| 1 November 2026 | Step 3 verification passed: regression tests, TypeScript, a development-data production build, and six responsive viewport/browser interaction checks. Corrected the mobile sketch crop and reduced-motion hydration behavior during review. Design approval remains pending. |
+| 1 November 2026 | User narrowed step 3 to the hero and navigation and specified viewport-height fitting, a 2100 px content cap, automatic 100 ms crossfades every 2.5 seconds, no carousel/ticker controls, a stationary handdrawn menu toggle, plain CMS links, small menu logo, shared colored status, and orange-only ordering hover. Implemented all corrections and removed About from the preview. Nine viewport checks, animation timing/interaction checks, 11 regressions, TypeScript, and an isolated development-data build pass. Preview remains uncommitted; no CMS mutations, push, deployment, or move to the next milestone. |
+| 1 November 2026 | Second hero review: restored the flush-left photograph and orange viewport outline; kept one ordering link and status block mounted at unchanged coordinates throughout menu opening/closing; promoted social links to the main navigation treatment. Added `sectionHero.tickerPhrases` to the local Studio/query and seeded only the development Home hero with the existing six phrases, using revision guards and before/after preservation checks. The ticker now inserts automatic bullets with 8 px spacing and measures repetition to avoid wide-screen gaps. Nine responsive checks, frame-by-frame menu checks at three sizes, playback/accessibility checks, 11 tests, TypeScript, and an isolated development-data build pass. No commits, production changes, push, or deployment. |
+| 2 November 2026 | Reviewed the supplied 7.915 s `villas.mov` at 250 ms intervals. Adapted the horizontal photo reveal, intro focus/fade, image-to-layout handoff, masked branding, and staggered details into a 2.85 s first-visit welcome and 1.15 s repeat-load entrance. Moved the mobile ticker to the bottom and logo/menu up. Verified first/repeat/replay, early interaction, slow-image fallback, no-JavaScript rendering, resize and live reduced-motion recovery, nine viewports, stationary menu elements, and retained carousel cadence. Regression/type/build checks pass. Updated the design notes and plan; no content mutations, commits, push, or deployment. |
+| 2 November 2026 | Corrected menu behavior after scrolling: an independent viewport grid reuses the original responsive composition and shared ordering/status components. The menu logo and status remain visible, the page keeps its scroll position, and the toggle/focus behavior is preserved. Verified 27 viewport/scroll combinations plus normal-motion opening/closing and resizing. This supersedes the earlier same-DOM-element interpretation; changes remain uncommitted. |
+| 2 November 2026 | Reviewed both supplied menu recordings. Replaced the backdrop-only animation with a mask over the complete opaque menu, added independent masked entrances/exits for its logo and ordering SVG, and kept the inert hero painted underneath. This removes floating artwork and the scrolled-position snap on close. Verified top/scrolled transitions at three sizes, rapid reversals, orange-only hover, and reduced-motion scroll/focus behavior. No CMS changes or commits. |
+| 2 November 2026 | User locked in the completed design work and requested commits, documentation updates, then continuation to step 4. Committed `d9d30c8` (owner-managed ticker phrases) and `fb0c54c` (approved hero/navigation preview). All 11 regressions, TypeScript, isolated development-data build, 27 viewport/scroll checks, and six normal-motion artwork checks pass. No push, deployment, or production mutation. |
