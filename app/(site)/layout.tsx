@@ -11,7 +11,8 @@ import {
 import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { PageTransitionProvider } from "@/components/ui/PageTransition";
 import { ComingSoon } from "@/components/ComingSoon";
-import { Header } from "@/components/Header";
+import { SiteShell } from "@/components/hero/SiteShell";
+import { urlFor } from "@/sanity/lib/image";
 import { Footer } from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -70,12 +71,11 @@ export default async function SiteLayout({
 
   return (
     <PageTransitionProvider>
-      <Header
-        restaurantName={brand?.restaurantName}
-        logoSvg={logoSvg}
-        headerNav={headerNav}
-      />
-      <main className="min-h-svh">{children}</main>
+      <SiteShell data={{
+        brand: { name: brand?.restaurantName || "Tapparo", tagline: brand?.tagline, logo: brand?.logo?.asset ? urlFor(brand.logo).url() : null },
+        contact, hours, navigation: headerNav,
+      }}>
+      <main id="main-content" tabIndex={-1} className="min-h-svh">{children}</main>
       <Footer
         settings={{
           restaurantName: brand?.restaurantName,
@@ -88,6 +88,7 @@ export default async function SiteLayout({
         }}
         footerNav={footerNav}
       />
+      </SiteShell>
     </PageTransitionProvider>
   );
 }

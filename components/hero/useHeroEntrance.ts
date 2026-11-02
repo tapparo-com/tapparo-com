@@ -15,6 +15,8 @@ export function useHeroEntrance(
   root: RefObject<HTMLDivElement | null>,
   photo: RefObject<HTMLDivElement | null>,
   reduced: boolean,
+  sessionKey = INTRO_SESSION_KEY,
+  suspended = false,
 ) {
   const [entrance, setEntrance] = useState<HeroEntrance>({ mode: "idle", run: 0 });
   const started = useRef(false);
@@ -28,20 +30,22 @@ export function useHeroEntrance(
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || reduced) { finish(); return; }
     if (root.current) delete root.current.dataset.preparing;
     started.current = true;
-    try { sessionStorage.setItem(INTRO_SESSION_KEY, "true"); } catch { /* Storage is optional. */ }
+    try { sessionStorage.setItem(sessionKey, "true"); } catch { /* Storage is optional. */ }
     setEntrance(current => ({ mode, run: current.run + 1 }));
-  }, [finish, reduced, root]);
+  }, [finish, reduced, root, sessionKey]);
 
   useLayoutEffect(() => {
-    if (started.current) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || root.current?.dataset.entryExpired) {
+    if (started.current || suspended) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || root.current?.dataset.entryExpired
+      || Math.abs(root.current?.getBoundingClientRect().top || 0) > 1) {
       started.current = true;
       finish();
       return;
     }
     let first = true;
-    try { first = !sessionStorage.getItem(INTRO_SESSION_KEY); } catch { /* Still usable without storage. */ }
+    try { first = !sessionStorage.getItem(sessionKey); } catch { /* Still usable without storage. */ }
     const image = photo.current?.querySelector("img");
+    if (!image) { play("return"); return; }
     const ready = () => play(first ? "first" : "return");
     if (!first || (image?.complete && image.naturalWidth > 0)) { ready(); return; }
     // The image handoff needs a decoded photograph. On a slow/erroring request,
@@ -56,7 +60,7 @@ export function useHeroEntrance(
       image?.removeEventListener("load", loaded);
       image?.removeEventListener("error", fallback);
     };
-  }, [finish, photo, play, root]);
+  }, [finish, photo, play, root, sessionKey, suspended]);
 
   useEffect(() => { if (reduced) finish(); }, [reduced, finish]);
 
@@ -69,6 +73,7 @@ export function useHeroEntrance(
     // intro photograph travelling towards an outdated layout rectangle.
     window.addEventListener("resize", finish);
     window.addEventListener("wheel", finish, { passive: true });
+    window.addEventListener("scroll", finish, { passive: true });
     window.addEventListener("touchstart", finish, { passive: true });
     document.addEventListener("keydown", onKey);
     document.addEventListener("visibilitychange", onVisibility);
@@ -76,6 +81,7 @@ export function useHeroEntrance(
       clearTimeout(timer);
       window.removeEventListener("resize", finish);
       window.removeEventListener("wheel", finish);
+      window.removeEventListener("scroll", finish);
       window.removeEventListener("touchstart", finish);
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("visibilitychange", onVisibility);

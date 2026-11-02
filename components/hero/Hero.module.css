@@ -161,3 +161,23 @@
   .intro { display: none; }
   .preview[data-preparing] :is(.hero, .menuShell) { visibility: visible; }
 }
+
+/* Shared site chrome; the hero remains a normal, reorderable CMS section. */
+.siteShell { --ticker-height: 0px; }
+.siteShell:has([data-site-hero][data-has-ticker="true"]) { --ticker-height: 32px; }
+.pageHeader { height: var(--header-height); max-width: var(--content-max-width); padding: 14px 74px 14px 24px; display: flex; align-items: center; }
+.pageHeader > a { display: block; width: 160px; height: 60px; }
+.siteShell:has([data-section-page][data-has-leading-hero="true"]) .pageHeader { display: none; }
+.siteShell :global(main) > *, .siteShell :global(footer) { max-width: var(--content-max-width); margin-inline: auto; }
+.siteShell :global(main) > [data-section-page] { margin-left: 0; }
+.menuLinks > div { flex: none; }
+.menuLinks > div > a { display: block; }
+.photoFallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 32px; background: var(--color-background); }
+.photoFallback > span:first-child { width: min(70%, 360px); height: 130px; }
+.photoFallback > span:last-child { font-size: 16px; text-align: center; }
+.skipLink { position: fixed; top: 8px; left: 8px; z-index: 120; padding: 12px; background: var(--color-background); transform: translateY(-200%); }
+.skipLink:focus { transform: none; }
+.fallbackNavigation { display: flex; flex-wrap: wrap; gap: 24px; padding: 16px 24px; }
+@media (max-height: 500px) and (min-width: 640px) and (max-width: 1023px) {
+  .siteShell:has([data-site-hero][data-has-ticker="true"]) { --ticker-height: 28px; }
+}

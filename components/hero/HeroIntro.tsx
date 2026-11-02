@@ -3,16 +3,17 @@
 import Image from "next/image";
 import { useLayoutEffect, useState, type RefObject } from "react";
 import { motion } from "motion/react";
-import styles from "./DesignPreview.module.css";
+import styles from "./Hero.module.css";
 
 type Rect = { left: number; top: number; width: number; height: number };
 const HANDOFF_EASE = [0.76, 0, 0.24, 1] as const;
 
-export function HeroIntro({ photo, image, tagline, name }: {
+export function HeroIntro({ photo, image, tagline, name, logo }: {
   photo: RefObject<HTMLDivElement | null>;
-  image: { src: string; sketch: boolean };
+  image: { src: string; sketch?: boolean; position?: string };
   tagline?: string;
   name: string;
+  logo?: string | null;
 }) {
   const [geometry, setGeometry] = useState<{ start: Rect; target: Rect; mobile: boolean } | null>(null);
   const [landed, setLanded] = useState(false);
@@ -44,7 +45,7 @@ export function HeroIntro({ photo, image, tagline, name }: {
       <div>
         {/* The original artwork stays intact; only its wrapper is animated. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/design-preview/logo-mobile.svg" width={180} height={66} alt={name} />
+        <img src={logo || "/design-preview/logo-mobile.svg"} width={180} height={66} alt={name} />
         {tagline && <p>{tagline}</p>}
       </div>
     </motion.div>
@@ -56,7 +57,7 @@ export function HeroIntro({ photo, image, tagline, name }: {
         clipPath: { duration: 1.05, delay: 0, ease: HANDOFF_EASE },
       }} onAnimationComplete={() => setLanded(true)}>
       <div className={image.sketch ? styles.sketchFrame : styles.imageFrame}>
-        <Image src={image.src} alt="" fill sizes="(min-width: 2100px) 1200px, (min-width: 1024px) 57vw, 100vw" className={styles.photoImage} />
+        <Image src={image.src} alt="" fill priority sizes="(min-width: 2100px) 1200px, (min-width: 1024px) 57vw, 100vw" className={styles.photoImage} style={{ objectPosition: image.position }} />
       </div>
     </motion.div>}
   </div>;

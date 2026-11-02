@@ -58,7 +58,7 @@ export function Footer({ settings, footerNav }: FooterProps) {
                 XL: single row reordered (Pages, Contact, Hours, Follow) via order. */}
             <div className="flex flex-col gap-20 xl:flex-row">
               {/* Row 1 mobile: Hours + Pages */}
-              <div className="grid grid-cols-[fit-content(100%)_1fr] gap-x-8 xl:contents">
+              <div className="grid grid-cols-[fit-content(100%)_1fr] gap-x-4 sm:gap-x-8 xl:contents">
                 {settings?.openingHours && settings.openingHours.length > 0 && (
                   <div className="flex flex-col gap-7 xl:order-3">
                     <span className="text-base text-muted">Hours</span>

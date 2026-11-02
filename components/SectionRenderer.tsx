@@ -41,26 +41,12 @@ export async function SectionRenderer({ sections, shared }: Props) {
       })
     : null;
 
-  const heroIndex = sections.findIndex((s) => s._type === "sectionHero");
-  const heroSection = heroIndex !== -1 ? sections[heroIndex] : null;
-  const restSections = heroSection
-    ? sections.filter((_, i) => i !== heroIndex)
-    : sections;
-
   return (
-    <>
-      {heroSection && (
-        <SectionHero
-          key={heroSection._key}
-          restaurantName={shared?.restaurantName || "Tapparo"}
-          tagline={shared?.tagline}
-          logoSvg={shared?.logoSvg}
-          heroImages={heroSection.heroImages}
-        />
-      )}
-      <div className="relative z-10 bg-background">
-      {restSections.map((section) => {
+    <div data-section-page data-has-leading-hero={sections[0]?._type === "sectionHero"}>
+      {sections.map((section) => {
         switch (section._type) {
+          case "sectionHero":
+            return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} />;
           case "sectionSubhero":
             return (
               <SectionSubhero
@@ -147,7 +133,6 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return null;
         }
       })}
-      </div>
-    </>
+    </div>
   );
 }
