@@ -74,6 +74,20 @@ export const sectionHero = defineArrayMember({
   icon: ImageIcon,
   fields: [
     defineField({
+      name: "tickerPhrases",
+      title: "Ticker phrases",
+      type: "array",
+      description: "Add one word or phrase per entry and drag to reorder. Bullet separators and spacing are added automatically. Leave empty to hide the ticker.",
+      of: [defineArrayMember({
+        type: "string",
+        validation: (rule) => rule.required().custom((value) => {
+          if (!value?.trim()) return "Enter a word or phrase.";
+          if (/[•·]/.test(value)) return "Add each phrase separately. Bullet separators are added automatically.";
+          return true;
+        }),
+      })],
+    }),
+    defineField({
       name: "heroImages",
       title: "Background Images",
       type: "array",
