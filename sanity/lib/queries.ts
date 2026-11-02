@@ -1,7 +1,7 @@
 import { defineQuery } from "next-sanity";
 
 // --- Shared image fragment ---
-const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt`;
+const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt, crop, hotspot`;
 
 // --- Site Settings (split across 5 documents) ---
 export const BRAND_QUERY = defineQuery(/* groq */ `

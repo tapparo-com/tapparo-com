@@ -89,9 +89,9 @@ export const sectionHero = defineArrayMember({
     }),
     defineField({
       name: "heroImages",
-      title: "Background Images",
+      title: "Carousel images",
       type: "array",
-      description: "Full-screen background images that auto-rotate. Upload at least 1920×1080px for best quality. The logo and tagline from Site Settings are overlaid automatically.",
+      description: "Choose the leading hero photographs and drag to set their order. The first is shown first; one image stays still. Use large, sharp photos (at least 1920 px wide) and set the crop/hotspot for responsive screens. Playback timing and layout are handled by the website.",
       of: [
         defineArrayMember({
           type: "image",
@@ -101,7 +101,7 @@ export const sectionHero = defineArrayMember({
               .assetRequired()
               .error("Upload an image — items without an image are not shown on the website."),
           fields: [
-            defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for screen readers and SEO. Example: 'Bar counter with focaccia and wine glasses'" }),
+            defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for screen readers and SEO. Example: 'Bar counter with focaccia and wine glasses'", validation: rule => rule.required().warning("Describe the photograph for screen readers.") }),
           ],
         }),
       ],
