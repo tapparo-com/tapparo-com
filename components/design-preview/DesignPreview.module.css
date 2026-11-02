@@ -1,0 +1,162 @@
+.preview {
+  --header-height: clamp(78px, 14dvh, 148px);
+  --brand-row: clamp(80px, 19dvh, 210px);
+  --ticker-height: 32px;
+  color: var(--color-foreground);
+  background: var(--color-background);
+  font-family: var(--font-instrument-sans), sans-serif;
+}
+.preview[data-has-ticker="false"] { --ticker-height: 0px; }
+.viewportOutline { position: fixed; inset: 0; height: 100dvh; border: 1px solid var(--color-accent); z-index: 110; pointer-events: none; }
+.preview :is(button, a, summary, select, textarea) { -webkit-tap-highlight-color: transparent; }
+.preview :is(button, summary) { cursor: pointer; }
+.preview button:disabled { cursor: default; opacity: .5; }
+.preview :is(a, button, select, textarea, summary, input):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 5px; }
+.viewportLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 57fr) minmax(0, 43fr);
+  grid-template-rows: minmax(0, 1fr) var(--brand-row) var(--ticker-height);
+  column-gap: 24px;
+  row-gap: 14px;
+  width: 100%;
+  max-width: var(--content-max-width);
+  height: 100svh;
+  height: 100dvh;
+  margin-inline: 0 auto;
+  padding: 14px 14px 0 0;
+}
+.hero { position: relative; }
+.photo { grid-area: 1 / 1; position: relative; overflow: hidden; min-width: 0; min-height: 0; max-width: 1200px; background: var(--color-foreground); }
+.heroBackground { display: contents; }
+.imageLayer, .imageFrame, .sketchFrame { position: absolute; inset: 0; }
+.photoImage { object-fit: cover; object-position: center; }
+.logo { grid-area: 2 / 1; width: min(calc(100% - 14px), 531px); height: 100%; min-height: 0; align-self: center; margin-left: 14px; }
+.artwork, .artwork img { display: block; width: 100%; height: 100%; }
+.artworkMask { display: block; overflow: hidden; height: 100%; }
+.artworkEntrance { display: block; height: 100%; transform-origin: center bottom; }
+.order .artworkMask:focus-within { overflow: visible; }
+.artwork img { object-fit: contain; object-position: left center; }
+.order { grid-area: 2 / 2; align-self: center; width: min(100%, calc(var(--brand-row) * 6.9)); }
+.orderingLink { display: block; color: var(--color-foreground); transition: color .2s ease; }
+.orderingLink:is(:hover, :focus-visible) { color: var(--color-accent); }
+.orderArtwork {
+  display: block;
+  width: 100%;
+  aspect-ratio: 831.836 / 120.127;
+  background: currentColor;
+  mask: url('/design-preview/order-desktop.svg') center / contain no-repeat;
+}
+.details { grid-area: 1 / 2; align-self: start; padding: 5px 60px 0 0; }
+.statusDetails { font-size: 16px; line-height: 1.35; letter-spacing: -.08px; }
+.statusDetails > p:first-child { display: flex; align-items: center; gap: 8px; }
+.statusDot { flex: 0 0 12px; width: 12px; height: 12px; border-radius: 50%; background: #6B4443; }
+.statusDot[data-open="true"] { background: #5ACF00; }
+.statusDetails .address { display: block; margin-left: 20px; margin-top: 3px; max-width: 42ch; }
+.statusDetails a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.ticker { grid-area: 3 / 1 / 4 / -1; overflow: hidden; background: var(--color-accent); color: var(--color-background); font-size: 16px; line-height: 32px; margin-right: -14px; }
+.tickerTrack { display: flex; width: max-content; animation: ticker 38s linear infinite; }
+.tickerCopy, .tickerSequence { display: flex; flex: none; }
+.tickerItem { display: flex; align-items: center; flex: none; white-space: nowrap; gap: 8px; padding-right: 8px; }
+.tickerSeparator { flex: none; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+.imageError { position: absolute; inset: auto 16px 16px; padding: 12px; background: var(--color-background); }
+
+.menuShell { position: fixed; inset: 0; width: 100%; max-width: var(--content-max-width); margin-inline: 0 auto; z-index: 63; pointer-events: none; }
+.menuButton { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; display: grid; place-items: center; z-index: 2; pointer-events: auto; }
+.menuButton svg { overflow: visible; }
+.navigation { position: fixed; inset: 0; height: 100dvh; z-index: 60; background: var(--color-background); }
+.navigationLayout > :is(.order, .details) { position: relative; z-index: 2; }
+.menuArtworkMask { display: block; width: 100%; overflow: hidden; }
+.menuArtworkMask:focus-within { overflow: visible; }
+.menuArtwork { display: block; width: 100%; }
+.menuLogo { grid-area: 1 / 1; position: relative; z-index: 62; align-self: start; width: 160px; height: 44px; display: flex; align-items: center; margin: 8px 24px; }
+.menuLogo img { display: block; width: 100%; height: auto; max-height: 60px; object-fit: contain; object-position: left center; }
+.menuLinks { grid-area: 1 / 1; position: relative; z-index: 61; min-height: 0; display: flex; flex-direction: column; justify-content: safe center; align-items: flex-start; gap: 12px; padding: 80px 24px 20px; overflow-y: auto; overscroll-behavior: contain; }
+.menuLinks a { flex: none; font-size: clamp(44px, 6.5vw, 112px); letter-spacing: -.05em; line-height: 1.05; transition: color .2s ease; }
+.menuLinks a:hover { color: var(--color-accent); }
+.menuLinks .menuPhone { margin-top: 12px; font-size: 16px; letter-spacing: normal; }
+
+.review { position: relative; max-width: var(--content-max-width); margin-inline: auto; padding: 16px clamp(20px, 4vw, 80px); border-bottom: 1px solid var(--color-border); font-size: 13px; }
+.review summary { margin-left: auto; width: fit-content; padding: 9px 14px; background: var(--color-foreground); color: var(--color-background); list-style: none; }
+.review summary::-webkit-details-marker { display: none; }
+.reviewPanel { width: min(560px, 100%); margin: 12px 0 0 auto; padding: 20px; background: var(--color-background); border: 1px solid var(--color-foreground); }
+.reviewPanel p { margin-bottom: 18px; line-height: 1.45; }
+.reviewPanel p:last-child { margin-block: 18px 0; color: #5a5a5a; }
+.reviewPanel label { display: grid; gap: 6px; margin-top: 14px; }
+.reviewPanel :is(select, textarea) { width: 100%; padding: 9px; border: 1px solid #8d8d8d; border-radius: 0; background: transparent; font: inherit; }
+.reviewPanel .checkbox { display: flex; align-items: center; gap: 8px; }
+.reviewButtons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.reviewButtons button { padding: 8px; border: 1px solid var(--color-foreground); flex: 1; }
+.transitionDemo { position: fixed; inset: 0; z-index: 100; background: var(--color-accent); pointer-events: none; }
+
+/* The full first-visit welcome hands its photograph to the existing hero.
+   Returning visits use only the shorter, individually staggered reveals. */
+.intro { position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+.introBackdrop { position: absolute; inset: 0; background: var(--color-background); }
+.introPhoto { position: fixed; overflow: hidden; background: var(--color-background); }
+.introGreeting { position: absolute; left: 0; top: 0; display: grid; place-items: center; text-align: center; }
+.introGreeting img { display: block; margin-inline: auto; }
+.introGreeting p { margin-top: 14px; font-size: clamp(14px, 1.2vw, 18px); }
+.preview[data-preparing] :is(.hero, .menuShell) { visibility: hidden; }
+.preview[data-entrance="first"] { --entry-delay: 1.7s; }
+.preview[data-entrance="return"] { --entry-delay: 0s; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .logo .artworkEntrance { animation: artworkIn .9s cubic-bezier(.22, 1, .36, 1) var(--entry-delay) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .order .artworkEntrance { animation: artworkIn .9s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .12s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .statusDetails > :first-child { animation: detailIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .35s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .statusDetails > .address { animation: detailIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .43s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .menuButton > svg { animation: detailIn .45s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .38s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .ticker { animation: tickerIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .5s) both; }
+.preview[data-entrance="first"] .photo { animation: photoHandoff .001s linear 2.35s both; }
+.preview[data-entrance="return"] .photo { animation: photoIn .95s cubic-bezier(.76, 0, .24, 1) both; }
+.preview[data-entrance="return"] .photoImage { animation: photoSettle 1.1s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes artworkIn { from { transform: translateY(105%) scaleY(.96); } to { transform: translateY(0) scaleY(1); } }
+@keyframes detailIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes tickerIn { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes photoIn { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes photoSettle { from { transform: scale(1.045); } to { transform: scale(1); } }
+@keyframes photoHandoff { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 1023px) {
+  .viewportLayout { padding: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--header-height) minmax(0, 1fr) auto auto var(--ticker-height); gap: 0; }
+  .ticker { grid-area: 5 / 1; margin: 0; }
+  .logo { grid-area: 1 / 1; width: min(67%, 360px); height: calc(var(--header-height) - 18px); margin-left: 10px; }
+  .menuButton { top: calc((var(--header-height) - 44px) / 2); right: 14px; }
+  .photo { grid-area: 2 / 1; margin: 0 20px 0 0; }
+  .sketchFrame { inset: auto; width: 138.91%; height: 143.14%; left: -15.09%; top: -31.29%; }
+  .order { grid-area: 3 / 1; width: min(calc(100% - 24px), 680px, 66dvh); margin: clamp(12px, 2dvh, 22px) 12px; }
+  .orderArtwork { aspect-ratio: 370.959 / 53.686; mask-image: url('/design-preview/order-mobile.svg'); }
+  .details { grid-area: 4 / 1; padding: 0 12px max(12px, env(safe-area-inset-bottom)); }
+  .statusDetails { font-size: clamp(13px, 3.9vw, 16px); }
+  .menuLogo { grid-area: 1 / 1; align-self: center; width: 132px; margin: 0 24px; }
+  .menuLinks { grid-area: 2 / 1; gap: 12px; padding: 12px 24px; }
+  .menuLinks a { font-size: clamp(44px, 9dvh, 86px); }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sketchFrame { inset: 0; width: 100%; height: 100%; }
+}
+@media (max-height: 500px) and (min-width: 640px) and (max-width: 1023px) {
+  .preview { --ticker-height: 28px; }
+  .viewportLayout { padding: 10px 10px 0 0; grid-template-columns: minmax(0, 57fr) minmax(0, 43fr); grid-template-rows: minmax(0, 1fr) 72px var(--ticker-height); column-gap: 18px; row-gap: 10px; }
+  .photo { grid-area: 1 / 1; margin: 0; }
+  .sketchFrame { inset: 0; width: 100%; height: 100%; }
+  .logo { grid-area: 2 / 1; width: 196px; height: 72px; margin-left: 10px; }
+  .order { grid-area: 2 / 2; width: 100%; margin: 0; }
+  .details { grid-area: 1 / 2; padding: 4px 48px 0 0; }
+  .statusDetails { font-size: 13px; }
+  .ticker { grid-area: 3 / 1 / 4 / -1; margin: 0 -10px 0 0; line-height: 28px; font-size: 14px; }
+  .menuButton { top: 10px; right: 10px; }
+  .menuLogo { grid-area: 1 / 1; align-self: start; margin: 0 24px; }
+  .menuLinks { grid-area: 1 / 1; gap: 6px; padding: 60px 24px 8px; }
+  .menuLinks a { font-size: 36px; }
+}
+.preview[data-reduced-motion="true"] .tickerTrack { animation: none; }
+.preview[data-reduced-motion="true"] :is(.orderingLink, .menuLinks a) { transition: none; }
+.preview[data-reduced-motion="true"] :is(.artworkEntrance, .statusDetails > *, .menuButton > svg, .ticker, .photo, .photoImage) { animation: none; }
+.preview[data-reduced-motion="true"] .intro { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tickerTrack { animation: none; }
+  .orderingLink, .menuLinks a { transition: none; }
+  .preview :is(.artworkEntrance, .statusDetails > *, .menuButton > svg, .ticker, .photo, .photoImage) { animation: none; }
+  .intro { display: none; }
+  .preview[data-preparing] :is(.hero, .menuShell) { visibility: visible; }
+}

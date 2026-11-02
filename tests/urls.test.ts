@@ -48,7 +48,7 @@ test("manual slugs cannot bypass format, length, or reserved-route rules", () =>
     assert.notEqual(validateSlug(slug, "post"), true, slug);
   }
   for (const type of ["page", "post", "legalPage"]) {
-    for (const slug of ["menu", "stories", "order", "studio", "api", "opengraph-image"]) {
+    for (const slug of ["menu", "stories", "order", "design-preview", "studio", "api", "opengraph-image"]) {
       assert.notEqual(validateSlug(slug, type), true, `${type}:${slug}`);
     }
   }

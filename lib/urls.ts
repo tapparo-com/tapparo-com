@@ -3,7 +3,7 @@ export const SLUG_MAX_LENGTH = 96;
 export const ROUTE_TYPES = ["page", "post", "legalPage"] as const;
 export const SLUG_TYPES = [...ROUTE_TYPES, "menuCategory"] as const;
 export const RESERVED_SLUGS = new Set([
-  "home", "menu", "stories", "order", "studio", "api", "_next", "_vercel",
+  "home", "menu", "stories", "order", "design-preview", "studio", "api", "_next", "_vercel",
   "favicon.ico", "robots.txt", "sitemap.xml", "manifest.webmanifest",
   "icon", "apple-icon", "opengraph-image", "twitter-image",
 ]);

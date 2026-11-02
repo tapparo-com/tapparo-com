@@ -26,6 +26,7 @@ html {
 
 @layer base {
   :root {
+    --content-max-width: 2100px;
     --gutter: 624px;
     --content-gap: 40px;
   }
