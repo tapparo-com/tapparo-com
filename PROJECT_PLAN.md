@@ -3,7 +3,7 @@
 Created: 31 October 2026  
 Last updated: 2 November 2026
 
-Status: Milestones 1–4 are locked in, committed, and locally validated. Milestone 4 was approved on 2 November 2026: `0426fae` adds structured hours and live status; `b265868` clarifies carousel editing and preserves image crops. Milestone 5 is now in progress: integrate the approved hero, CMS-selected carousel, shared navigation, and page motion. All implementation and content work uses development. Production rollout remains deferred until the full result is approved. Further implementation commits require explicit lock-in.
+Status: Milestones 1–5 are locked in, committed, and locally validated. Step 5 was approved on 2 November 2026: `a7bc4bc` adds coordinated motion and live reduced-motion handling; `620a611` integrates the CMS hero and shared navigation. Step 6 is now in progress: redesign the remaining homepage sections while preserving their full content, assets, and CMS order. All implementation and content work uses development. Production rollout remains deferred until the full result is approved. Further implementation commits require explicit lock-in.
 
 ## Working agreement
 
@@ -23,8 +23,8 @@ Status: Milestones 1–4 are locked in, committed, and locally validated. Milest
 | 2. Ordering route | Committed — production deferred to final release | Yes — 1 November 2026 | `c9ca238` / not released |
 | 3. Design and motion direction | Committed — approved direction, production integration in step 5 | Yes — 2 November 2026 | `d9d30c8`, `fb0c54c` / not released |
 | 4. Sanity enhancements | Committed — production deferred to final release | Yes — 2 November 2026 | `0426fae`, `b265868`; ticker field: `d9d30c8` |
-| 5. Hero, carousel, and shared motion | In progress | No | — |
-| 6. Remaining homepage sections | Not started | No | — |
+| 5. Hero, carousel, and shared motion | Committed — production deferred to final release | Yes — 2 November 2026 | `a7bc4bc`, `620a611` |
+| 6. Remaining homepage sections | In progress | No | — |
 | 7. Stories, menu, and imprint | Not started | No | — |
 | 8. Verification, polish, and release | Not started | No | — |
 
@@ -258,24 +258,32 @@ Evidence: `.sanity-backups/development-hours-before.json`, `development-hours-af
 
 ## 5. Build the hero, carousel, and shared motion
 
-- [ ] Implement both Figma compositions as responsive layouts.
-- [ ] Use the supplied logo and “jetzt bestellen” SVG artwork, with an accessible link label and the correct `/order` destination.
-- [ ] Render the selected Sanity images in their owner-defined order inside the leading-image area.
-- [ ] Carry over the requested 100 ms crossfade on a 2.5-second start-to-start cadence.
-- [ ] Keep the logo, address, live status, and ordering CTA stable during image changes.
-- [ ] Keep the carousel free of visible controls, counters, and manual gestures; autoplay unless motion is reduced.
-- [ ] Handle a single image as a static hero and provide a safe empty-image fallback.
-- [ ] Preload the next image, respect Sanity crops/hotspots, and prevent layout shifts.
-- [ ] Pause autoplay when offscreen or when the tab is hidden; support reduced motion.
-- [ ] Implement the owner-controlled moving ticker without a pause button; respect reduced motion and background visibility.
-- [ ] Carry over the shared 2100 px content cap, viewport-fitting hero, and narrower desktop image cap.
-- [ ] Carry over the stationary handdrawn menu toggle, small CMS logo, plain navigation labels, shared status, and orange-only SVG ordering hover.
-- [ ] Carry over zero left image inset, the viewport outline, stationary ordering/status during menu transitions, main-link social styling, and automatic 8 px ticker separators.
-- [ ] Carry over the reviewed first-visit welcome and image handoff, shorter repeat-load entrance, and reduced-motion/interaction fallbacks.
-- [ ] Coordinate internal page transitions, navigation overlay, and section motion using shared timings and easing.
-- [ ] Verify keyboard use, focus management, anchors, browser back/forward, modifier-key links, and recovery from failed navigation.
+- [x] Implement both Figma compositions as responsive layouts.
+- [x] Use the supplied logo and “jetzt bestellen” SVG artwork, with an accessible link label and the correct `/order` destination.
+- [x] Render the selected Sanity images in their owner-defined order inside the leading-image area.
+- [x] Carry over the requested 100 ms crossfade on a 2.5-second start-to-start cadence.
+- [x] Keep the logo, address, live status, and ordering CTA stable during image changes.
+- [x] Keep the carousel free of visible controls, counters, and manual gestures; autoplay unless motion is reduced.
+- [x] Handle a single image as a static hero and provide a safe empty-image fallback.
+- [x] Preload the next image, respect Sanity crops/hotspots, and prevent layout shifts.
+- [x] Pause autoplay when offscreen or when the tab is hidden; support reduced motion.
+- [x] Implement the owner-controlled moving ticker without a pause button; respect reduced motion and background visibility.
+- [x] Carry over the shared 2100 px content cap, viewport-fitting hero, and narrower desktop image cap.
+- [x] Carry over the stationary handdrawn menu toggle, small CMS logo, plain navigation labels, shared status, and orange-only SVG ordering hover.
+- [x] Carry over zero left image inset, the viewport outline, stationary ordering/status during menu transitions, main-link social styling, and automatic 8 px ticker separators.
+- [x] Carry over the reviewed first-visit welcome and image handoff, shorter repeat-load entrance, and reduced-motion/interaction fallbacks.
+- [x] Coordinate internal page transitions, navigation overlay, and section motion using shared timings and easing.
+- [x] Verify keyboard use, focus management, anchors, browser back/forward, modifier-key links, and recovery from failed navigation.
 
 Review point: lock the hero appearance, carousel cadence, ticker behavior, menu animation, and page-transition timing.
+
+Implementation completed locally on 2 November 2026. The hero renders from `sectionHero` in CMS order, using only its selected images and the shared Site Settings/navigation. The current development selection contains one image, so it stays static. Crop/hotspot handling, next-image loading, empty/failed-image fallbacks, the bottom ticker, live status, original SVG ordering, and the approved intro/menu treatment are connected. Shared navigation replaces the old header/menu components across the site. Other sections retain their content and remain separate; no CMS content or draft was changed.
+
+Internal transitions now coordinate a 300 ms cover and reveal with routing, defer hero entrances until uncovered, preserve link query/fragment/options, and recover from errors, stalled requests, history changes, Escape, tab hiding, and live reduced-motion changes. Existing sections remain readable without JavaScript. A small footer spacing fix prevents overflow at 320 px.
+
+Verification: all 22 tests, TypeScript, the development slug audit, and an isolated development-data production build pass. The build still prerenders the homepage statically. Browser checks pass for 27 viewport/scroll combinations; real menu/stories/home transitions and back/forward; anchors, object hrefs, replace, modifier/new-tab behavior, 404 and stalled-request recovery; 100 ms fades with approximately 2.5-second cadence; single/empty/failed-image cases; section reordering; offscreen/menu/reduced-motion suspension; desktop/mobile first and repeat entrances; and no-JavaScript content/navigation. Temporary fixture routes were removed before building, without any CMS mutations. The integrated menu's normal-motion geometry and ordering bypass were also checked.
+
+See [the implementation and review record](docs/hero-integration.md). Local browser/build evidence is stored under `.sanity-backups/step5-*`. Step 5 was approved and committed on 2 November as `a7bc4bc` and `620a611`. Production is unchanged, with no push or deployment. Step 6 is now authorized.
 
 ## 6. Redesign the remaining homepage
 
@@ -322,9 +330,9 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 
 ## Decisions still to lock in
 
-- First-entry animation duration and replay policy; current preview is a 2.85 s welcome once per tab session and 1.15 s repeat-load entrance.
-- Tablet and shorter-screen hero behavior.
-- Holiday-closure representation and temporary-closure controls.
+- Remaining homepage compositions and section motion (step 6).
+- Stories, menu, and imprint layouts (step 7).
+- Final release approval and production rollout (step 8).
 - Placement of existing homepage content, including whether the standalone address section remains.
 - Scope of pinned story showcases and any additional animation dependency.
 
@@ -351,5 +359,6 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 | 2 November 2026 | Reviewed both supplied menu recordings. Replaced the backdrop-only animation with a mask over the complete opaque menu, added independent masked entrances/exits for its logo and ordering SVG, and kept the inert hero painted underneath. This removes floating artwork and the scrolled-position snap on close. Verified top/scrolled transitions at three sizes, rapid reversals, orange-only hover, and reduced-motion scroll/focus behavior. No CMS changes or commits. |
 | 2 November 2026 | User locked in the completed design work and requested commits, documentation updates, then continuation to step 4. Committed `d9d30c8` (owner-managed ticker phrases) and `fb0c54c` (approved hero/navigation preview). All 11 regressions, TypeScript, isolated development-data build, 27 viewport/scroll checks, and six normal-motion artwork checks pass. No push, deployment, or production mutation. |
 | 2 November 2026 | Committed the step-3 records as `71a8815`, then implemented step 4 in development. Added structured hours/exceptions/closures, migrated only `settingsHours`, connected live preview status and derived display rows, clarified carousel editing, and added tests plus an owner guide. All existing drafts and original text remain unchanged; 20 tests, type/build checks, schema validation, and live-browser checks pass. Step 4 is ready for review and uncommitted; no production changes, push, deployment, or step-5 work. |
-
 | 2 November 2026 | User approved step 4 and requested focused commits followed by step 5. Committed structured hours/live status as `0426fae` and carousel editing/crop preservation as `b265868`; all 20 tests and type checks pass. Confirmed browser-clock status with neutral SSR rendering. Recorded completion and began CMS hero/navigation integration; production remains unchanged. |
+| 2 November 2026 | Recorded step-4 completion in `dc0002d`, then completed step 5 locally. Integrated the CMS hero and shared navigation, image crop/hotspot handling, loading/failure states, and coordinated page motion. Preserved all content and made no CMS mutations. All 22 tests, type/build checks, and responsive/motion/navigation checks pass. Step 5 is ready for review and uncommitted; production unchanged. |
+| 2 November 2026 | User approved step 5 for commit and authorized step 6. Committed coordinated motion as `a7bc4bc` and CMS hero/shared navigation as `620a611`. All 22 tests and type checks pass; removed a stale generated type left by the deleted local test route. Saved a fresh development home/contact/revision inventory and began the remaining homepage redesign. No production changes or deployment. |

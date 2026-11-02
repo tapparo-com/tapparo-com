@@ -23,7 +23,7 @@ In **Pages → Home → Hero**:
 - **Ticker phrases** is one phrase per entry. Drag to reorder, leave empty to hide. The frontend adds bullets and their 8 px spacing.
 - Layout, animation duration, and carousel cadence stay in the frontend. The owner does not need to edit those parameters.
 
-The design preview still uses its approved demonstration image sequence. Rendering the selected CMS sequence in the public hero belongs to milestone 5; this step clarifies editing and preserves crop/hotspot data in queries.
+Milestone 5 now renders the selected CMS sequence on the local homepage, respecting crops/hotspots. The separate design preview retains its approved demonstration sequence. See [Hero integration](hero-integration.md).
 
 ## Rules used by the live indicator
 
@@ -69,4 +69,4 @@ The tests cover regular boundaries, split shifts, overnight/week carry-over, dat
 
 Six local fixtures were also checked through Sanity's validation engine in Studio mode: three valid documents pass, while overlapping hours, duplicate special dates, and reversed closure dates produce publication-blocking errors. The installed CLI reports object-level validation failures as warnings, so Studio-mode validation was checked separately. This is an engine check; an authenticated walkthrough of the editing UI remains part of review.
 
-Public homepage sections, stories, menu, imprint, navigation, and brand content remain intact. Integration of the approved hero into the section renderer is still milestone 5.
+Public homepage sections, stories, menu, imprint, navigation, and brand content remain intact. Milestone 5 integrates the approved hero into the section renderer; see its separate review record.

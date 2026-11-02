@@ -7,7 +7,9 @@ Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Ne
 - [Approved design and motion direction](docs/design-direction.md)
 - [Opening hours, live status, and hero editing](docs/opening-hours.md)
 
-The development-only [design preview](http://localhost:3000/design-preview) reads ticker phrases from **Pages → Home → Hero → Ticker phrases** in the local Studio. Add one word or phrase per item and drag to reorder; the website adds `•` separators with 8 px spacing automatically. An empty list hides the ticker. The original public homepage remains in place until the approved redesign is integrated in step 5. The design preview and ticker field are committed (`fb0c54c`, `d9d30c8`); structured opening hours and the live indicator are committed (`0426fae`, `b265868`). Step 5 is now integrating the approved design into the CMS section renderer. Edit the regular week, special dates, and closures in **Site Settings → Opening Hours**. Original text hours are retained, and unmigrated datasets keep their existing display.
+The [local homepage](http://localhost:3000/) now renders the approved hero from the development CMS. **Pages → Home → Hero** controls carousel images and ticker phrases; **Site Settings → Opening Hours** controls the shared live indicator. The current hero selects one photograph, so it stays static until more images are selected. All other sections and page content remain preserved.
+
+Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`). Step 6 is now redesigning the remaining homepage sections. See [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
 
 ## Architecture
 
@@ -47,9 +49,8 @@ app/
 components/
   sections/            # Page sections (Hero, SubHero, Quote, Gallery, etc.)
   ui/                  # Reusable UI components
-  Header.tsx           # Sticky header with menu toggle
+  hero/                # Shared hero artwork, intro, viewport layout, and site navigation
   Footer.tsx           # Site footer
-  MenuOverlay.tsx      # Full-screen navigation overlay
   ComingSoon.tsx       # Coming soon page
   SectionRenderer.tsx  # Maps CMS section types to React components
   PostBody.tsx         # Blog post body renderer (Portable Text)

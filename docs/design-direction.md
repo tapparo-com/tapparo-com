@@ -1,6 +1,6 @@
 # Tapparo — design and motion direction
 
-Prepared 1 November 2026; updated 2 November 2026 after the supplied motion recording. **Approved for implementation on 2 November 2026.** Milestone 3 is committed as `d9d30c8` and `fb0c54c`. Integration into the public page-builder remains milestone 5; production is unchanged.
+Prepared 1 November 2026; updated 2 November 2026 after the supplied motion recording. **Approved for implementation on 2 November 2026.** Milestone 3 is committed as `d9d30c8` and `fb0c54c`. Milestone 5 now integrates this direction into the local public page builder; see [the integration record](hero-integration.md). Production is unchanged.
 
 ## Review the prototype
 
@@ -101,8 +101,8 @@ An early click/tap, scroll gesture, Tab, or Escape finishes the entrance immedia
 - About remains a separate existing section. It is not rendered or redesigned in this preview.
 - Navigation labels/destinations, social links, optional phone, small menu logo, address, and map link are read from development. The ordering artwork uses the established `/order` route.
 - Ticker is an additive `tickerPhrases` string-array field on the existing Hero section. The development Home document's hero (`_key: s1`) was seeded with the current phrases using revision guards. Before/after comparison confirmed only this field and Sanity revision metadata changed. A newly created draft was published only to development; there was no pre-existing homepage draft. Backups: `.sanity-backups/development-ticker-before.json` and `.sanity-backups/development-ticker-after.json`. Production seeding remains part of the approved final rollout.
-- The original homepage and all story, menu, and legal templates retain their existing rendering.
-- This review route is a composition prototype. Production work will carry the approved treatment into reusable section components and shared navigation, preserving the existing page-builder structure.
+- The approved hero and shared navigation are now integrated on the local site in milestone 5. Other homepage sections and story, menu, and legal content/templates are preserved.
+- This review route remains a composition prototype. Milestone 5 shares its artwork, layout, and entrance components with the real CMS section and navigation.
 - Site Settings remains the source of brand/contact/hours data. The prototype uses the exact Figma logo asset for comparison; integration with the owner's brand fields is part of milestone 5.
 - Live status now uses structured development hours, date exceptions, temporary closures, and `Europe/Berlin` calculations. The original free-text hours were preserved during the guarded migration. Missing or invalid structured settings produce a neutral status.
 
