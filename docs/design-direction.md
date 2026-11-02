@@ -8,7 +8,7 @@ With the local development server running, open [the design preview](http://loca
 
 The preview contains only the responsive hero, navigation, and motion samples. About is a separate section and is outside this milestone. Open **Designprobe · Einstellungen und Statusbeispiel** below the hero to review open/closed states and reduced motion. **Erstbesuch ansehen** replays the dedicated welcome; **Kurzen Einstieg ansehen** replays the ordinary page entrance. A separate button replays the page-transition sample. These review settings are outside the proposed product interface. Edit ticker phrases in the development Studio under **Pages → Home → Hero → Ticker phrases**. Carousel timing is fixed at the user's requested 100 ms crossfade every 2.5 seconds.
 
-The status is a **demonstration, not a live opening-hours calculation**, and the image sequence is still a preview. The ticker now reads `sectionHero.tickerPhrases`, an ordered string array in the development dataset. The existing six preview phrases were added to that field on the development homepage; no existing content or drafts were replaced. Production remains unchanged. Structured hours and the remaining CMS enhancements belong to milestones 4–5.
+Since milestone 4, status defaults to the **live development opening schedule**, with explicit design overrides in the review panel. The image sequence is still a preview. The ticker now reads `sectionHero.tickerPhrases`, an ordered string array in the development dataset. The existing six preview phrases were added to that field on the development homepage; no existing content or drafts were replaced. Production remains unchanged. Structured hours and their owner workflow are documented in [Opening hours and hero editing](opening-hours.md); full CMS image rendering remains milestone 5.
 
 ## References and interpretation
 
@@ -104,7 +104,7 @@ An early click/tap, scroll gesture, Tab, or Escape finishes the entrance immedia
 - The original homepage and all story, menu, and legal templates retain their existing rendering.
 - This review route is a composition prototype. Production work will carry the approved treatment into reusable section components and shared navigation, preserving the existing page-builder structure.
 - Site Settings remains the source of brand/contact/hours data. The prototype uses the exact Figma logo asset for comparison; integration with the owner's brand fields is part of milestone 5.
-- Live opening status requires structured hours, exceptions, and `Europe/Berlin` calculations. No attempt is made to infer a reliable live schedule from the current free-text rows.
+- Live status now uses structured development hours, date exceptions, temporary closures, and `Europe/Berlin` calculations. The original free-text hours were preserved during the guarded migration. Missing or invalid structured settings produce a neutral status.
 
 ## Decisions for review
 
@@ -115,7 +115,7 @@ An early click/tap, scroll gesture, Tab, or Escape finishes the entrance immedia
 
 The user has specified the flush-left image, orange viewport frame, stable layout positions for ordering/status, independent logo and ordering entrances/exits, social links styled like main navigation, CMS ticker phrases with automatic 8 px bullet spacing, 100 ms crossfade, 2.5-second image cadence, no carousel/ticker controls, shared status colors, and orange-only ordering hover. These are requirements, not alternatives still to choose between.
 
-Approval of this direction is still pending. No commit or rollout is authorized by preparing this prototype.
+The user approved this direction on 2 November; its implementation is committed as `fb0c54c`. Step 5 is authorized to integrate it with the CMS page builder. Production rollout remains deferred.
 
 ## Verification
 
