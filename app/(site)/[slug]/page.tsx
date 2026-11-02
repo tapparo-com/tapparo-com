@@ -1,3 +1,4 @@
+import { getHoursRows } from "@/lib/opening-hours";
 import { absoluteSiteUrl, pathForSlug, validateSlug } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
@@ -135,7 +136,7 @@ export default async function SlugPage({ params }: Props) {
             restaurantName: brand?.restaurantName,
             tagline: brand?.tagline,
             logoSvg: await fetchLogoSvg(brand?.logo),
-            openingHours: hours?.openingHours,
+            openingHours: getHoursRows(hours),
           }}
         />
       </>

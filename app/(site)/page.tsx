@@ -1,3 +1,4 @@
+import { getHoursRows } from "@/lib/opening-hours";
 import type { Metadata } from "next";
 import { absoluteSiteUrl } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -26,6 +27,7 @@ export default async function HomePage() {
     }),
   ]);
 
+  const openingHours = getHoursRows(hours);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
@@ -33,12 +35,9 @@ export default async function HomePage() {
     description: brand?.tagline,
     ...(contact?.address && { address: contact.address }),
     ...(contact?.phone && { telephone: contact.phone }),
-    ...(hours?.openingHours &&
-      hours.openingHours.length > 0 && {
-        openingHours: hours.openingHours.map(
-          (entry: any) => `${entry.day} ${entry.hours}`
-        ),
-      }),
+    ...(openingHours.length > 0 && {
+      openingHours: openingHours.map(entry => `${entry.day} ${entry.hours}`),
+    }),
   };
 
   return (
@@ -53,7 +52,7 @@ export default async function HomePage() {
           restaurantName: brand?.restaurantName,
           tagline: brand?.tagline,
           logoSvg: await fetchLogoSvg(brand?.logo),
-          openingHours: hours?.openingHours,
+          openingHours: getHoursRows(hours),
         }}
       />
     </>

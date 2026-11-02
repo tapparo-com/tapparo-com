@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { BRAND_QUERY, CONTACT_QUERY, HEADER_NAV_QUERY, PAGE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
+import { BRAND_QUERY, CONTACT_QUERY, HOURS_QUERY, HEADER_NAV_QUERY, PAGE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { PageTransitionProvider } from "@/components/ui/PageTransition";
 import { DesignPreview, type PreviewContent } from "@/components/design-preview/DesignPreview";
@@ -15,11 +15,12 @@ export const metadata: Metadata = {
 export default async function DesignPreviewPage() {
   if (process.env.NEXT_PUBLIC_SANITY_DATASET !== "development") notFound();
 
-  const [home, contact, navigation, brand] = await Promise.all([
+  const [home, contact, navigation, brand, hours] = await Promise.all([
     sanityFetch<any>({ query: PAGE_BY_SLUG_QUERY, params: { slug: "home" }, revalidate: 0 }),
     sanityFetch<PreviewContent["contact"]>({ query: CONTACT_QUERY, revalidate: 0 }),
     sanityFetch<PreviewContent["navigation"]>({ query: HEADER_NAV_QUERY, revalidate: 0 }),
     sanityFetch<any>({ query: BRAND_QUERY, revalidate: 0 }),
+    sanityFetch<PreviewContent["hours"]>({ query: HOURS_QUERY, revalidate: 0 }),
   ]);
   const hero = home?.sections?.find((section: any) => section._type === "sectionHero");
   const gallery = home?.sections?.find((section: any) => section._type === "sectionGallery");
@@ -37,6 +38,7 @@ export default async function DesignPreviewPage() {
 
   return <PageTransitionProvider><DesignPreview content={{
     contact,
+    hours,
     navigation,
     images,
     tickerPhrases: (hero?.tickerPhrases || []).filter((phrase: unknown): phrase is string => typeof phrase === "string" && Boolean(phrase.trim())).map((phrase: string) => phrase.trim()),

@@ -25,7 +25,11 @@ export const CONTACT_QUERY = defineQuery(/* groq */ `
 
 export const HOURS_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsHours"][0]{
-    openingHours[]{ _key, day, hours }
+    openingHours[]{ _key, day, hours },
+    weeklySchedule,
+    closedOnPublicHolidays,
+    dateExceptions[]{ _key, date, closed, periods[]{ _key, start, end, nextDay } },
+    temporaryClosures[]{ _key, startDate, endDate }
   }
 `);
 

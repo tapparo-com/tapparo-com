@@ -1,3 +1,4 @@
+import { getHoursRows } from "@/lib/opening-hours";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   BRAND_QUERY,
@@ -83,7 +84,7 @@ export default async function SiteLayout({
           phone: contact?.phone,
           address: contact?.address,
           mapUrl: contact?.mapUrl,
-          openingHours: hours?.openingHours,
+          openingHours: getHoursRows(hours),
         }}
         footerNav={footerNav}
       />

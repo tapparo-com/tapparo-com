@@ -51,6 +51,7 @@
 .statusDetails > p:first-child { display: flex; align-items: center; gap: 8px; }
 .statusDot { flex: 0 0 12px; width: 12px; height: 12px; border-radius: 50%; background: #6B4443; }
 .statusDot[data-open="true"] { background: #5ACF00; }
+.statusDot[data-status="unknown"] { background: #74716C; }
 .statusDetails .address { display: block; margin-left: 20px; margin-top: 3px; max-width: 42ch; }
 .statusDetails a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .ticker { grid-area: 3 / 1 / 4 / -1; overflow: hidden; background: var(--color-accent); color: var(--color-background); font-size: 16px; line-height: 32px; margin-right: -14px; }

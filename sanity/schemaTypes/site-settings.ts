@@ -1,8 +1,8 @@
-import { defineType, defineField, defineArrayMember } from "sanity";
+export { settingsHours } from "./opening-hours";
+import { defineType, defineField } from "sanity";
 import {
   CogIcon,
   EnvelopeIcon,
-  ClockIcon,
   UsersIcon,
   SearchIcon,
 } from "@sanity/icons";
@@ -95,49 +95,6 @@ export const settingsContact = defineType({
   preview: {
     prepare() {
       return { title: "Contact" };
-    },
-  },
-});
-
-export const settingsHours = defineType({
-  name: "settingsHours",
-  title: "Opening Hours",
-  type: "document",
-  icon: ClockIcon,
-  fields: [
-    defineField({
-      name: "openingHours",
-      title: "Opening Hours",
-      type: "array",
-      description:
-        "Shown in the SubHero section and the footer. Single source of truth — edit here, updates everywhere.",
-      of: [
-        defineArrayMember({
-          type: "object",
-          fields: [
-            defineField({
-              name: "day",
-              title: "Day",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "hours",
-              title: "Hours",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-          ],
-          preview: {
-            select: { title: "day", subtitle: "hours" },
-          },
-        }),
-      ],
-    }),
-  ],
-  preview: {
-    prepare() {
-      return { title: "Opening Hours" };
     },
   },
 });

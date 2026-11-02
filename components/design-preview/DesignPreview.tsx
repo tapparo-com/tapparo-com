@@ -5,6 +5,8 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { pathForSlug } from "@/lib/urls";
+import { type HoursSettings, type OpeningStatus } from "@/lib/opening-hours";
+import { useOpeningStatus } from "@/lib/opening-hours/useOpeningStatus";
 import { ORDER_PATH } from "@/lib/ordering";
 import { HeroIntro } from "./HeroIntro";
 import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "./useHeroEntrance";
@@ -12,6 +14,7 @@ import styles from "./DesignPreview.module.css";
 
 type PreviewImage = { id: string; src: string; alt: string; sketch: boolean };
 export type PreviewContent = {
+  hours: HoursSettings | null;
   brand: { name: string; logo: string | null; tagline?: string };
   contact: { address?: string; mapUrl?: string } | null;
   navigation: {
@@ -75,10 +78,10 @@ function MenuArtwork({ children, reduced, delay }: { children: ReactNode; reduce
   </span>;
 }
 
-function StatusDetails({ open, contact }: { open: boolean; contact: PreviewContent["contact"] }) {
+function StatusDetails({ status, contact }: { status: OpeningStatus; contact: PreviewContent["contact"] }) {
   const address = contact?.address?.replace(/\s*\n\s*/g, ", ");
   return <div className={styles.statusDetails}>
-    <p><span className={styles.statusDot} data-open={open} /><span>{open ? "Gerade offen" : "Gerade geschlossen"}</span></p>
+    <p aria-live="polite"><span className={styles.statusDot} data-open={status === "open"} data-status={status} /><span>{status === "open" ? "Gerade offen" : status === "closed" ? "Gerade geschlossen" : "Öffnungszeiten prüfen"}</span></p>
     {address && (contact?.mapUrl
       ? <a href={contact.mapUrl} target="_blank" rel="noopener noreferrer" className={styles.address}>{address}</a>
       : <p className={styles.address}>{address}</p>)}
@@ -121,7 +124,9 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
   const systemPrefersReduced = hydrated && Boolean(systemReduced);
   const reduced = reduceMotion || systemPrefersReduced;
   const [visible, setVisible] = useState(true);
-  const [sampleOpen, setSampleOpen] = useState(true);
+  const [statusPreview, setStatusPreview] = useState<"live" | "open" | "closed">("live");
+  const liveStatus = useOpeningStatus(content.hours);
+  const status = statusPreview === "live" ? liveStatus : statusPreview;
   const [transitionDemo, setTransitionDemo] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPresent, setMenuPresent] = useState(false);
@@ -236,7 +241,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
         </div>
 
         <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
-        <div className={styles.details}><StatusDetails open={sampleOpen} contact={contact} /></div>
+        <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
       </section>
 
       {/* Reuse the hero's responsive grid, anchored to the viewport rather than
@@ -270,7 +275,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
               initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.18 }}
               exit={{ opacity: 0, transition: { duration: reduced ? 0 : 0.15, delay: 0 } }}>
-              <StatusDetails open={sampleOpen} contact={contact} />
+              <StatusDetails status={status} contact={contact} />
             </motion.div>
           </div>
         </motion.div>}
@@ -279,15 +284,15 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
       <details className={styles.review} inert={menuPresent}>
         <summary>Designprobe · Einstellungen und Statusbeispiel</summary>
         <div className={styles.reviewPanel}>
-          <p><strong>Hero- & Navigationsprobe</strong><br />Status und Bildfolge sind Beispiele. Die Ticker-Phrasen kommen aus dem Hero der Home-Seite im Development-CMS.</p>
-          <label>Statusbeispiel<select aria-label="Statusbeispiel" value={sampleOpen ? "open" : "closed"} onChange={event => setSampleOpen(event.target.value === "open")}><option value="open">Offen</option><option value="closed">Geschlossen</option></select></label>
+          <p><strong>Hero- & Navigationsprobe</strong><br />Der Live-Status kommt aus Site Settings → Opening Hours im Development-CMS. Die Bildfolge ist weiterhin eine Designprobe; die Ticker-Phrasen kommen aus dem Hero der Home-Seite.</p>
+          <label>Statusvorschau<select aria-label="Statusvorschau" value={statusPreview} onChange={event => setStatusPreview(event.target.value as typeof statusPreview)}><option value="live">Live aus dem CMS</option><option value="open">Offen (Designprobe)</option><option value="closed">Geschlossen (Designprobe)</option></select></label>
           <label className={styles.checkbox}><input type="checkbox" checked={reduced} disabled={systemPrefersReduced} onChange={event => setReduceMotion(event.target.checked)} />Bewegung reduzieren{systemPrefersReduced ? " (System)" : ""}</label>
           <div className={styles.reviewButtons}>
             <button type="button" disabled={reduced || introActive} onClick={() => { window.scrollTo({ top: 0, behavior: "instant" }); play("first"); }}>Erstbesuch ansehen</button>
             <button type="button" disabled={reduced || introActive} onClick={() => { window.scrollTo({ top: 0, behavior: "instant" }); play("return"); }}>Kurzen Einstieg ansehen</button>
             <button type="button" disabled={reduced} onClick={() => setTransitionDemo(value => value + 1)}>Seitenwechsel ansehen</button>
           </div>
-          <p>Erstbesuch: ca. 2,85 s, danach kurzer Einstieg mit 1,15 s. 100 ms Crossfade alle 2,5 s. Der Live-Status folgt mit den strukturierten Öffnungszeiten.</p>
+          <p>Erstbesuch: ca. 2,85 s, danach kurzer Einstieg mit 1,15 s. 100 ms Crossfade alle 2,5 s. Der Live-Status verwendet Europe/Berlin und aktualisiert sich zu jeder vollen Minute.</p>
         </div>
       </details>
     </div>
