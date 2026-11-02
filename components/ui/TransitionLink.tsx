@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { usePageTransition } from "@/components/ui/PageTransition";
 import { isOrderingHref } from "@/lib/ordering";
 
@@ -19,7 +18,6 @@ export function TransitionLink({
   ...props
 }: TransitionLinkProps) {
   const { navigateTo } = usePageTransition();
-  const pathname = usePathname();
   const url = typeof href === "string" ? href : href.pathname || "/";
   const isOrdering = isOrderingHref(url);
 
@@ -27,11 +25,12 @@ export function TransitionLink({
     onClick?.(e);
     if (e.defaultPrevented) return;
 
-    // Let external links, new tabs, and modifier keys pass through
+    // Use the rendered URL so object hrefs retain their query and fragment.
+    const destination = new URL(e.currentTarget.href);
+    // Let external links, new tabs, and modifier keys pass through.
     if (
-      url.startsWith("http") ||
-      url.startsWith("mailto:") ||
-      url.startsWith("tel:") ||
+      destination.origin !== window.location.origin ||
+      !["http:", "https:"].includes(destination.protocol) ||
       e.button !== 0 ||
       e.metaKey ||
       e.ctrlKey ||
@@ -44,20 +43,17 @@ export function TransitionLink({
     }
 
     // /order leaves the site. Use a full navigation without the internal-page overlay.
-    if (isOrdering) {
+    if (isOrderingHref(destination.pathname)) {
       e.preventDefault();
       window.location.assign(e.currentTarget.href);
       return;
     }
 
-    // Skip transition if already on this page
-    if (url === pathname) {
-      e.preventDefault();
-      return;
-    }
+    // Next's normal link behavior owns same-page anchors, queries, and scrolling.
+    if (!navigateTo || destination.pathname === window.location.pathname) return;
 
     e.preventDefault();
-    navigateTo(url);
+    navigateTo(`${destination.pathname}${destination.search}${destination.hash}`, { replace: props.replace, scroll: props.scroll });
   };
 
   return (

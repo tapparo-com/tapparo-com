@@ -1,9 +1,12 @@
 "use client";
 
+import { useReducedMotion } from "@/lib/useReducedMotion";
+
 export function ScrollToTop() {
+  const reduced = useReducedMotion();
   return (
     <button
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "instant" : "smooth" })}
       aria-label="Scroll to top"
       className="absolute bottom-5 right-3 flex size-12 items-center justify-center bg-background/75 backdrop-blur-sm text-accent transition-colors hover:text-accent/80 md:right-8 xl:bottom-20"
     >
