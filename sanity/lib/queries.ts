@@ -3,7 +3,14 @@ import { defineQuery } from "next-sanity";
 // --- Shared image fragment ---
 const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt, crop, hotspot`;
 
-// --- Site Settings (split across 5 documents) ---
+// --- Site Settings ---
+export const PAGE_INTRO_QUERY = defineQuery(/* groq */ `
+  *[_id == "settingsPageIntro"][0]{
+    enabled,
+    "artworkUrl": artwork.asset->url
+  }
+`);
+
 export const BRAND_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsBrand"][0]{
     restaurantName,
@@ -94,6 +101,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type,
       _type == "sectionHero" => {
         tickerPhrases,
+        imageDuration,
         heroImages[defined(asset)]{ _key, ${imageFields} }
       },
       _type == "sectionSubhero" => {

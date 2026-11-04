@@ -26,14 +26,14 @@ export const settingsBrand = defineType({
       title: "Tagline",
       type: "string",
       description:
-        "Shown below the logo in the hero section and on the Coming Soon page.",
+        "Read with the restaurant name in the homepage's screen-reader heading. The page intro does not display a separate tagline. Also used on the Coming Soon page.",
     }),
     defineField({
       name: "logo",
       title: "Logo",
       type: "image",
       description:
-        "SVG file used in the hero (light) and header/footer (dark). Upload a single-color SVG — the site applies colors automatically.",
+        "Used in the hero, menu, header and footer. Upload a dark, single-color SVG with a transparent background. The floating header renders it black. The welcome's iconmark + wordmark artwork is managed under Site Settings → Page Intro.",
     }),
     defineField({
       name: "supportingLogo",

@@ -11,6 +11,7 @@ import { TransitionLink } from "@/components/ui/TransitionLink";
 import { BrandArtwork, EASE, MenuArtwork, MenuIcon, OrderingLink, StatusDetails } from "./HeroParts";
 import type { SiteData } from "./types";
 import styles from "./Hero.module.css";
+import { ScrollHeader } from "./ScrollHeader";
 
 type SiteContextValue = {
   data: SiteData;
@@ -52,6 +53,15 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
     document.addEventListener("visibilitychange", visibility);
     return () => { document.removeEventListener("visibilitychange", visibility); };
   }, []);
+  useEffect(() => {
+    const element = root.current;
+    if (!element) return;
+    const update = () => element.style.setProperty("--site-width", `${element.clientWidth}px`);
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    update();
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => { setMenuOpen(false); }, [pathname]);
   useEffect(() => {
     if (!menuPresent) return;
@@ -84,6 +94,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
         <header className={styles.pageHeader}>
           <TransitionLink href="/" aria-label={`${brand.name} Startseite`}><BrandArtwork logo={brand.logo} /></TransitionLink>
         </header>
+        <ScrollHeader scope={root} brand={brand} pathname={pathname} reduced={reduced} />
         <noscript><nav className={styles.fallbackNavigation} aria-label="Hauptnavigation">{links.map(link => <a key={link.key} href={link.href}>{link.label}</a>)}</nav></noscript>
         {children}
       </div>

@@ -7,8 +7,10 @@ import { TransitionLink } from "@/components/ui/TransitionLink";
 import { pathForSlug } from "@/lib/urls";
 import { type HoursSettings } from "@/lib/opening-hours";
 import { useOpeningStatus } from "@/lib/opening-hours/useOpeningStatus";
-import { ASSETS, EASE, IMAGE_SIZES, SLIDE_INTERVAL, CROSSFADE_SECONDS, MenuIcon, BrandArtwork, OrderingLink, MenuArtwork, StatusDetails, HeroTicker } from "@/components/hero/HeroParts";
+import { ASSETS, EASE, IMAGE_SIZES, CROSSFADE_SECONDS, MenuIcon, BrandArtwork, OrderingLink, MenuArtwork, StatusDetails, HeroTicker } from "@/components/hero/HeroParts";
+import { heroSlideInterval } from "@/lib/animation";
 import { HeroIntro } from "@/components/hero/HeroIntro";
+import type { SiteData } from "@/components/hero/types";
 import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "@/components/hero/useHeroEntrance";
 import styles from "@/components/hero/Hero.module.css";
 
@@ -16,6 +18,7 @@ type PreviewImage = { id: string; src: string; alt: string; sketch: boolean };
 export type PreviewContent = {
   hours: HoursSettings | null;
   brand: { name: string; logo: string | null; tagline?: string };
+  intro?: SiteData["intro"];
   contact: { address?: string; mapUrl?: string } | null;
   navigation: {
     pageLinks?: { _key: string; label: string; slug: string }[];
@@ -24,6 +27,7 @@ export type PreviewContent = {
   } | null;
   images: PreviewImage[];
   tickerPhrases: string[];
+  imageDuration?: number | null;
 };
 
 export function DesignPreview({ content }: { content: PreviewContent }) {
@@ -47,8 +51,9 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
   const focusScope = useRef<HTMLDivElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const inView = useInView(hero, { amount: 0.1 });
-  const { images, contact, navigation, brand, tickerPhrases } = content;
-  const { entrance, active: introActive, play, finish } = useHeroEntrance(focusScope, photo, reduced);
+  const { images, contact, navigation, brand, tickerPhrases, intro } = content;
+  const slideInterval = heroSlideInterval(content.imageDuration);
+  const { entrance, active: introActive, play, finish } = useHeroEntrance(focusScope, photo, reduced, undefined, false, intro?.enabled !== false);
   const next = (slide.current + 1) % images.length;
   const stopped = !hydrated || reduced || !visible || !inView || introActive || menuPresent;
 
@@ -83,13 +88,13 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
 
   useEffect(() => {
     if (stopped || images.length < 2 || !loaded.has(slide.current) || !loaded.has(next)) return;
-    // 2.5 seconds from one transition's start to the next; crossfade is included.
+    // The owner controls start-to-start timing; the 100 ms crossfade is included.
     const timer = setTimeout(() => {
       setFailed(false);
       setSlide(current => ({ current: next, previous: current.current, version: current.version + 1 }));
-    }, SLIDE_INTERVAL);
+    }, slideInterval);
     return () => clearTimeout(timer);
-  }, [stopped, images.length, loaded, next, slide.current]);
+  }, [stopped, images.length, loaded, next, slide.current, slideInterval]);
 
   useEffect(() => {
     if (!menuPresent) return;
@@ -121,7 +126,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
     <div>
       <section ref={hero} className={`${styles.viewportLayout} ${styles.hero}`} aria-label="Tapparo — Hero-Entwurf" inert={menuPresent} aria-hidden={menuPresent || undefined}>
         <div className={styles.heroBackground}>
-          <h1 className="sr-only">{brand.name} — Tagesbar & Focacceria</h1>
+          <h1 className="sr-only">{brand.name}{brand.tagline ? ` — ${brand.tagline}` : ""}</h1>
           {tickerPhrases.length > 0 && <HeroTicker phrases={tickerPhrases} stopped={stopped} />}
 
           <a href="/" aria-label={`${brand.name} Startseite`} className={styles.logo}>
@@ -214,7 +219,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
       </button>
     </div>
 
-    {entrance.mode === "first" && <HeroIntro key={entrance.run} photo={photo} image={images[slide.current]} name={brand.name} tagline={brand.tagline} />}
+    {entrance.mode === "first" && <HeroIntro key={entrance.run} photo={photo} image={images[slide.current]} artwork={intro?.artworkUrl} />}
 
     <AnimatePresence>{transitionDemo > 0 && !reduced && <motion.div key={transitionDemo} className={styles.transitionDemo} aria-hidden="true" initial={{ y: "100%" }} animate={{ y: ["100%", "0%", "0%", "-100%"] }} transition={{ duration: 0.7, times: [0, 0.43, 0.57, 1], ease: [0.76, 0, 0.24, 1] }} onAnimationComplete={() => setTransitionDemo(0)} />}</AnimatePresence>
   </div>;

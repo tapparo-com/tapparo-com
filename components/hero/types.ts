@@ -2,6 +2,7 @@ import type { HoursSettings } from "@/lib/opening-hours";
 
 export type SiteData = {
   brand: { name: string; logo: string | null; tagline?: string };
+  intro?: { enabled?: boolean; artworkUrl?: string | null } | null;
   contact: { address?: string; mapUrl?: string } | null;
   hours: HoursSettings | null;
   navigation: {

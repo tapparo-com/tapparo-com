@@ -5,19 +5,27 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { usePageTransition } from "@/components/ui/PageTransition";
-import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, IMAGE_SIZES, OrderingLink, SLIDE_INTERVAL, StatusDetails } from "@/components/hero/HeroParts";
+import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, IMAGE_SIZES, OrderingLink, StatusDetails } from "@/components/hero/HeroParts";
+import { heroSlideInterval } from "@/lib/animation";
 import { HeroIntro } from "@/components/hero/HeroIntro";
 import { useSite } from "@/components/hero/SiteShell";
 import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "@/components/hero/useHeroEntrance";
 import { heroImage, type SanityHeroImage } from "@/lib/hero-images";
 import styles from "@/components/hero/Hero.module.css";
 
-export function SectionHero({ heroImages, tickerPhrases = [] }: { heroImages?: SanityHeroImage[] | null; tickerPhrases?: string[] }) {
-  return <Hero key={JSON.stringify(heroImages)} heroImages={heroImages} tickerPhrases={tickerPhrases} />;
+type HeroProps = {
+  heroImages?: SanityHeroImage[] | null;
+  tickerPhrases?: string[];
+  imageDuration?: number | null;
+};
+
+export function SectionHero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
+  return <Hero key={JSON.stringify(heroImages)} heroImages={heroImages} tickerPhrases={tickerPhrases} imageDuration={imageDuration} />;
 }
 
-function Hero({ heroImages, tickerPhrases }: { heroImages?: SanityHeroImage[] | null; tickerPhrases: string[] }) {
-  const { data: { brand, contact }, status, reduced, hydrated, visible, menuPresent, setEntrance } = useSite();
+function Hero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
+  const slideInterval = heroSlideInterval(imageDuration);
+  const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent, setEntrance } = useSite();
   const root = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState<{ width: number; height: number }>();
@@ -28,7 +36,7 @@ function Hero({ heroImages, tickerPhrases }: { heroImages?: SanityHeroImage[] | 
   const [failed, setFailed] = useState(false);
   const inView = useInView(root, { amount: 0.1 });
   const { isTransitioning } = usePageTransition();
-  const { entrance, active, finish } = useHeroEntrance(root, photo, reduced, "tapparo:site:intro:v1", isTransitioning);
+  const { entrance, active, finish } = useHeroEntrance(root, photo, reduced, "tapparo:site:intro:v1", isTransitioning, intro?.enabled !== false);
   const next = images.length ? (slide.current + 1) % images.length : 0;
   const current = images[slide.current], previous = images[slide.previous], upcoming = images[next];
   const stopped = !hydrated || reduced || !visible || !inView || active || menuPresent || isTransitioning;
@@ -58,17 +66,17 @@ function Hero({ heroImages, tickerPhrases }: { heroImages?: SanityHeroImage[] | 
     const timer = setTimeout(() => {
       setFailed(false);
       setSlide(slide => ({ current: next, previous: slide.current, version: slide.version + 1 }));
-    }, SLIDE_INTERVAL);
+    }, slideInterval);
     return () => clearTimeout(timer);
-  }, [stopped, images.length, loaded, current?.id, upcoming?.id, next]);
+  }, [stopped, images.length, loaded, current?.id, upcoming?.id, next, slideInterval]);
 
   return <div ref={root} className={styles.preview} data-site-hero data-has-ticker={phrases.length > 0} data-reduced-motion={reduced}
     data-entrance={entrance.mode} data-entrance-run={entrance.run} suppressHydrationWarning onPointerDownCapture={active ? finish : undefined}>
     <script dangerouslySetInnerHTML={{ __html: ENTRANCE_BOOTSTRAP }} />
     <section className={`${styles.viewportLayout} ${styles.hero}`} aria-label={brand.name}>
+      {/* Keep the intro's spoken identity available after its decorative artwork exits. */}
       <h1 className="sr-only">{brand.name}{brand.tagline ? ` — ${brand.tagline}` : ""}</h1>
-      {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} />}
-      <TransitionLink href="/" aria-label={`${brand.name} Startseite`} className={styles.logo}>
+      <TransitionLink href="/" aria-label={`${brand.name} Startseite`} className={styles.logo} data-hero-logo>
         <span className={styles.artworkMask}><span className={styles.artworkEntrance}><BrandArtwork logo={brand.logo} /></span></span>
       </TransitionLink>
       <div ref={photo} className={styles.photo} data-slide={slide.current} data-image-count={images.length}>
@@ -83,6 +91,7 @@ function Hero({ heroImages, tickerPhrases }: { heroImages?: SanityHeroImage[] | 
       <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
       <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
     </section>
-    {entrance.mode === "first" && current && <HeroIntro key={entrance.run} photo={photo} image={current} name={brand.name} tagline={brand.tagline} logo={brand.logo} />}
+    {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} />}
+    {entrance.mode === "first" && current && <HeroIntro key={entrance.run} photo={photo} image={current} artwork={intro?.artworkUrl} />}
   </div>;
 }

@@ -6,13 +6,12 @@ import { TransitionLink } from "@/components/ui/TransitionLink";
 import type { OpeningStatus } from "@/lib/opening-hours";
 import { ORDER_PATH } from "@/lib/ordering";
 import type { SiteData } from "./types";
-import { REVEAL_EASE, HERO_CROSSFADE, HERO_SLIDE_INTERVAL } from "@/lib/animation";
+import { REVEAL_EASE, HERO_CROSSFADE } from "@/lib/animation";
 import styles from "./Hero.module.css";
 
 export const ASSETS = "/design-preview/";
 export const EASE = REVEAL_EASE;
-export const IMAGE_SIZES = "(min-width: 2100px) 1200px, (min-width: 1024px) 57vw, 100vw";
-export const SLIDE_INTERVAL = HERO_SLIDE_INTERVAL;
+export const IMAGE_SIZES = "(min-width: 2100px) calc((100vw - 2100px) / 2 + 1400px), (min-width: 1024px) 65vw, 100vw";
 export const CROSSFADE_SECONDS = HERO_CROSSFADE;
 
 // Original Figma strokes: translate/rotate these same lines into a handdrawn cross.

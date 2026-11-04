@@ -46,7 +46,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
       {sections.map((section) => {
         switch (section._type) {
           case "sectionHero":
-            return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} />;
+            return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} imageDuration={section.imageDuration} />;
           case "sectionSubhero":
             return (
               <SectionSubhero

@@ -2,6 +2,7 @@ import { getHoursRows } from "@/lib/opening-hours";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   BRAND_QUERY,
+  PAGE_INTRO_QUERY,
   CONTACT_QUERY,
   HOURS_QUERY,
   SEO_QUERY,
@@ -15,6 +16,7 @@ import { SiteShell } from "@/components/hero/SiteShell";
 import { urlFor } from "@/sanity/lib/image";
 import { Footer } from "@/components/Footer";
 import type { Metadata } from "next";
+import type { SiteData } from "@/components/hero/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await sanityFetch<any>({
@@ -36,7 +38,7 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [brand, contact, hours, seo, headerNav, footerNav] =
+  const [brand, contact, hours, seo, headerNav, footerNav, intro] =
     await Promise.all([
       sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
       sanityFetch<any>({ query: CONTACT_QUERY, tags: ["settingsContact"] }),
@@ -50,6 +52,7 @@ export default async function SiteLayout({
         query: FOOTER_NAV_QUERY,
         tags: ["navigationFooter", "socialLink"],
       }),
+      sanityFetch<SiteData["intro"]>({ query: PAGE_INTRO_QUERY, tags: ["settingsPageIntro"] }),
     ]);
 
   const logoSvg = await fetchLogoSvg(brand?.logo);
@@ -73,7 +76,7 @@ export default async function SiteLayout({
     <PageTransitionProvider>
       <SiteShell data={{
         brand: { name: brand?.restaurantName || "Tapparo", tagline: brand?.tagline, logo: brand?.logo?.asset ? urlFor(brand.logo).url() : null },
-        contact, hours, navigation: headerNav,
+        contact, hours, navigation: headerNav, intro,
       }}>
       <main id="main-content" tabIndex={-1} className="min-h-svh">{children}</main>
       <Footer

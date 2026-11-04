@@ -14,6 +14,7 @@ import type { StructureResolver } from "sanity/structure";
 
 const HIDDEN_TYPES = [
   "settingsBrand",
+  "settingsPageIntro",
   "settingsContact",
   "settingsHours",
   "socialLink",
@@ -51,6 +52,14 @@ const structure: StructureResolver = (S) =>
                     .schemaType("settingsBrand")
                     .documentId("settingsBrand")
                     .title("Brand")
+                ),
+              S.listItem()
+                .title("Page Intro")
+                .child(
+                  S.document()
+                    .schemaType("settingsPageIntro")
+                    .documentId("settingsPageIntro")
+                    .title("Page Intro")
                 ),
               S.listItem()
                 .title("Contact")
@@ -172,5 +181,11 @@ export default defineConfig({
   plugins: [structureTool({ structure }), media(), visionTool()],
   schema: {
     types: schemaTypes,
+    templates: (templates) => templates.filter((template) => template.schemaType !== "settingsPageIntro"),
+  },
+  document: {
+    actions: (actions, context) => context.schemaType === "settingsPageIntro"
+      ? actions.filter(({ action }) => action !== "duplicate")
+      : actions,
   },
 });

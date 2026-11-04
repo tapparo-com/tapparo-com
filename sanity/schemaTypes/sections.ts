@@ -1,4 +1,5 @@
 import { defineField, defineArrayMember } from "sanity";
+import { HERO_IMAGE_DURATION } from "../../lib/animation";
 import {
   ImageIcon,
   BlockContentIcon,
@@ -92,7 +93,7 @@ export const sectionHero = defineArrayMember({
       name: "heroImages",
       title: "Carousel images",
       type: "array",
-      description: "Choose the leading hero photographs and drag to set their order. The first is shown first; one image stays still. Use large, sharp photos (at least 1920 px wide) and set the crop/hotspot for responsive screens. Playback timing and layout are handled by the website.",
+      description: "Choose the leading hero photographs and drag to set their order. The first is shown first; one image stays still. Use large, sharp photos (at least 1920 px wide) and set the crop/hotspot for responsive screens. Set the time between images below.",
       of: [
         defineArrayMember({
           type: "image",
@@ -106,6 +107,14 @@ export const sectionHero = defineArrayMember({
           ],
         }),
       ],
+    }),
+    defineField({
+      name: "imageDuration",
+      title: "Image duration (seconds)",
+      type: "number",
+      initialValue: HERO_IMAGE_DURATION.default,
+      description: "Time from one image change to the next, including the short crossfade. Leave empty for 1.2 seconds. Choose 1.2–15 seconds; playback waits for images to load and stays still with reduced motion or a single image.",
+      validation: rule => rule.min(HERO_IMAGE_DURATION.min).max(HERO_IMAGE_DURATION.max).precision(1),
     }),
   ],
   preview: {

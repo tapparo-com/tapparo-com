@@ -17,6 +17,7 @@ export function useHeroEntrance(
   reduced: boolean,
   sessionKey = INTRO_SESSION_KEY,
   suspended = false,
+  welcomeEnabled = true,
 ) {
   const [entrance, setEntrance] = useState<HeroEntrance>({ mode: "idle", run: 0 });
   const started = useRef(false);
@@ -31,8 +32,8 @@ export function useHeroEntrance(
     if (root.current) delete root.current.dataset.preparing;
     started.current = true;
     try { sessionStorage.setItem(sessionKey, "true"); } catch { /* Storage is optional. */ }
-    setEntrance(current => ({ mode, run: current.run + 1 }));
-  }, [finish, reduced, root, sessionKey]);
+    setEntrance(current => ({ mode: mode === "first" && !welcomeEnabled ? "return" : mode, run: current.run + 1 }));
+  }, [finish, reduced, root, sessionKey, welcomeEnabled]);
 
   useLayoutEffect(() => {
     if (started.current || suspended) return;
@@ -42,8 +43,8 @@ export function useHeroEntrance(
       finish();
       return;
     }
-    let first = true;
-    try { first = !sessionStorage.getItem(sessionKey); } catch { /* Still usable without storage. */ }
+    let first = welcomeEnabled;
+    try { first = welcomeEnabled && !sessionStorage.getItem(sessionKey); } catch { /* Still usable without storage. */ }
     const image = photo.current?.querySelector("img");
     if (!image) { play("return"); return; }
     const ready = () => play(first ? "first" : "return");
@@ -60,7 +61,7 @@ export function useHeroEntrance(
       image?.removeEventListener("load", loaded);
       image?.removeEventListener("error", fallback);
     };
-  }, [finish, photo, play, root, sessionKey, suspended]);
+  }, [finish, photo, play, root, sessionKey, suspended, welcomeEnabled]);
 
   useEffect(() => { if (reduced) finish(); }, [reduced, finish]);
 
