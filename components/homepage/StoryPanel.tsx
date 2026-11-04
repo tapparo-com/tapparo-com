@@ -7,8 +7,9 @@ import { AnimatedUnderline } from "./AnimatedUnderline";
 import { pathForSlug } from "@/lib/urls";
 import styles from "./Homepage.module.css";
 
-export function StoryPanel({ post }: { post: Post }) {
+export function StoryPanel({ post, headingLevel = 3 }: { post: Post; headingLevel?: 2 | 3 }) {
   const titleId = useId();
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   const hasImage = Boolean(post.coverImage?.asset);
 
   return (
@@ -32,7 +33,7 @@ export function StoryPanel({ post }: { post: Post }) {
         )}
         <div className={styles.storyPanelCopy}>
           <Reveal className={styles.storyPanelContent} delay={0.1} duration={0.75}>
-            <h3 id={titleId} className={styles.storyPanelTitle}>{post.title}</h3>
+            <Heading id={titleId} className={styles.storyPanelTitle}>{post.title}</Heading>
             {post.excerpt && <p className={styles.storyPanelExcerpt}>{post.excerpt}</p>}
             <div className={styles.storyPanelFooter}>
               {(post.authorName || post.publishedAt) && (
@@ -40,7 +41,7 @@ export function StoryPanel({ post }: { post: Post }) {
                   {post.authorName && <span>{post.authorName}</span>}
                   {post.publishedAt && (
                     <time dateTime={post.publishedAt}>
-                      {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                      {new Date(post.publishedAt).toLocaleDateString("de-DE", {
                         month: "short", day: "numeric", year: "numeric", timeZone: "Europe/Berlin",
                       })}
                     </time>

@@ -54,7 +54,7 @@
 .statusDot[data-status="unknown"] { background: #74716C; }
 .statusDetails .address { display: block; margin-left: 20px; margin-top: 3px; max-width: 42ch; }
 .statusDetails a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.ticker { grid-area: 3 / 1 / 4 / -1; overflow: hidden; background: var(--color-accent); color: var(--color-background); font-size: 16px; line-height: 32px; margin-right: -14px; }
+.ticker { grid-area: 3 / 1 / 4 / -1; overflow: hidden; background: var(--color-accent); color: var(--color-foreground); font-size: 16px; line-height: 32px; margin-right: -14px; }
 .tickerTrack { display: flex; width: max-content; animation: ticker 38s linear infinite; }
 .tickerCopy, .tickerSequence { display: flex; flex: none; }
 .tickerItem { display: flex; align-items: center; flex: none; white-space: nowrap; gap: 8px; padding-right: 8px; }

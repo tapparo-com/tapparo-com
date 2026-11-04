@@ -3,8 +3,8 @@
 .categoryScroll { overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
 .categoryLinks { display: flex; width: max-content; min-width: 100%; justify-content: flex-end; gap: 28px; }
 .categoryLinks a { display: flex; align-items: center; min-height: 44px; border-bottom: 1px solid transparent; font-size: 15px; line-height: 1.4; white-space: nowrap; }
-.categoryLinks a[aria-current="location"] { color: var(--color-accent); border-bottom-color: currentColor; }
-.categoryLinks a:hover { color: var(--color-accent); }
+.categoryLinks a[aria-current="location"] { border-bottom-color: var(--color-accent); }
+.categoryLinks a:hover { border-bottom-color: var(--color-accent); }
 .category { padding-block: clamp(40px, 4vw, 80px); scroll-margin-top: 110px; }
 .category + .category { border-top: 1px solid var(--color-border); }
 .categoryLayout { max-width: 624px; margin-inline: auto; }
@@ -26,7 +26,7 @@
 .allergenCodes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; margin-top: 8px; }
 .allergenCodes a { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; font-size: 13px; }
 .allergenCodes span { border-bottom: 1px solid var(--color-border); }
-.allergenCodes a:hover { color: var(--color-accent); }
+.allergenCodes a:hover { text-decoration: underline; text-decoration-color: var(--color-accent); }
 .extras { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--color-border); }
 .extras h3 { font-size: 20px; font-weight: 500; margin-bottom: 16px; }
 .extras dl { display: grid; gap: 12px; max-width: 640px; }
@@ -39,7 +39,7 @@
 .legend h2 { margin-bottom: 32px; font-size: 28px; font-weight: 500; letter-spacing: -.035em; }
 .legend dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 48px; }
 .legend dl > div { display: flex; gap: 16px; font-size: 16px; line-height: 1.5; scroll-margin-top: 110px; }
-.legend dt { color: var(--color-accent); flex-shrink: 0; }
+.legend dt { font-weight: 600; flex-shrink: 0; }
 .legend dd { overflow-wrap: anywhere; }
 .navigation a:focus-visible,
 .category :is(a,button):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }

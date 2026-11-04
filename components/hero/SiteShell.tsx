@@ -73,9 +73,14 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
       if (event.key !== "Tab") return;
       const focusable = Array.from(root.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") || [])
         .filter(element => !element.closest("[inert]") && element.getClientRects().length > 0);
-      const first = focusable[0], last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      if (!focusable.length) return;
+      // Cycle explicitly: WebKit's default keyboard preference can skip links,
+      // otherwise letting focus escape this dialog between its endpoints.
+      const current = focusable.indexOf(document.activeElement as HTMLElement);
+      const next = current < 0 ? (event.shiftKey ? focusable.length - 1 : 0)
+        : (current + (event.shiftKey ? -1 : 1) + focusable.length) % focusable.length;
+      event.preventDefault();
+      focusable[next].focus();
     };
     document.addEventListener("keydown", onKey);
     return () => {

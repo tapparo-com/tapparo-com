@@ -63,9 +63,9 @@
 .prose > * + * { margin-top: 1.25em; }
 .prose :is(h2,h3,h4,h5,h6) { font-weight: 500; letter-spacing: -.035em; line-height: 1.2; margin-top: 2em; scroll-margin-top: 100px; }
 .prose > :first-child { margin-top: 0; }
-.prose h2 { font-size: 24px; line-height: 1.333333; }
-.prose h3 { font-size: 20px; line-height: 1.4; }
-.prose :is(h4,h5,h6) { font-size: 1.1em; }
+.prose :is([data-heading-style="h1"], [data-heading-style="h2"]) { font-size: 24px; line-height: 1.333333; }
+.prose [data-heading-style="h3"] { font-size: 20px; line-height: 1.4; }
+.prose :is([data-heading-style="h4"], [data-heading-style="h5"], [data-heading-style="h6"]) { font-size: 1.1em; }
 .prose p { white-space: pre-line; }
 .prose :is(ul,ol) { padding-left: 1.3em; }
 .prose ul { list-style: disc; }
@@ -74,7 +74,7 @@
 .prose li > :is(ul,ol) { margin-top: .4em; }
 .prose blockquote { border-left: 2px solid var(--color-accent); padding-left: clamp(20px, 3vw, 40px); font-size: 1.15em; }
 .prose a { text-decoration: underline; text-underline-offset: .18em; text-decoration-thickness: 1px; }
-.prose a:hover { color: var(--color-accent); }
+.prose a:hover { text-decoration-color: var(--color-accent); }
 .prose a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
 .prose figure { margin-block: 2em; }
 .prose figcaption { margin-top: 12px; font-size: 14px; line-height: 1.5; }

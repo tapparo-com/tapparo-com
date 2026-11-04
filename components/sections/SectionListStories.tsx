@@ -4,6 +4,6 @@ import styles from "@/components/pages/Pages.module.css";
 
 export function SectionListStories({ posts }: { posts: Post[] }) {
   return <section className={`${styles.container} ${styles.stories}`} aria-label="Alle Stories" data-stories-overview>
-    {posts.length ? <StoryCollection posts={posts} batchSize={4} /> : <p className={styles.empty}>Hier gibt es bald neue Stories.</p>}
+    {posts.length ? <StoryCollection posts={posts} batchSize={4} headingLevel={2} /> : <p className={styles.empty}>Hier gibt es bald neue Stories.</p>}
   </section>;
 }
