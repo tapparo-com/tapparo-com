@@ -3,7 +3,7 @@
 Created: 31 October 2026  
 Last updated: 4 November 2026
 
-Status: Milestones 1–7 are locked in, committed and locally validated. The user approved committing the complete homepage work on 4 November 2026 and authorized continuing to milestone 7. Homepage sections are in `e9395f8`, hero/header/intro refinements in `8c3c53a`, and the compact footer in `03930e7`. Scrollytelling remains optional future work. All implementation and content work uses development; production rollout remains deferred until the full result is approved. Milestone 7 is committed as `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt’s current implementation is committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry); controlled test delivery, provider setup and real delivery verification remain pending. Further implementation commits require explicit lock-in.
+Status: Milestones 1–7 are locked in, committed and locally validated. The user approved committing the complete homepage work on 4 November 2026 and authorized continuing to milestone 7. Homepage sections are in `e9395f8`, hero/header/intro refinements in `8c3c53a`, and the compact footer in `03930e7`. Scrollytelling remains optional future work. All implementation and content work uses development; production rollout remains deferred until the full result is approved. Milestone 7 is committed as `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt’s current implementation is committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry); controlled test delivery, provider setup and real delivery verification remain pending. Step 8 verification and polish are committed following user authorization: `43acf65` (search metadata), `3527fe7` (accessibility), `fd98c53` (hero performance), and `d606b3f` (branded 404). Remaining release checks are recorded in `docs/release-review.md`. The user will perform the production release personally; nothing has been pushed or deployed. Further implementation commits require explicit lock-in.
 
 ## Working agreement
 
@@ -27,7 +27,7 @@ Status: Milestones 1–7 are locked in, committed and locally validated. The use
 | 6. Remaining homepage sections | Committed — production deferred | Yes — 4 November 2026 | `e9395f8`, `8c3c53a`, `03930e7` |
 | 7. Stories, menu, and imprint | Committed — [implementation record](docs/secondary-pages.md) | Yes — 4 November 2026 | `be135f0`, `91aeba5` |
 | 7.1 Kontakt enquiry page | Current implementation committed; activation pending — [checklist](docs/contact-page-plan.md#remaining-activation-checklist) | Yes — current implementation, 4 November 2026 | `020362b`, `f164b8f`, `f5023df` / not released |
-| 8. Verification, polish, and release | Not started | No | — |
+| 8. Verification, polish, and release handover | Committed — remaining release checks and user-owned release are open | Yes — 4 November 2026 | `43acf65`, `3527fe7`, `fd98c53`, `d606b3f` / not released |
 
 Suggested status progression: Not started → In progress → Ready for review → Locked in → Committed → Released, where applicable.
 
@@ -331,33 +331,40 @@ Created one development Kontakt page, appended navigation links without publishi
 
 The user authorized recording outstanding tasks and committing the current Kontakt implementation on 4 November 2026. Committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry). Track remaining work in the [Kontakt activation checklist](docs/contact-page-plan.md#remaining-activation-checklist): implement controlled test delivery with the development dataset and a fixed test inbox; configure Resend/DNS, Turnstile and Upstash; verify actual delivery, spam defenses and recovery; complete device/accessibility and service/privacy review; then prepare the targeted production rollout. Provider credentials are not configured locally and no real email has been sent. Production rollout remains part of milestone 8 and requires its own approval.
 
-## 8. Verify, polish, and release
+## 8. Verify, polish, and prepare the release handover
 
-- [ ] Compare document IDs, text, images, references, and draft state against the baseline; do not rely on counts alone.
-- [ ] Recheck all routes, redirects, internal links, canonical tags, sitemap entries, and ordering CTAs.
-- [ ] Test desktop and mobile browsers, keyboard navigation, reduced motion, and automatic carousel/ticker playback.
-- [ ] Test opening-hour boundaries, closures, holiday handling, daylight-saving changes, and overnight schedules.
-- [ ] Test slow-loading images and navigation failures.
-- [ ] Check loading speed, layout stability, image sizing, and animation responsiveness.
-- [ ] Verify the owner's workflow in development: edit ticker text, reorder carousel images, change hours, update a menu item, and publish a story.
-- [ ] Confirm that CMS updates reach the website with the expected cache/revalidation behavior.
-- [ ] Complete the final visual and functional review.
-- [ ] Obtain approval of the full result and the production rollout; individual milestone lock-in does not authorize this release.
-- [ ] Take fresh production backups, compare current production content with the baseline, and dry-run targeted migrations that preserve drafts and intervening owner edits. Do not copy development over production wholesale.
-- [ ] Include the new Page Intro settings document and its lockup asset in the targeted rollout; preserve production Brand name/tagline and any owner drafts.
-- [ ] Prepare rollback instructions for code and any content migrations.
-- [ ] Commit only the work explicitly locked in by the user, and record the commit reference here.
-- [ ] Perform the agreed release, deploying compatible code before the production slug migration as documented in `docs/url-normalization.md`; run production smoke checks and record the release reference here.
+Authorized on 4 November 2026. Audit and fix the development implementation, record evidence and prepare the release instructions. The user subsequently authorized commits after reviewing the work and requesting the branded 404 revision. **Do not push, deploy or mutate production; the user will perform the release personally.** Kontakt activation remains separately tracked; keep ordinary previews in no-email mode.
+
+Sequence: preserve a fresh baseline → run code/content/route audits → check responsive behavior, accessibility and failure recovery → verify performance and CMS refresh/workflows → fix findings and repeat affected checks → hand over open issues and targeted release/rollback instructions.
+
+- [x] Compare document IDs, text, images, references, and draft state against the baseline; do not rely on counts alone.
+- [x] Recheck all routes, redirects, internal links, canonical tags, sitemap entries, and ordering CTAs.
+- [x] Test desktop and mobile browsers, keyboard navigation, reduced motion, and automatic carousel/ticker playback.
+- [x] Test opening-hour boundaries, closures, holiday handling, daylight-saving changes, and overnight schedules.
+- [x] Test slow-loading images and navigation failures.
+- [x] Check loading speed, layout stability, image sizing, and animation responsiveness.
+- [x] Verify the owner's workflow in development: edit ticker text, reorder carousel images, change hours, update a menu item, and publish a story.
+- [x] Confirm that CMS updates reach the website with the expected cache/revalidation behavior.
+- [x] Complete development visual and functional checks, present the work, and record user approval to commit.
+- [ ] Complete remaining physical-device, spoken screen-reader and pre-release checks recorded in the handover.
+- [x] Present the full development result for user review before any step-8 commit; hand production release execution to the user.
+- [x] Take fresh production backups, compare current production content with the baseline, and dry-run targeted migrations that preserve drafts and intervening owner edits. Do not copy development over production wholesale.
+- [x] Include the new Page Intro settings document and its lockup asset in the targeted rollout; preserve production Brand name/tagline and any owner drafts.
+- [x] Prepare rollback instructions for code and any content migrations.
+- [x] Commit only the work explicitly locked in by the user: `43acf65` (search metadata), `3527fe7` (accessibility), `fd98c53` (hero performance), and `d606b3f` (branded 404).
+- [ ] **User-owned:** perform the release, deploying compatible code before the production slug migration as documented in `docs/url-normalization.md`; run production smoke checks and record the release reference. The assistant must not execute this release.
+
+Evidence, measured limits and the user-owned release/rollback sequence: [Step 8 review](docs/release-review.md). Automated checks do not replace physical-device/screen-reader testing or the user's final acceptance. Performance and the approved control-free motion design retain the review notes in that guide. No production migration has been applied.
 
 Acceptance: content preservation, functional behavior, visual quality, performance, and CMS usability pass review, with a clear rollback path.
 
 ## Decisions still to lock in
 
-- Remaining homepage compositions and section motion (step 6).
-- Stories, menu, and imprint layouts (step 7).
-- Final release approval and production rollout (step 8).
-- Placement of existing homepage content, including whether the standalone address section remains.
-- Scope of pinned story showcases and any additional animation dependency.
+- Remaining pre-release checks and follow-up fixes in the [release review](docs/release-review.md), including mobile loading and the no-JavaScript fallback for unknown CMS URLs.
+- Kontakt test delivery/provider setup and remaining activation checks.
+- The user's production release timing and targeted content changes.
+
+Homepage and secondary-page layouts are already locked in. The address section was intentionally removed; product scrollytelling remains optional future work.
 
 ## Decision and progress log
 
@@ -418,3 +425,11 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 | 4 November 2026 | Implemented Kontakt for local review: German guided enquiry flow, owner-managed reasons/copy, review/edit/retry states, catering preselection, protected POST endpoint, Turnstile/Upstash/Resend integration and bounded duplicate prevention. Development runs in explicit no-email preview mode. TypeScript, schema extraction, slug audit, isolated build, 32 tests and responsive browser journeys pass. Created one development page and made four targeted document changes; 141 unrelated revisions unchanged. Added owner/setup documentation. Real provider setup and delivery verification remain pending; new work is uncommitted and production untouched. |
 
 | 4 November 2026 | User requested tracking the remaining Kontakt requirements and committing the current work. Saved the ordered activation checklist, explicitly retaining the unimplemented development test-delivery mode, fixed test inbox, provider/DNS/environment setup, real-service verification, device/accessibility checks and approved production rollout. Committed `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry). All 32 tests, TypeScript and diff checks pass before commit; earlier schema/slug/build/browser evidence is retained. No push, deployment, new CMS changes or email sending. |
+
+| 4 November 2026 | User authorized step 8 in development, explicitly reserved production release for themselves and required review before any further commit. Began final code/content/route, accessibility, responsive, recovery and performance checks plus a release/rollback handover. No step-8 commits or production mutations authorized. |
+
+| 4 November 2026 | Step 8 development audit and polish prepared for review (Lighthouse 99 desktop / 89 simulated mobile, measured CLS 0; mobile LCP remains 3.8 s): German semantics/404/dates, heading hierarchy with retained type sizes, small-text contrast, WebKit menu focus containment, hero image priority/intro movement and safer search metadata. Tests, isolated optimized build, route/content/responsive/a11y/failure checks and authenticated CMS fixture editing/publication completed. Cache propagation observed at 121 seconds. All fixtures removed; full before/after snapshots, including revisions and owner drafts, match in both datasets. See `docs/release-review.md` for performance/manual checks, targeted production content/asset review and rollback. All step-8 work is uncommitted; no push, deployment or production mutation. |
+
+| 4 November 2026 | Revised the 404 after user review: restored full orange, the CMS Supporting Logo illustration and wordmark; added “Suchst du nach Focaccia?” with the animated “Die gibt’s hier!” Speisekarte link and a secondary home link. TypeScript, isolated optimized build, twelve Chromium/WebKit viewport checks, accessibility checks and keyboard navigation pass. Recorded an existing no-JavaScript fallback limitation for unknown CMS slugs, reproduced with data-free markup; unmatched nested paths render without JavaScript. No CMS changes, commits or release. |
+
+| 4 November 2026 | User authorized committing all reviewed work. Created `43acf65` (preview indexing and structured restaurant metadata), `3527fe7` (contrast, heading hierarchy and menu focus), `fd98c53` (hero image priority and intro layout stability), and `d606b3f` (orange, CMS-branded Focaccia 404). All 39 tests, TypeScript and diff checks pass; prior isolated builds and Chromium/WebKit evidence remain valid. Updated the plan and release/rollback handover in the accompanying documentation commit. Existing performance, manual-device/screen-reader, no-JavaScript fallback and Kontakt activation follow-ups remain tracked. No push, deployment or CMS mutation; production release remains exclusively user-owned. |

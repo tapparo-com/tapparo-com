@@ -9,13 +9,14 @@ Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Ne
 - [Homepage revision sub-project](docs/homepage-revision-plan.md)
 - [Homepage implementation record](docs/homepage-redesign.md)
 - [Stories, Speisekarte and legal page implementation](docs/secondary-pages.md)
+- [Step 8 verification and user-owned release handover](docs/release-review.md)
 - [Kontakt enquiry page plan](docs/contact-page-plan.md)
 - [Kontakt remaining activation checklist](docs/contact-page-plan.md#remaining-activation-checklist)
 - [Kontakt editing, delivery setup and verification](docs/contact-page.md)
 
 The [local homepage](http://localhost:3000/) now renders the approved hero from the development CMS. **Pages → Home → Hero** controls carousel images, image duration and ticker phrases; **Site Settings → Opening Hours** controls the shared live indicator. The carousel follows the selected images and defaults to a 1.2-second image duration with a 100 ms crossfade. One selected image stays static. The remaining sections retain their content.
 
-Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is committed: `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt’s current implementation is committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry); controlled test delivery, provider setup and real delivery verification remain pending. See [Stories, Speisekarte and legal pages](docs/secondary-pages.md). Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
+Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is committed: `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt’s current implementation is committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry); controlled test delivery, provider setup and real delivery verification remain pending. See [Stories, Speisekarte and legal pages](docs/secondary-pages.md). Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged. Step 8 verification and polish are committed following user approval; references are recorded in `PROJECT_PLAN.md`. Remaining release checks are still open, and the user will perform the release. See the [review evidence, remaining checks and rollback guide](docs/release-review.md).
 
 ## Architecture
 
@@ -84,10 +85,10 @@ lib/
 Access the studio at `yoursite.com/studio`. The sidebar is organized into:
 
 ### Site Settings
-- **Brand** — Restaurant name, tagline, logo, supporting logos
+- **Brand** — Restaurant name, tagline, logo, supporting logos. The orange 404 uses **Supporting Logo** for its illustration and **Logo** for the wordmark.
 - **Page Intro** — First-visit welcome toggle and iconmark + wordmark artwork. Screen-reader name/tagline come from Brand; the visual intro has no separate tagline.
 - **Contact** — Email, phone, address, Google Maps link
-- **Opening Hours** — Day/hours pairs shown in the footer and SubHero section
+- **Opening Hours** — Structured Berlin weekly hours, date exceptions and closures; these drive the live indicator and the regular hours shown in the footer and About section
 - **Social Links** — Instagram, WhatsApp, etc. Referenced by header, footer, and coming soon page
 - **SEO** — Default meta title, title template, meta description, coming soon mode
 
@@ -193,10 +194,12 @@ Kontakt delivery adds private Resend, Turnstile and Upstash variables, plus a pu
 
 The site uses **Incremental Static Regeneration (ISR)** with a 60-second revalidation window. When an editor publishes a change in Sanity:
 
-1. The next visitor request after 60 seconds triggers a background page rebuild
-2. The following request serves the updated content
+1. A visitor request after the cache window triggers background revalidation.
+2. Subsequent requests receive the update after the Sanity CDN, data cache and page cache refresh. Another cycle may be needed; the step-8 publishing check took 121 seconds. This is not an exact one-minute publication guarantee.
 
-No manual redeploy is needed for content changes.
+No manual redeploy is normally needed for content changes. An already open page does not subscribe to CMS edits; reload or revisit it after publishing. Live opening status still updates against the schedule already loaded in that browser.
+
+Development datasets and Vercel preview builds send `noindex, nofollow` and a disallowing robots file. Production indexing is enabled only for the production dataset outside a Vercel preview. Verify the actual production directives after your release.
 
 ### Switching datasets
 

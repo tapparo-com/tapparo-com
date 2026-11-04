@@ -21,7 +21,7 @@ In **Pages → Home → Hero**:
 
 - **Carousel images** uses the existing `heroImages` array. Add/reorder images, set crops/hotspots, and describe them with alt text. Missing image assets block publication; missing descriptions produce a warning. One selected image will be static in the redesigned hero.
 - **Ticker phrases** is one phrase per entry. Drag to reorder, leave empty to hide. The frontend adds bullets and their 8 px spacing.
-- Layout, animation duration, and carousel cadence stay in the frontend. The owner does not need to edit those parameters.
+- **Image duration (seconds)** controls the interval between images: 1.2–15 seconds, default 1.2. The 100 ms crossfade and other entrance/layout timing stay in the frontend.
 
 Milestone 5 now renders the selected CMS sequence on the local homepage, respecting crops/hotspots. The separate design preview retains its approved demonstration sequence. See [Hero integration](hero-integration.md).
 
@@ -38,7 +38,7 @@ The holiday calendar follows the [City of Munich's public-holiday list](https://
 
 All calculations use `Europe/Berlin`, regardless of the visitor's device time zone. Opening includes the start instant and excludes the closing instant. During the autumn clock change, an ambiguous opening uses the first occurrence and closing uses the last. Missing spring times move forward by the clock-change gap. For example, a missing `02:30` becomes `03:30`.
 
-The hero and menu share one live status hook. It refreshes at minute boundaries and immediately on focus, page restoration, or visibility changes. These are clock updates against the loaded CMS settings; publishing a new schedule follows the site's existing fetch/cache behavior on the next page load. Production data requests currently revalidate after 60 seconds; development requests are uncached. No browser-specific timezone setting or external holiday API is needed.
+The hero and menu share one live status hook. It refreshes at minute boundaries and immediately on focus, page restoration, or visibility changes. These are clock updates against the loaded CMS settings; publishing a new schedule follows the site's existing fetch/cache behavior on the next page load. Optimized builds use a 60-second revalidation window; request-driven CDN/data/page cache refresh can take another cycle (121 seconds in the step-8 test). Local development requests are uncached. No browser-specific timezone setting or external holiday API is needed.
 
 The server and initial browser render use the neutral **Öffnungszeiten prüfen** state until the client has calculated the status, avoiding hydration disagreement or an invented “open” claim. Missing/invalid structured settings also use this neutral state. Green means open; dark grey red means closed.
 
@@ -67,6 +67,10 @@ The command also permits a read-only production audit; it has no apply mode. At 
 
 The tests cover regular boundaries, split shifts, overnight/week carry-over, date/closure priority, holiday dates, both daylight-saving transitions, invalid content, and conservative migration. Studio schema extraction and validation of the migrated development document pass without warnings or errors. Browser checks cover minute-boundary changes with a Los Angeles device timezone, hero/menu agreement, holiday closure, focus/visibility recovery, design overrides, and derived footer rows.
 
-Six local fixtures were also checked through Sanity's validation engine in Studio mode: three valid documents pass, while overlapping hours, duplicate special dates, and reversed closure dates produce publication-blocking errors. The installed CLI reports object-level validation failures as warnings, so Studio-mode validation was checked separately. This is an engine check; an authenticated walkthrough of the editing UI remains part of review.
+Six local fixtures were also checked through Sanity's validation engine in Studio mode: three valid documents pass, while overlapping hours, duplicate special dates, and reversed closure dates produce publication-blocking errors. The installed CLI reports object-level validation failures as warnings, so Studio-mode validation was checked separately. This was originally an engine check. Step 8 subsequently verified changing and publishing an opening period through authenticated Studio on an isolated development copy, then deleted that copy; the original settings were unchanged.
 
 Public homepage sections, stories, menu, imprint, navigation, and brand content remain intact. Milestone 5 integrates the approved hero into the section renderer; see its separate review record.
+
+## Search-engine hours
+
+Step 8 uses the same validated schedule for Restaurant JSON-LD, including current/next-year public holidays, explicit special dates and closure precedence. Display text is not parsed into structured hours. Invalid, unmigrated or ambiguous 24-hour schedules omit structured hours; the public live-status behavior remains unchanged. See the [release review](release-review.md).

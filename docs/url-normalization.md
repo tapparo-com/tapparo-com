@@ -2,7 +2,7 @@
 
 ## Working environment
 
-All ongoing implementation, content changes, migration trials, and review previews use the `development` dataset. Keep production unchanged until the user is happy with the full result and approves its rollout. An individual milestone's lock-in permits its commit, not a production release. The production procedure below is deferred to milestone 8 in `PROJECT_PLAN.md`.
+All ongoing implementation, content changes, migration trials, and review previews use the `development` dataset. Keep production unchanged until the user is happy with the full result and approves its rollout. An individual milestone's lock-in permits its commit, not a production release. The production procedure below is reserved for the user after development review. Step 8 prepares verification and handover only; it does not authorize the assistant to release. See [release review](release-review.md).
 
 ## Policy
 
