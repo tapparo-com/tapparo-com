@@ -10,10 +10,12 @@ Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Ne
 - [Homepage implementation record](docs/homepage-redesign.md)
 - [Stories, Speisekarte and legal page implementation](docs/secondary-pages.md)
 - [Kontakt enquiry page plan](docs/contact-page-plan.md)
+- [Kontakt remaining activation checklist](docs/contact-page-plan.md#remaining-activation-checklist)
+- [Kontakt editing, delivery setup and verification](docs/contact-page.md)
 
 The [local homepage](http://localhost:3000/) now renders the approved hero from the development CMS. **Pages → Home → Hero** controls carousel images, image duration and ticker phrases; **Site Settings → Opening Hours** controls the shared live indicator. The carousel follows the selected images and defaults to a 1.2-second image duration with a 100 ms crossfade. One selected image stays static. The remaining sections retain their content.
 
-Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is committed: `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt is authorized next. See [Stories, Speisekarte and legal pages](docs/secondary-pages.md). Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
+Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is committed: `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt’s current implementation is committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry); controlled test delivery, provider setup and real delivery verification remain pending. See [Stories, Speisekarte and legal pages](docs/secondary-pages.md). Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
 
 ## Architecture
 
@@ -43,6 +45,7 @@ app/
     menu/page.tsx      # Menu page
     stories/page.tsx   # Stories listing page
   order/route.ts       # Temporary redirect to Degaso ordering
+  api/contact/route.ts # Validated, spam-protected enquiry submission
   studio/              # Sanity Studio (admin interface)
   layout.tsx           # Root layout (fonts, metadata)
   not-found.tsx        # 404 page
@@ -55,6 +58,7 @@ components/
   ui/                  # Reusable UI components
   hero/                # Shared hero artwork, intro, viewport layout, and site navigation
   homepage/            # Shared editorial section styles and image rendering
+  contact/             # Guided enquiry form and challenge lifecycle
   Footer.tsx           # Site footer
   ComingSoon.tsx       # Coming soon page
   SectionRenderer.tsx  # Maps CMS section types to React components
@@ -93,9 +97,11 @@ Access the studio at `yoursite.com/studio`. The sidebar is organized into:
 
 ### Pages
 CMS pages built with a section-based page builder. Available sections:
-- Hero, SubHero, Story Highlight, Stories Grid, Quote, Text + Images, Gallery, Image Grid, Large Text
+- Hero, SubHero, Story Highlight, Stories Grid, Quote, Text + Images, Gallery, Image Grid, Large Text, Contact Form
 
 **Text + Images** retains the existing `sectionText` content. Edit the heading, full rich text, first image, optional second image and **Images first** setting in the section. Images support crop/hotspot and alt text; one-image and text-only layouts work automatically. The homepage uses this section for **Das Produkt**.
+
+**Pages → Kontakt → Contact Form** controls the enquiry reasons, question/help text and confirmation copy. The [local Kontakt page](http://localhost:3000/kontakt) runs in development; preview submissions send no email. **Text + Images → Enquiry link (optional)** supplies the product's catering entry point. The current implementation is committed following user approval on 4 November. The [remaining activation checklist](docs/contact-page-plan.md#remaining-activation-checklist) tracks controlled test delivery, provider setup, verification and launch; the [owner guide](docs/contact-page.md) explains editing and configuration.
 
 ### Menu
 - **Menu Page** — Title, description, ordered category references
@@ -180,6 +186,8 @@ Set these in the Vercel dashboard (Settings > Environment Variables):
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | Sanity project ID |
 | `NEXT_PUBLIC_SANITY_DATASET` | Dataset name (`development` or `production`) |
 | `NEXT_PUBLIC_SITE_URL` | Public site URL (used for OG images, sitemap, robots.txt) |
+
+Kontakt delivery adds private Resend, Turnstile and Upstash variables, plus a public Turnstile site key. See [.env.contact.example](.env.contact.example) and the [setup guide](docs/contact-page.md#environment-and-provider-setup). Local development uses preview delivery; only explicitly configured production can send to the owner.
 
 ### Content updates
 

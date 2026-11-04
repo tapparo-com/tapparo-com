@@ -1,11 +1,13 @@
 # Kontakt page implementation plan
 
 Created: 4 November 2026  
-Status: Approved for implementation on 4 November 2026 after committing milestone 7.
+Status: Current development implementation locked in and committed on 4 November 2026 as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry). Live activation is pending the checklist below; this approval does not authorize production rollout.
+
+See the [implementation, CMS editing and setup guide](contact-page.md). Local review: [Kontakt](http://localhost:3000/kontakt). Preview submissions send no email.
 
 Create `/kontakt` as a short, welcoming enquiry flow that helps visitors ask about catering or contact Tapparo. The experience should feel like the existing website, with one question at a time and a clear route to sending a message. Completion means a qualified enquiry sent to `hello@tapparo.com`; this is not a booking confirmation or a newsletter subscription.
 
-This is milestone **7.1**, after the approved secondary pages and before milestone 8. Implement in development with test delivery. Provider setup and live sending remain pending; commit the new implementation only after lock-in.
+This is milestone **7.1**, after the approved secondary pages and before milestone 8. Continue setup and testing against development. The user authorized committing the current implementation; provider setup, controlled test delivery and public launch remain outstanding.
 
 ## Proposed visitor flow
 
@@ -83,6 +85,43 @@ Hosting prerequisite: Vercel’s published Hobby terms limit that plan to person
 | 7.1.6 Lock-in and release preparation | Make sensible commits only after lock-in. Verify recipient/DNS, actual delivery, provider limits and privacy copy; prepare targeted production content changes and navigation updates. | Approved release package for milestone 8; no automatic production rollout. |
 
 Suggested commit boundaries after approval: CMS configuration; form interface/accessibility; protected delivery and tests; documentation and verification. Combine tightly coupled changes where a split would leave the application broken.
+
+### Implementation record — 4 November 2026
+
+- 7.1.1–7.1.2: Complete for review. Native German flow, review/edit/error/confirmation states, reusable section, development page and navigation additions are implemented.
+- 7.1.3: Code and mocked provider tests complete. Turnstile, Upstash and Resend account/credential setup, sender verification and real delivery remain pending. Development cannot email the owner.
+- 7.1.4: Implemented. The optional product CTA preselects catering; mobile/desktop journeys preserve answers through menu opening, editing and errors.
+- 7.1.5: Local type, schema, slug, optimized build, 32 automated tests and responsive browser checks pass. Owner/setup documentation is written. Physical-device, assistive-technology and real-provider checks remain release work.
+- 7.1.6: Current implementation locked in and committed on 4 November. Delivery setup and release preparation remain open below; production release remains separately authorized in milestone 8.
+
+Created one development page; added Kontakt to existing published navigation and its existing header draft, without publishing that draft; added only the optional product action on Home. All 141 unrelated content document/draft revisions are unchanged. Production is untouched.
+
+## Remaining activation checklist
+
+This is the authoritative list of open Kontakt tasks. Check items off only when their setup or verification has actually completed, and record evidence here. The existing interface, endpoint and mocked integration tests are implemented; **real email delivery has not been tested or enabled**. None of the provider credentials are configured in the local environment as of 4 November 2026.
+
+### A. Enable controlled testing in development
+
+- [ ] **Implement a separate test-delivery mode.** Current code permits real sending only on a Vercel production deployment using the production dataset. Add an explicitly enabled mode that uses the development dataset and a fixed server-configured test recipient. Ordinary previews must remain demo/disabled; never take the recipient from browser input or spoof a production environment to bypass the guard. Define the allowed test origin and trusted client-IP handling for the chosen test environment, namespace test rate-limit/idempotency records separately, and retain all live validation and spam checks. Add regression tests proving that test submissions cannot reach the owner's live inbox.
+- [ ] **Confirm setup access and the test inbox.** Obtain access to the intended Resend, Cloudflare and Upstash accounts, Tapparo's DNS and the relevant deployment settings. Confirm the controlled test recipient and that `hello@tapparo.com` is the live receiving mailbox. Keep credentials out of documents and commits.
+- [ ] **Configure Resend.** Add and verify a sending subdomain such as `notify.tapparo.com` using Resend's supplied DNS records, preserve existing mailbox records, create a suitably scoped API key and configure a verified `CONTACT_FROM` sender.
+- [ ] **Configure Turnstile.** Create a managed widget and appropriate test/live hostname configuration; obtain the public site key and private secret. Verify the server's expected hostname and `contact` action match the actual environment.
+- [ ] **Configure Upstash.** Create Redis, choose the service region, obtain its REST URL/token and generate the HMAC rate-limit secret. Review the existing eight-attempts/ten-minutes and 80-attempts/day limits against expected traffic and service quotas.
+- [ ] **Install environment configuration.** Use `.env.contact.example` for the existing variables; add/document the test-mode recipient and origin settings when implemented. Configure secrets in the appropriate environment and rebuild/redeploy that test environment for public site-key/rendering changes. Keep production and ordinary previews unchanged.
+
+### B. Verify with the real services
+
+- [ ] **Verify email delivery end to end.** Send a controlled test with the development dataset to the agreed test inbox. Check inbox/spam placement, sender identity, subject, full message, reason, reference and Reply-To. Record the date, environment and provider delivery status without logging personal enquiry content.
+- [ ] **Verify protection and recovery end to end.** Exercise a real challenge, expiration/retry, invalid submissions, throttling, unavailable providers and an uncertain delivery outcome. Confirm the same unchanged retry does not send a second message, answers remain available on failure, and failures never produce a success confirmation.
+- [ ] **Complete device/accessibility review.** Check a physical mobile keyboard, screen-reader announcements/focus, keyboard-only navigation, reduced motion and the complete owner editing workflow. Prior automated viewport/semantics checks remain valid but do not replace these checks.
+
+### C. Prepare and approve public launch
+
+- [ ] **Finish service and privacy review.** Review actual provider retention/processing settings, costs/quotas, the appropriate business hosting arrangement already identified in the plan, and update the privacy notice for the chosen services. Confirm who will monitor enquiries and delivery failures.
+- [ ] **Prepare targeted production content changes and rollback.** Take fresh backups, compare current owner edits/drafts, and prepare the Kontakt page/privacy reference, navigation additions and optional product link using production references. Do not replace production with development wholesale.
+- [ ] **Obtain release approval and enable live delivery.** Commit any subsequent approved test/setup changes, deploy compatible code/schema and the approved content changes, configure the live credentials and canonical origin, and set `CONTACT_DELIVERY_MODE=live` only in the intended production environment. Rebuild and run a controlled live inbox/Reply-To and form smoke test; record the deployment reference and outcome. Keep a documented route to disable sending if necessary.
+
+**Next implementation task:** the controlled test-delivery mode in A. Provider account/DNS preparation can proceed alongside it. Public launch is not a prerequisite for testing with the development dataset once that mode exists.
 
 ## Acceptance criteria
 

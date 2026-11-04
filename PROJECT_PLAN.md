@@ -3,7 +3,7 @@
 Created: 31 October 2026  
 Last updated: 4 November 2026
 
-Status: Milestones 1–7 are locked in, committed and locally validated. The user approved committing the complete homepage work on 4 November 2026 and authorized continuing to milestone 7. Homepage sections are in `e9395f8`, hero/header/intro refinements in `8c3c53a`, and the compact footer in `03930e7`. Scrollytelling remains optional future work. All implementation and content work uses development; production rollout remains deferred until the full result is approved. Milestone 7 is committed as `be135f0` (stories/legal) and `91aeba5` (menu). The Kontakt plan is approved for implementation in development. Further implementation commits require explicit lock-in.
+Status: Milestones 1–7 are locked in, committed and locally validated. The user approved committing the complete homepage work on 4 November 2026 and authorized continuing to milestone 7. Homepage sections are in `e9395f8`, hero/header/intro refinements in `8c3c53a`, and the compact footer in `03930e7`. Scrollytelling remains optional future work. All implementation and content work uses development; production rollout remains deferred until the full result is approved. Milestone 7 is committed as `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt’s current implementation is committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry); controlled test delivery, provider setup and real delivery verification remain pending. Further implementation commits require explicit lock-in.
 
 ## Working agreement
 
@@ -26,7 +26,7 @@ Status: Milestones 1–7 are locked in, committed and locally validated. The use
 | 5. Hero, carousel, and shared motion | Committed — production deferred to final release | Yes — 2 November 2026 | `a7bc4bc`, `620a611` |
 | 6. Remaining homepage sections | Committed — production deferred | Yes — 4 November 2026 | `e9395f8`, `8c3c53a`, `03930e7` |
 | 7. Stories, menu, and imprint | Committed — [implementation record](docs/secondary-pages.md) | Yes — 4 November 2026 | `be135f0`, `91aeba5` |
-| 7.1 Kontakt enquiry page | Authorized — [contact page plan](docs/contact-page-plan.md) | No | — |
+| 7.1 Kontakt enquiry page | Current implementation committed; activation pending — [checklist](docs/contact-page-plan.md#remaining-activation-checklist) | Yes — current implementation, 4 November 2026 | `020362b`, `f164b8f`, `f5023df` / not released |
 | 8. Verification, polish, and release | Not started | No | — |
 
 Suggested status progression: Not started → In progress → Ready for review → Locked in → Committed → Released, where applicable.
@@ -325,7 +325,11 @@ User locked in milestone 7 on 4 November 2026. Stories/legal layouts are committ
 
 Proposed on 4 November 2026 at the user's request. Build a Tapparo-styled, one-question-at-a-time enquiry flow collecting reason, name, email and message, with owner-controlled reason options. The goal is more catering enquiries and easier general contact. See the [contact page plan](docs/contact-page-plan.md) for the proposed flow, reusable CMS section, email delivery to `hello@tapparo.com`, layered spam protection and review sequence.
 
-Implementation authorized on 4 November 2026 after committing milestone 7. Use development and test delivery settings; production rollout remains part of milestone 8. New Kontakt implementation stays uncommitted until lock-in.
+Implementation authorized on 4 November 2026 after committing milestone 7. The German step flow, reusable Contact Form section, development page/navigation, catering entry link, protected endpoint and mocked provider integration are implemented. Preview submissions explicitly send no email. TypeScript, schema extraction, slug audit, isolated build, all 32 tests and responsive browser journeys pass. See the [owner/setup guide](docs/contact-page.md) for evidence and boundaries.
+
+Created one development Kontakt page, appended navigation links without publishing the existing header draft, and added only the product enquiry action. All 141 unrelated content document/draft revisions remain unchanged. No production changes.
+
+The user authorized recording outstanding tasks and committing the current Kontakt implementation on 4 November 2026. Committed as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry). Track remaining work in the [Kontakt activation checklist](docs/contact-page-plan.md#remaining-activation-checklist): implement controlled test delivery with the development dataset and a fixed test inbox; configure Resend/DNS, Turnstile and Upstash; verify actual delivery, spam defenses and recovery; complete device/accessibility and service/privacy review; then prepare the targeted production rollout. Provider credentials are not configured locally and no real email has been sent. Production rollout remains part of milestone 8 and requires its own approval.
 
 ## 8. Verify, polish, and release
 
@@ -410,3 +414,7 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 | 4 November 2026 | Planned a new Kontakt enquiry page as proposed milestone 7.1, using a reusable CMS section, editable enquiry reasons, a short German step flow, server-side email delivery and layered spam protection. Saved design, implementation, setup and verification sequence in `docs/contact-page-plan.md`. Planning only; no form code, provider setup, email sending, CMS mutation or commit. |
 
 | 4 November 2026 | User approved committing prior work and starting Kontakt. Committed stories/legal as `be135f0` and menu/allergen alignment as `91aeba5`; all 22 tests and TypeScript pass. Approved the Kontakt plan for implementation in development, with test delivery until provider setup is ready. No push or production changes. |
+
+| 4 November 2026 | Implemented Kontakt for local review: German guided enquiry flow, owner-managed reasons/copy, review/edit/retry states, catering preselection, protected POST endpoint, Turnstile/Upstash/Resend integration and bounded duplicate prevention. Development runs in explicit no-email preview mode. TypeScript, schema extraction, slug audit, isolated build, 32 tests and responsive browser journeys pass. Created one development page and made four targeted document changes; 141 unrelated revisions unchanged. Added owner/setup documentation. Real provider setup and delivery verification remain pending; new work is uncommitted and production untouched. |
+
+| 4 November 2026 | User requested tracking the remaining Kontakt requirements and committing the current work. Saved the ordered activation checklist, explicitly retaining the unimplemented development test-delivery mode, fixed test inbox, provider/DNS/environment setup, real-service verification, device/accessibility checks and approved production rollout. Committed `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry). All 32 tests, TypeScript and diff checks pass before commit; earlier schema/slug/build/browser evidence is retained. No push, deployment, new CMS changes or email sending. |
