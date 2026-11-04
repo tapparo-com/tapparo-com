@@ -3,7 +3,7 @@
 Created: 31 October 2026  
 Last updated: 4 November 2026
 
-Status: Milestones 1–6 are locked in, committed and locally validated. The user approved committing the complete homepage work on 4 November 2026 and authorized continuing to milestone 7. Homepage sections are in `e9395f8`, hero/header/intro refinements in `8c3c53a`, and the compact footer in `03930e7`. Scrollytelling remains optional future work. All implementation and content work uses development; production rollout remains deferred until the full result is approved. Further implementation commits require explicit lock-in.
+Status: Milestones 1–7 are locked in, committed and locally validated. The user approved committing the complete homepage work on 4 November 2026 and authorized continuing to milestone 7. Homepage sections are in `e9395f8`, hero/header/intro refinements in `8c3c53a`, and the compact footer in `03930e7`. Scrollytelling remains optional future work. All implementation and content work uses development; production rollout remains deferred until the full result is approved. Milestone 7 is committed as `be135f0` (stories/legal) and `91aeba5` (menu). The Kontakt plan is approved for implementation in development. Further implementation commits require explicit lock-in.
 
 ## Working agreement
 
@@ -25,7 +25,8 @@ Status: Milestones 1–6 are locked in, committed and locally validated. The use
 | 4. Sanity enhancements | Committed — production deferred to final release | Yes — 2 November 2026 | `0426fae`, `b265868`; ticker field: `d9d30c8` |
 | 5. Hero, carousel, and shared motion | Committed — production deferred to final release | Yes — 2 November 2026 | `a7bc4bc`, `620a611` |
 | 6. Remaining homepage sections | Committed — production deferred | Yes — 4 November 2026 | `e9395f8`, `8c3c53a`, `03930e7` |
-| 7. Stories, menu, and imprint | Not started | No | — |
+| 7. Stories, menu, and imprint | Committed — [implementation record](docs/secondary-pages.md) | Yes — 4 November 2026 | `be135f0`, `91aeba5` |
+| 7.1 Kontakt enquiry page | Authorized — [contact page plan](docs/contact-page-plan.md) | No | — |
 | 8. Verification, polish, and release | Not started | No | — |
 
 Suggested status progression: Not started → In progress → Ready for review → Locked in → Committed → Released, where applicable.
@@ -300,19 +301,31 @@ Completed, locked in and committed on 4 November 2026. The [homepage revision su
 
 Review each substep before progressing to the next. Retain the approved hero, brand colors and fonts, 2100 px cap, section-based CMS workflow, founders' quote and original content except the now-authorized address-block removal. Commit only after explicit lock-in. All CMS changes use development; production remains deferred.
 
-The [implementation record](docs/homepage-redesign.md) tracks data changes and verification. The user approved the section revisions and pre-step-7 polish on 4 November; preparation footage is no longer a dependency for the current design. Milestone 7 is authorized next.
+The [implementation record](docs/homepage-redesign.md) tracks data changes and verification. The user approved the section revisions and pre-step-7 polish on 4 November; preparation footage is no longer a dependency for the current design. Milestone 7 is implemented and ready for review.
 
 ## 7. Redesign stories, menu, and imprint
 
-- [ ] Redesign the stories overview and individual article templates.
-- [ ] Preserve story bodies, images, authors, dates, related-story references, and existing URLs.
-- [ ] Preserve menu category order, prices, price variants, extras, availability rules, and allergens.
-- [ ] Give the menu clear category navigation and readable typography with restrained motion.
-- [ ] Preserve the full imprint text and maintain access through the footer.
-- [ ] Retain the dedicated menu, stories, and legal editing workflows.
-- [ ] Review representative article, menu, and imprint layouts before finalizing all templates.
+Authorized 4 November 2026, after committing milestone 6. Follow the [page template plan](docs/secondary-pages.md): overview → articles → Speisekarte → legal page → content and responsive verification. Snapshot evidence lives in `.sanity-backups/step7/`; no CMS mutations are planned.
 
-Review point: all page types are approved, with content preservation verified against the baseline.
+- [x] Redesign the stories overview and individual article templates.
+- [x] Preserve story bodies, images, authors, dates, related-story references, and existing URLs.
+- [x] Preserve menu category order, prices, price variants, extras, availability rules, and allergens.
+- [x] Give the menu clear category navigation and readable typography with restrained motion.
+- [x] Preserve the full imprint text and maintain access through the footer.
+- [x] Retain the dedicated menu, stories, and legal editing workflows.
+- [x] Review representative article, menu, and imprint layouts before finalizing all templates.
+
+Verification complete on 4 November 2026: all 22 regressions, TypeScript, development slug audit, isolated build, 32 responsive layouts, all ten story bodies/routes, menu prices/availability, full legal text, motion and fallbacks pass. All 145 document/draft revisions are unchanged. See the [implementation record](docs/secondary-pages.md).
+
+Applied reading-layout feedback: restored a single menu item column at every size, smaller story/legal typography, and desktop article photography beside the prose. Overview and related cards retain two desktop columns with compact headings. Follow-up type/build, content, interaction and 36 responsive layout checks pass; evidence is in `.sanity-backups/step7-reading-review/`.
+
+User locked in milestone 7 on 4 November 2026. Stories/legal layouts are committed as `be135f0`; the menu and allergen alignment as `91aeba5`. All 22 regressions and TypeScript pass before commit; prior browser/build evidence is retained.
+
+## 7.1 Kontakt enquiry page
+
+Proposed on 4 November 2026 at the user's request. Build a Tapparo-styled, one-question-at-a-time enquiry flow collecting reason, name, email and message, with owner-controlled reason options. The goal is more catering enquiries and easier general contact. See the [contact page plan](docs/contact-page-plan.md) for the proposed flow, reusable CMS section, email delivery to `hello@tapparo.com`, layered spam protection and review sequence.
+
+Implementation authorized on 4 November 2026 after committing milestone 7. Use development and test delivery settings; production rollout remains part of milestone 8. New Kontakt implementation stays uncommitted until lock-in.
 
 ## 8. Verify, polish, and release
 
@@ -390,4 +403,10 @@ Acceptance: content preservation, functional behavior, visual quality, performan
 
 | 4 November 2026 | Completed approved homepage refinements (6.9): smaller Stories/Product headings, full-width Product content, aligned desktop story metadata/actions, optional overlapping second quote image, CMS-controlled carousel duration defaulting to 1.2 seconds, and a simpler aligned footer. TypeScript, schema extraction, 22 tests, slug audit, isolated build and responsive/content/timing/fallback checks pass. All 145 development document/draft revisions unchanged. Updated owner guides and review plan. Ready for review, uncommitted; production unchanged and step 7 remains on hold. |
 
-| 4 November 2026 | User locked in the homepage and requested sensible commits before milestone 7. Committed editorial homepage sections/CMS image layouts as `e9395f8`, responsive hero/sticky branding/intro/carousel controls as `8c3c53a`, and the compact footer as `03930e7`. Recorded prior build, schema, regression, responsive and content-preservation checks. No push, deployment or production changes. Milestone 7 is authorized next. |
+| 4 November 2026 | User locked in the homepage and requested sensible commits before milestone 7. Committed editorial homepage sections/CMS image layouts as `e9395f8`, responsive hero/sticky branding/intro/carousel controls as `8c3c53a`, and the compact footer as `03930e7`. Recorded prior build, schema, regression, responsive and content-preservation checks. No push, deployment or production changes. Milestone 7 is implemented and ready for review. |
+
+| 4 November 2026 | Completed milestone 7 for review: shared story cards/loading, responsive article introductions and readable rich text, a compact anchored Speisekarte with aligned price rows and accessible allergens, and a full legal/privacy reading layout. Content comparisons, all ten story routes, 32 responsive layouts, motion/keyboard/no-JavaScript checks, availability fixtures, TypeScript, 22 tests, slug audit and isolated build pass. All 145 development document/draft revisions unchanged. Step 7 is uncommitted; production unchanged and step 8 not started. |
+| 4 November 2026 | Revised step 7 after comparing the original live layouts: restored one menu item column, compact story/legal typography and desktop article images beside the heading/prose. Mobile articles retain a stacked reading order. TypeScript, isolated build, 36 responsive layouts, all story/menu/legal content comparisons, anchors, motion and fallback checks pass. Updated the implementation record; no CMS mutations or commits. Step 7 remains ready for review. |
+| 4 November 2026 | Planned a new Kontakt enquiry page as proposed milestone 7.1, using a reusable CMS section, editable enquiry reasons, a short German step flow, server-side email delivery and layered spam protection. Saved design, implementation, setup and verification sequence in `docs/contact-page-plan.md`. Planning only; no form code, provider setup, email sending, CMS mutation or commit. |
+
+| 4 November 2026 | User approved committing prior work and starting Kontakt. Committed stories/legal as `be135f0` and menu/allergen alignment as `91aeba5`; all 22 tests and TypeScript pass. Approved the Kontakt plan for implementation in development, with test delivery until provider setup is ready. No push or production changes. |

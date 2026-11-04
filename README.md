@@ -8,10 +8,12 @@ Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Ne
 - [Opening hours, live status, and hero editing](docs/opening-hours.md)
 - [Homepage revision sub-project](docs/homepage-revision-plan.md)
 - [Homepage implementation record](docs/homepage-redesign.md)
+- [Stories, Speisekarte and legal page implementation](docs/secondary-pages.md)
+- [Kontakt enquiry page plan](docs/contact-page-plan.md)
 
 The [local homepage](http://localhost:3000/) now renders the approved hero from the development CMS. **Pages → Home → Hero** controls carousel images, image duration and ticker phrases; **Site Settings → Opening Hours** controls the shared live indicator. The carousel follows the selected images and defaults to a 1.2-second image duration with a 100 ms crossfade. One selected image stays static. The remaining sections retain their content.
 
-Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is authorized next. Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
+Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is committed: `be135f0` (stories/legal) and `91aeba5` (menu). Kontakt is authorized next. See [Stories, Speisekarte and legal pages](docs/secondary-pages.md). Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
 
 ## Architecture
 
