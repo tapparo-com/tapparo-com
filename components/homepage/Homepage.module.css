@@ -188,6 +188,7 @@
   letter-spacing: 0.06em;
   transition: color 0.2s ease;
 }
+.productAction { display: flex; justify-content: flex-end; margin-top: 32px; }
 .animatedLink svg {
   position: absolute;
   bottom: 0;

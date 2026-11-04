@@ -1,6 +1,9 @@
 import { PortableText } from "@portabletext/react";
 import { PortableTextLink } from "@/components/ui/PortableTextLink";
 import { Reveal } from "@/components/ui/Reveal";
+import { TransitionLink } from "@/components/ui/TransitionLink";
+import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
+import { pathForSlug } from "@/lib/urls";
 import {
   SectionMedia,
   type SectionImage,
@@ -13,8 +16,9 @@ type Props = {
   image?: SectionImage | null;
   secondaryImage?: SectionImage | null;
   imageFirst?: boolean;
+  contactAction?: { label?: string; slug?: string; reason?: string } | null;
 };
-export function SectionText({ label, body, image, secondaryImage, imageFirst }: Props) {
+export function SectionText({ label, body, image, secondaryImage, imageFirst, contactAction }: Props) {
   const images = [image, secondaryImage].filter(
     (item): item is SectionImage => !!item?.asset,
   );
@@ -28,6 +32,11 @@ export function SectionText({ label, body, image, secondaryImage, imageFirst }: 
           components={{ marks: { link: PortableTextLink } }}
         />
       </div>
+      {contactAction?.slug && contactAction.label && <div className={styles.productAction}>
+        <TransitionLink className={styles.animatedLink} href={`${pathForSlug(contactAction.slug)}${contactAction.reason ? `?anliegen=${encodeURIComponent(contactAction.reason)}` : ""}`}>
+          <span>{contactAction.label}</span><AnimatedUnderline />
+        </TransitionLink>
+      </div>}
     </Reveal>
   ) : null;
 

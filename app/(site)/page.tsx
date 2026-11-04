@@ -47,6 +47,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SectionRenderer
+        documentId={pageData?._id}
         sections={pageData?.sections || []}
         shared={{
           restaurantName: brand?.restaurantName,

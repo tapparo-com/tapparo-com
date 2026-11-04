@@ -118,9 +118,10 @@ export default async function SlugPage({ params }: Props) {
     return (
       <>
         {page.title && slug !== "menu" && (
-          <SectionPageIntro title={page.title} />
+          <SectionPageIntro title={page.title} narrow={page.sections?.some((section: { _type: string }) => section._type === "sectionContactForm")} />
         )}
         <SectionRenderer
+          documentId={page._id}
           sections={page.sections || []}
           shared={{
             restaurantName: brand?.restaurantName,

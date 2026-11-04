@@ -9,6 +9,8 @@ import { SectionLargeText } from "@/components/sections/SectionLargeText";
 import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
 import { SectionText } from "@/components/sections/SectionText";
+import { SectionContactForm } from "@/components/sections/SectionContactForm";
+import type { ContactSection } from "@/lib/contact";
 
 type Section = {
   _key: string;
@@ -25,10 +27,11 @@ type SharedData = {
 
 type Props = {
   sections: Section[];
+  documentId?: string;
   shared?: SharedData;
 };
 
-export async function SectionRenderer({ sections, shared }: Props) {
+export async function SectionRenderer({ sections, shared, documentId }: Props) {
   if (!sections || sections.length === 0) return null;
 
   // Pre-fetch data needed by dynamic sections
@@ -45,6 +48,8 @@ export async function SectionRenderer({ sections, shared }: Props) {
     <div data-section-page data-has-leading-hero={sections[0]?._type === "sectionHero"}>
       {sections.map((section) => {
         switch (section._type) {
+          case "sectionContactForm":
+            return documentId ? <SectionContactForm key={section._key} documentId={documentId} section={section as ContactSection} /> : null;
           case "sectionHero":
             return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} imageDuration={section.imageDuration} />;
           case "sectionSubhero":
@@ -124,6 +129,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return (
               <SectionText
                 key={section._key}
+                contactAction={section.contactAction}
                 label={section.label}
                 body={section.body}
                 image={section.image}
