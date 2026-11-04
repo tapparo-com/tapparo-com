@@ -1,47 +1,22 @@
 import { PortableTextLink } from "@/components/ui/PortableTextLink";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
+import { SectionMedia } from "@/components/homepage/SectionMedia";
+import styles from "@/components/pages/Pages.module.css";
 
 const components: PortableTextComponents = {
   marks: { link: PortableTextLink },
   block: {
-    normal: ({ children }) => (
-      <p className="text-base leading-7 text-foreground">{children}</p>
-    ),
-    h2: ({ children }) => (
-      <h2 className="pt-7 text-2xl font-medium leading-8 text-foreground">
-        {children}
-      </h2>
-    ),
-    h3: ({ children }) => (
-      <h3 className="pt-7 text-xl font-medium leading-7 text-foreground">
-        {children}
-      </h3>
-    ),
+    // The template owns the sole page h1; keep CMS heading text and hierarchy below it.
+    h1: ({ children }) => <h2>{children}</h2>,
   },
   types: {
-    image: ({ value }) => {
-      if (!value?.asset?._ref) return null;
-      return (
-        <figure className="max-w-gutter py-8">
-          <Image
-            src={urlFor(value).width(1248).url()}
-            alt={value.alt || ""}
-            width={624}
-            height={400}
-            className="h-auto w-full"
-          />
-        </figure>
-      );
-    },
+    image: ({ value }) => value?.asset ? <figure>
+      <SectionMedia image={value} natural sizes="(max-width: 663px) calc(100vw - 40px), 624px" />
+      {value.caption && <figcaption>{value.caption}</figcaption>}
+    </figure> : null,
   },
 };
 
 export function PostBody({ value }: { value: any[] }) {
-  return (
-    <div className="flex flex-col gap-5">
-      <PortableText value={value} components={components} />
-    </div>
-  );
+  return <div className={styles.prose} data-rich-text><PortableText value={value} components={components} /></div>;
 }

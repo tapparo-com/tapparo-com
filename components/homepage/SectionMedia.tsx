@@ -22,12 +22,14 @@ export function SectionMedia({
   natural = false,
   sizes = "(max-width: 767px) 100vw, 55vw",
   maxWidth = 1600,
+  priority = false,
 }: {
   image: SectionImage;
   ratio?: number;
   natural?: boolean;
   sizes?: string;
   maxWidth?: number;
+  priority?: boolean;
 }) {
   if (!image.asset) return null;
   const dimensions = image.asset.metadata?.dimensions;
@@ -54,6 +56,7 @@ export function SectionMedia({
         src={src}
         alt={image.alt || ""}
         fill
+        priority={priority}
         sizes={sizes}
         placeholder={image.asset.metadata?.lqip ? "blur" : undefined}
         blurDataURL={image.asset.metadata?.lqip}

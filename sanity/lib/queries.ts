@@ -171,7 +171,7 @@ export const STORIES_QUERY = defineQuery(/* groq */ `
     _id,
     title,
     excerpt,
-    coverImage,
+    coverImage{ ${imageFields} },
     publishedAt,
     "slug": lower(slug.current),
     "authorName": author->name
@@ -203,7 +203,7 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
         "allergens": allergens[]->{ _id, code, label }
       },
       extras[]{ _key, name, price },
-      images[defined(asset)]{ _key, asset->{_id, url}, alt }
+      images[defined(asset)]{ _key, ${imageFields} }
     }
   }
 `);
@@ -223,7 +223,7 @@ export const RELATED_STORIES_QUERY = defineQuery(/* groq */ `
     _id,
     title,
     excerpt,
-    coverImage,
+    coverImage{ ${imageFields} },
     publishedAt,
     "slug": lower(slug.current),
     "authorName": author->name
@@ -236,7 +236,7 @@ export const LEGAL_PAGE_QUERY = defineQuery(/* groq */ `
     _id,
     title,
     "slug": lower(slug.current),
-    body,
+    body[]{ ..., _type == "image" => { ${imageFields} } },
     updatedAt,
     seo{ title, description }
   }
@@ -271,8 +271,8 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
     title,
     "slug": lower(slug.current),
     excerpt,
-    body,
-    coverImage,
+    body[]{ ..., _type == "image" => { ${imageFields} } },
+    coverImage{ ${imageFields} },
     publishedAt,
     author->{name, image},
     showRelatedStories,
@@ -280,7 +280,7 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
       _id,
       title,
       excerpt,
-      coverImage,
+      coverImage{ ${imageFields} },
       publishedAt,
       "slug": lower(slug.current),
       "authorName": author->name

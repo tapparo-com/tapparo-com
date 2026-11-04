@@ -397,10 +397,10 @@
   transform: scale(1.025);
 }
 .storyPanelTitle {
-  font-size: clamp(28px, 2.2vw, 44px);
+  font-size: var(--story-panel-title-size, clamp(28px, 2.2vw, 44px));
   font-weight: 500;
-  letter-spacing: -0.045em;
-  line-height: 1.05;
+  letter-spacing: var(--story-panel-title-tracking, -0.045em);
+  line-height: var(--story-panel-title-leading, 1.05);
   text-wrap: pretty;
   overflow-wrap: anywhere;
 }
@@ -410,8 +410,8 @@
 .storyPanelExcerpt {
   max-width: 58ch;
   margin-top: 24px;
-  font-size: clamp(16px, 1.05vw, 18px);
-  line-height: 1.55;
+  font-size: var(--story-panel-copy-size, clamp(16px, 1.05vw, 18px));
+  line-height: var(--story-panel-copy-leading, 1.55);
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
@@ -699,7 +699,7 @@
     font-size: clamp(56px, 19vw, 144px);
   }
   .storyPanelTitle {
-    font-size: clamp(32px, 7.5vw, 52px);
+    font-size: var(--story-panel-title-size, clamp(32px, 7.5vw, 52px));
   }
 }
 @media (prefers-reduced-motion: reduce) {

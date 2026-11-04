@@ -34,7 +34,7 @@ export default async function StoriesPage() {
   return (
     <div className="relative z-10 bg-background">
       <SectionPageIntro title={title} description={pageData?.description} />
-      {posts && posts.length > 0 && <SectionListStories posts={posts} />}
+      <SectionListStories posts={posts || []} />
     </div>
   );
 }
