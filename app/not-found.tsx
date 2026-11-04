@@ -1,61 +1,50 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Reveal } from "@/components/ui/Reveal";
+import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { BRAND_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
+import styles from "./not-found.module.css";
+import shared from "@/components/homepage/Homepage.module.css";
+
+type Brand = {
+  restaurantName?: string;
+  logo?: { asset?: { _ref: string } };
+  supportingLogo?: { asset?: { _id: string; url: string } };
+};
+
+function FallbackLockup({ name = "Tapparo" }: { name?: string }) {
+  return <div className={styles.fallbackLockup}>
+    <Image src="/brand/intro-lockup.svg" alt={name} fill priority
+      sizes="(max-width: 767px) 170px, 300px" />
+  </div>;
+}
 
 export default async function NotFound() {
-  const brand = await sanityFetch<any>({
-    query: BRAND_QUERY,
-    tags: ["settingsBrand"],
-  });
-
-  return (
-    <main className="selection-invert flex min-h-svh items-center bg-accent px-3 py-14 md:px-8 md:py-20">
-      <div className="mx-auto w-full max-w-[1856px]">
-        <div className="md:grid grid-cols-sidebar md:gap-10">
-          {/* Col-1: Label */}
-          <div className="mb-8 md:mb-0 md:col-start-1">
-            <span className="text-base uppercase text-background/70">
-              Not found
-            </span>
-          </div>
-
-          {/* Col-2: Text + Image */}
-          <div className="md:col-start-2">
-            <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
-              {/* Text */}
-              <Reveal>
-              <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
-                <p className="text-section-heading font-medium text-background">
-                  We didn&apos;t find the page you were looking for.{" "}
-                  <Link href="/" className="underline">
-                    Visit the home page.
-                  </Link>
-                </p>
-              </div>
-              </Reveal>
-
-              {/* Supporting logo */}
-              {brand?.supportingLogo?.asset && (
-                <Reveal delay={0.1}>
-                  <div className="max-w-gutter xl:flex-1">
-                    <div className="relative aspect-square w-48 md:w-64">
-                      <Image
-                        src={urlFor(brand.supportingLogo).width(512).url()}
-                        alt=""
-                        fill
-                        className="object-contain object-left-bottom"
-                      />
-                    </div>
-                  </div>
-                </Reveal>
-              )}
-            </div>
-          </div>
-        </div>
+  const brand = await sanityFetch<Brand | null>({ query: BRAND_QUERY, tags: ["settingsBrand"] }).catch(() => null);
+  const name = brand?.restaurantName || "Tapparo";
+  return <main className={`${styles.page} selection-invert`} id="main-content" tabIndex={-1}>
+    <div className={styles.layout}>
+      <div className={styles.content}>
+        <p className={styles.note}>404 — Diese Seite gibt’s leider nicht.</p>
+        <h1 className={styles.title}>Suchst du nach<br />Focaccia?</h1>
+        <Link href="/menu" className={`${shared.animatedLink} ${styles.menuLink}`}>
+          <span>Die gibt’s hier!</span><AnimatedUnderline />
+        </Link>
+        <Link href="/" className={styles.homeLink}>oder zurück zur Startseite</Link>
       </div>
-    </main>
-  );
+      <div className={styles.brand}>
+        {brand?.supportingLogo?.asset ? <>
+          <div className={styles.illustration}>
+            <Image src={brand.supportingLogo.asset.url} alt="" fill priority
+              sizes="(max-width: 767px) 160px, (max-width: 1279px) 280px, 360px" />
+          </div>
+          <div className={styles.wordmark}>
+            <Image src={brand.logo?.asset ? urlFor(brand.logo).url() : "/design-preview/logo-desktop.svg"}
+              alt={name} fill priority sizes="(max-width: 767px) 170px, 280px" />
+          </div>
+        </> : <FallbackLockup name={name} />}
+      </div>
+    </div>
+  </main>;
 }
