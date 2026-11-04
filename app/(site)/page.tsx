@@ -1,6 +1,7 @@
 import { getHoursRows } from "@/lib/opening-hours";
 import type { Metadata } from "next";
 import { absoluteSiteUrl } from "@/lib/urls";
+import { serializeJsonLd, structuredHours } from "@/lib/seo";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   BRAND_QUERY,
@@ -11,9 +12,14 @@ import {
 import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
 
-export const metadata: Metadata = {
-  alternates: { canonical: absoluteSiteUrl("/") },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await sanityFetch<any>({ query: PAGE_BY_SLUG_QUERY, params: { slug: "home" }, tags: ["page"] });
+  return {
+    alternates: { canonical: absoluteSiteUrl("/") },
+    ...(page?.seo?.title && { title: page.seo.title }),
+    ...(page?.seo?.description && { description: page.seo.description }),
+  };
+}
 
 export default async function HomePage() {
   const [brand, contact, hours, pageData] = await Promise.all([
@@ -27,24 +33,23 @@ export default async function HomePage() {
     }),
   ]);
 
-  const openingHours = getHoursRows(hours);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
     name: brand?.restaurantName || "Tapparo",
+    url: absoluteSiteUrl("/"),
+    hasMenu: absoluteSiteUrl("/menu"),
     description: brand?.tagline,
     ...(contact?.address && { address: contact.address }),
     ...(contact?.phone && { telephone: contact.phone }),
-    ...(openingHours.length > 0 && {
-      openingHours: openingHours.map(entry => `${entry.day} ${entry.hours}`),
-    }),
+    ...structuredHours(hours, new Date().getUTCFullYear()),
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <SectionRenderer
         documentId={pageData?._id}

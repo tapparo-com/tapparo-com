@@ -1,4 +1,5 @@
 import { absoluteSiteUrl } from "@/lib/urls";
+import { canIndexSite } from "@/lib/seo";
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
@@ -6,8 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/studio", "/studio/"],
+        ...(canIndexSite() ? { allow: "/", disallow: ["/studio", "/api/", "/order", "/design-preview"] } : { disallow: "/" }),
       },
     ],
     sitemap: absoluteSiteUrl("/sitemap.xml"),
