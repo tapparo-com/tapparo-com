@@ -1,5 +1,6 @@
 import { defineField, defineArrayMember } from "sanity";
 import { HERO_IMAGE_DURATION } from "../../lib/animation";
+import { sectionContactForm } from "./contact-form";
 import {
   ImageIcon,
   BlockContentIcon,
@@ -469,6 +470,15 @@ export const sectionText = defineArrayMember({
   icon: DocumentTextIcon,
   fields: [
     defineField({
+      name: "contactAction", title: "Enquiry link (optional)", type: "object",
+      description: "Add a link to a contact page, optionally preselecting one of its enquiry reasons.",
+      fields: [
+        defineField({ name: "label", type: "string", initialValue: "catering anfragen", validation: rule => rule.required().max(80) }),
+        defineField({ name: "page", type: "reference", to: [{ type: "page" }], options: { filter: 'count(sections[_type == "sectionContactForm"]) > 0' }, validation: rule => rule.required() }),
+        defineField({ name: "reason", title: "Reason identifier (optional)", type: "string", description: "Copy the reason’s link identifier, e.g. catering. Leave empty for no preselection.", validation: rule => rule.max(64).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/) }),
+      ],
+    }),
+    defineField({
       name: "label",
       title: "Section Label",
       type: "string",
@@ -520,6 +530,7 @@ export const sectionText = defineArrayMember({
 });
 
 export const allSectionTypes = [
+  sectionContactForm,
   sectionHero,
   sectionSubhero,
   sectionStoryHighlight,

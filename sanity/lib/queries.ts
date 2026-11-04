@@ -1,4 +1,5 @@
 import { defineQuery } from "next-sanity";
+import { contactFormFields } from "./contactQuery";
 
 // --- Shared image fragment ---
 const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt, crop, hotspot`;
@@ -99,6 +100,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
     sections[]{
       _key,
       _type,
+      _type == "sectionContactForm" => { ${contactFormFields} },
       _type == "sectionHero" => {
         tickerPhrases,
         imageDuration,
@@ -156,6 +158,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionText" => {
         label,
         body,
+        contactAction{ label, reason, "slug": lower(page->slug.current) },
         image{ ${imageFields} },
         secondaryImage{ ${imageFields} },
         imageFirst
