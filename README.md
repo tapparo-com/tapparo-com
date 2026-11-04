@@ -6,10 +6,12 @@ Restaurant website for Tapparo, a focacceria and daybar in Munich. Built with Ne
 - [URL policy, validation, and migration rollout](docs/url-normalization.md)
 - [Approved design and motion direction](docs/design-direction.md)
 - [Opening hours, live status, and hero editing](docs/opening-hours.md)
+- [Homepage revision sub-project](docs/homepage-revision-plan.md)
+- [Homepage implementation record](docs/homepage-redesign.md)
 
-The [local homepage](http://localhost:3000/) now renders the approved hero from the development CMS. **Pages → Home → Hero** controls carousel images and ticker phrases; **Site Settings → Opening Hours** controls the shared live indicator. The current hero selects one photograph, so it stays static until more images are selected. All other sections and page content remain preserved.
+The [local homepage](http://localhost:3000/) now renders the approved hero from the development CMS. **Pages → Home → Hero** controls carousel images, image duration and ticker phrases; **Site Settings → Opening Hours** controls the shared live indicator. The carousel follows the selected images and defaults to a 1.2-second image duration with a 100 ms crossfade. One selected image stays static. The remaining sections retain their content.
 
-Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`). Step 6 is now redesigning the remaining homepage sections. See [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
+Step 4 is committed (`0426fae`, `b265868`, `dc0002d`). Step 5 is committed (`a7bc4bc`, `620a611`), with its record in `49d5a9c`. Step 6 is locked in and committed: `e9395f8` (homepage sections), `8c3c53a` (hero/header/intro controls), and `03930e7` (footer). Step 7 is authorized next. Product now uses two editable images and the full original text; scrollytelling is optional future work. See [Homepage sections](docs/homepage-redesign.md) and [Hero and navigation integration](docs/hero-integration.md). The separate [design preview](http://localhost:3000/design-preview) retains the approved demonstration sequence and motion replay controls. Production is unchanged.
 
 ## Architecture
 
@@ -50,6 +52,7 @@ components/
   sections/            # Page sections (Hero, SubHero, Quote, Gallery, etc.)
   ui/                  # Reusable UI components
   hero/                # Shared hero artwork, intro, viewport layout, and site navigation
+  homepage/            # Shared editorial section styles and image rendering
   Footer.tsx           # Site footer
   ComingSoon.tsx       # Coming soon page
   SectionRenderer.tsx  # Maps CMS section types to React components
@@ -76,6 +79,7 @@ Access the studio at `yoursite.com/studio`. The sidebar is organized into:
 
 ### Site Settings
 - **Brand** — Restaurant name, tagline, logo, supporting logos
+- **Page Intro** — First-visit welcome toggle and iconmark + wordmark artwork. Screen-reader name/tagline come from Brand; the visual intro has no separate tagline.
 - **Contact** — Email, phone, address, Google Maps link
 - **Opening Hours** — Day/hours pairs shown in the footer and SubHero section
 - **Social Links** — Instagram, WhatsApp, etc. Referenced by header, footer, and coming soon page
@@ -87,7 +91,9 @@ Access the studio at `yoursite.com/studio`. The sidebar is organized into:
 
 ### Pages
 CMS pages built with a section-based page builder. Available sections:
-- Hero, SubHero, Story Highlight, Stories Grid, Quote, Text + Image, Gallery, Image Grid, Large Text
+- Hero, SubHero, Story Highlight, Stories Grid, Quote, Text + Images, Gallery, Image Grid, Large Text
+
+**Text + Images** retains the existing `sectionText` content. Edit the heading, full rich text, first image, optional second image and **Images first** setting in the section. Images support crop/hotspot and alt text; one-image and text-only layouts work automatically. The homepage uses this section for **Das Produkt**.
 
 ### Menu
 - **Menu Page** — Title, description, ordered category references
@@ -110,6 +116,18 @@ CMS pages built with a section-based page builder. Available sections:
 2. Click on any section to edit it
 3. Drag sections to reorder
 4. Publish
+
+The redundant standalone address section has been removed. Continue editing the shared address and map under **Site Settings → Contact** for the hero, menu and footer. About now has **First image** and optional **Second image** fields above its full text; the original image, menu link and hours controls are retained. The About link uses a hand-drawn animated underline; its text and destination remain editable. **Section name** is used in the editor and by screen readers, without a visible overline. Follow the [homepage revision sub-project](docs/homepage-revision-plan.md) for review status and upcoming section changes.
+
+Pre-step-7 polish adds centered content on wide screens, a full-width ticker, a scrolling hero logo that docks in the top-left header, right-aligned menu/story actions and hours before the right-aligned About link. The redesigned footer still uses **Site Settings** and **Navigation → Footer** for its brand, contact/hours, page and social links; no additional CMS controls are needed. The footer uses a small logo and compact information/link groups, without oversized ordering artwork. The transparent sticky header has a black logo and no divider. Hero artwork is approximately 35% smaller and the desktop carousel uses a wider 65/35 grid. The intro is controlled under **Site Settings → Page Intro**: enable/disable the welcome or replace its iconmark + wordmark artwork. Brand supplies the restaurant name/tagline for screen readers, and Home → Hero supplies the first photograph; timing remains defined in code. See the [intro editing guide](docs/hero-integration.md#what-the-owner-can-edit-in-the-intro).
+
+Gallery images form compositions of up to three photographs: a leading image, an overlapping companion and a small detail. Drag **Gallery Images** to change their order; extra selections form additional groups. Mobile displays every image in the same reading order. Crop and alt-text controls remain unchanged, and small source files are kept small. The optional **Caption** appears below the gallery.
+
+The brand statement still uses **Large Text → Display Text**. An optional line break sets the two phrases; otherwise the layout chooses a sentence or word boundary. The complete wording is retained, and longer text scales down and wraps. Motion is automatic and respects reduced-motion preferences.
+
+Homepage Stories use two aligned columns on desktop and one on smaller screens, with landscape covers above the text. Edit the section's **Heading** and optional **Pinned Story** as before; edit each story under **Stories → Posts**. The pinned story comes first, followed by publication date. Four stories appear initially, with two more per load; the full title, excerpt, author/date and cover remain visible.
+
+The closing **Quote** section keeps its **Author**, **Quote** and **Image** fields and adds an optional **Second image** that slightly overlaps the first. Its full text leads the layout, with the portrait beside it on desktop and below it on mobile. Image crops and alt text remain editable; entrances are automatic and respect reduced motion.
 
 ### Adding a new menu item
 1. Go to Studio > Menu > Items
@@ -196,3 +214,5 @@ npm run dev
 ```
 
 The site runs at `http://localhost:3000` and the studio at `http://localhost:3000/studio`.
+
+Approved refinements (4 November): Stories and Product section headings now scale from 32 to 64 px. Product images and text use the full shared content width. Story actions share a metadata row from 1280 px, with aligned footers across desktop card pairs. The simplified footer has three aligned columns on desktop and a single right-aligned stack below 1024 px. **Pages → Home → Hero → Image duration (seconds)** accepts 1.2–15 seconds; empty or invalid values use 1.2 seconds, and the 100 ms crossfade stays fixed. **Pages → Home → Quote → Second image** is optional and has crop/hotspot and alt text. No CMS migration or content changes are needed. See [the approved sequence](docs/homepage-revision-plan.md#69--approved-homepage-refinements-4-november-2026).
