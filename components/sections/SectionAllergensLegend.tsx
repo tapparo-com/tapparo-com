@@ -1,48 +1,15 @@
-import { Reveal } from "@/components/ui/Reveal";
+import page from "@/components/pages/Pages.module.css";
+import styles from "@/components/menu/Menu.module.css";
 
-type Allergen = {
-  _id: string;
-  code: string;
-  label: string;
-};
-
-type SectionAllergensLegendProps = {
-  allergens: Allergen[];
-};
-
-export function SectionAllergensLegend({
-  allergens,
-}: SectionAllergensLegendProps) {
-  if (allergens.length === 0) return null;
-
-  return (
-    <Reveal>
-    <section
-      aria-label="Allergens legend"
-      className="overflow-clip bg-background px-3 py-20 md:px-8"
-    >
-      <div className="mx-auto max-w-[1856px]">
-        <div className="md:grid grid-cols-sidebar md:gap-10">
-          <div className="md:col-start-1">
-            <span className="text-base uppercase text-foreground">
-              Allergens
-            </span>
-          </div>
-          <div className="mt-4 md:mt-0 md:col-start-2">
-            <div className="flex flex-wrap gap-x-5 gap-y-3.5">
-              {allergens.map((a) => (
-                <div key={a._id} className="flex items-center gap-1">
-                  <div className="flex size-5 items-center justify-center bg-foreground/[0.08] text-xs text-foreground">
-                    {a.code}
-                  </div>
-                  <span className="text-xs text-muted">{a.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    </Reveal>
-  );
+type Allergen = { _id: string; code: string; label: string };
+export function SectionAllergensLegend({ allergens }: { allergens: Allergen[] }) {
+  if (!allergens.length) return null;
+  return <section className={`${page.container} ${styles.legend}`} aria-label="Allergene">
+    <div className={styles.categoryLayout}>
+      <h2>Allergene</h2>
+      <dl>{allergens.map(allergen => <div key={allergen._id} id={`allergen-${allergen._id}`}>
+        <dt>{allergen.code}</dt><dd>{allergen.label}</dd>
+      </div>)}</dl>
+    </div>
+  </section>;
 }

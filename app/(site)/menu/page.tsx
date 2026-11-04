@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
   return {
     alternates: { canonical: absoluteSiteUrl("/menu") },
-    title: data?.seo?.title || "Menu",
+    title: data?.seo?.title || "Speisekarte",
     description: data?.seo?.description,
   };
 }
@@ -31,19 +31,18 @@ export default async function MenuPage() {
     }),
   ]);
 
-  const categories = menuData?.categories || [];
+  const categories = (menuData?.categories || []).filter((category: any) => category?.slug);
 
   return (
     <div className="relative z-10 bg-background">
-      {menuData?.title && (
-        <SectionPageIntro
-          title={menuData.title}
-          description={menuData.description}
-        />
-      )}
+      <SectionPageIntro
+        narrow
+        title={menuData?.title || "Speisekarte"}
+        description={menuData?.description}
+      />
       <SectionMenuHeader categories={categories} />
 
-      {categories.filter(Boolean).map((category: any) => (
+      {categories.map((category: any) => (
         <SectionMenuCategory
           key={category._id}
           title={category.title}
