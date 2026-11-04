@@ -18,7 +18,7 @@ const buttonLink = defineArrayMember({
       name: "label",
       title: "Label",
       type: "string",
-      description: "Text shown on the button, e.g. 'View the menu'.",
+      description: "Text shown on the link, e.g. 'speisekarte'.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -39,7 +39,8 @@ const buttonLink = defineArrayMember({
       name: "variant",
       title: "Style",
       type: "string",
-      description: "Visual style of the button.",
+      // Retain legacy data; About now has one consistent underlined link style.
+      hidden: true,
       options: {
         list: [
           { title: "Filled (accent background)", value: "filled" },
@@ -122,9 +123,9 @@ export const sectionSubhero = defineArrayMember({
   fields: [
     defineField({
       name: "label",
-      title: "Section Label",
+      title: "Section name",
       type: "string",
-      description: "Small uppercase label shown in the left column on desktop, e.g. 'ABOUT'.",
+      description: "Names this section in the editor and for screen readers. No visible overline is displayed.",
     }),
     defineField({
       name: "heading",
@@ -135,19 +136,29 @@ export const sectionSubhero = defineArrayMember({
     }),
     defineField({
       name: "image",
-      title: "Image",
+      title: "First image",
       type: "image",
-      description: "Illustration or photo displayed alongside the text. Portrait orientation recommended (roughly 3:4 ratio).",
+      description: "The first image above the introduction. Its proportions and chosen crop are preserved, so menu artwork stays fully visible. If a menu button is selected, this image also links to that page.",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", title: "Alt Text", type: "string" }),
       ],
     }),
     defineField({
+      name: "secondaryImage",
+      title: "Second image",
+      type: "image",
+      description: "Optional companion photograph above the text. Displayed in a landscape frame; use the crop and hotspot to keep the subject in view. On mobile both images stack before the introduction.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe this photograph for screen readers.", validation: rule => rule.required().warning("Add a description for screen readers.") }),
+      ],
+    }),
+    defineField({
       name: "button",
       title: "Button",
       type: "array",
-      description: "Optional call-to-action button. Add one to display it below the heading.",
+      description: "Optional link below the introduction, with an animated hand-drawn underline. Choose the text and destination; its appearance is set by the design.",
       of: [buttonLink],
       validation: (rule) => rule.max(1).error("Only one button allowed."),
     }),
@@ -177,13 +188,13 @@ export const sectionMoodImages = defineArrayMember({
       name: "title",
       title: "Section Label",
       type: "string",
-      description: "Small label shown to the left of the images on desktop.",
+      description: "Optional heading above the image composition.",
     }),
     defineField({
       name: "images",
       title: "Images",
       type: "array",
-      description: "Exactly 3 portrait photos. Displayed side by side on desktop, stacked on mobile. Recommended 4:5 ratio.",
+      description: "Choose up to 3 photographs and drag to reorder. Images keep their proportions in an offset composition, stacked on mobile. Small files remain small details.",
       of: [
         defineArrayMember({
           type: "image",
@@ -223,7 +234,7 @@ export const sectionQuote = defineArrayMember({
       name: "author",
       title: "Author",
       type: "string",
-      description: "Attribution shown in accent color above the quote text.",
+      description: "Attribution shown below the quote.",
     }),
     defineField({
       name: "quote",
@@ -236,10 +247,20 @@ export const sectionQuote = defineArrayMember({
       name: "image",
       title: "Image",
       type: "image",
-      description: "Square image shown alongside the quote. Recommended 1:1 ratio.",
+      description: "Optional image alongside the quote. Its proportions and chosen crop are preserved.",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", title: "Alt Text", type: "string" }),
+      ],
+    }),
+    defineField({
+      name: "secondaryImage",
+      title: "Second image",
+      type: "image",
+      description: "Optional photograph that slightly overlaps the first image. Leave empty to keep the single-image layout. Set the crop and describe the photograph below.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string", validation: rule => rule.required().warning("Describe the photograph for screen readers, or leave empty if decorative.") }),
       ],
     }),
   ],
@@ -262,7 +283,7 @@ export const sectionLargeText = defineArrayMember({
       title: "Display Text",
       type: "text",
       rows: 4,
-      description: "Large display text, no attribution. Same visual style as the Quote section.",
+      description: "A prominent brand statement, with no attribution. Your complete text is displayed and wraps naturally on smaller screens.",
     }),
   ],
   preview: {
@@ -286,7 +307,7 @@ export const sectionGallery = defineArrayMember({
       name: "images",
       title: "Gallery Images",
       type: "array",
-      description: "Portrait images displayed in a horizontal row that bleeds off-screen. Recommended 3:4 ratio, at least 4 images.",
+      description: "Drag to set the order. In each group of three, the first photograph leads, the second overlaps alongside it, and the third is a small detail. Mobile stacks them in the same order. Original proportions and crops are preserved; small files stay small. Additional images form another group.",
       of: [
         defineArrayMember({
           type: "image",
@@ -305,7 +326,7 @@ export const sectionGallery = defineArrayMember({
       name: "caption",
       title: "Caption",
       type: "string",
-      description: "Large text shown below the image row.",
+      description: "Optional text below the complete gallery.",
     }),
   ],
   preview: {
@@ -326,13 +347,13 @@ export const sectionStories = defineArrayMember({
       name: "heading",
       title: "Section Label",
       type: "string",
-      description: "Small uppercase label shown in the left column, e.g. 'OUR STORIES'.",
+      description: "Heading above the homepage story selection, e.g. Stories.",
     }),
     defineField({
       name: "pinnedStory",
       title: "Pinned Story",
       type: "reference",
-      description: "Optional. Pick a story to always show first in the grid. Leave empty to sort by date only.",
+      description: "Optional. Pick a story to always show first in the homepage selection. Leave empty to sort by date only.",
       to: [{ type: "post" }],
     }),
   ],
@@ -390,7 +411,7 @@ export const sectionStoryHighlight = defineArrayMember({
       name: "label",
       title: "Section Label",
       type: "string",
-      description: "Small uppercase label shown in the left column on desktop, e.g. 'HIGHLIGHT'.",
+      description: "Small uppercase label above the story highlight, e.g. 'HIGHLIGHT'.",
     }),
     defineField({
       name: "story",
@@ -435,7 +456,7 @@ export const sectionStoryHighlight = defineArrayMember({
 export const sectionText = defineArrayMember({
   type: "object",
   name: "sectionText",
-  title: "Text + Image",
+  title: "Text + Images",
   icon: DocumentTextIcon,
   fields: [
     defineField({
@@ -443,7 +464,7 @@ export const sectionText = defineArrayMember({
       title: "Section Label",
       type: "string",
       description:
-        "Small uppercase label shown in the left column on desktop.",
+        "Optional heading above the image pair and text, e.g. 'Das Produkt'.",
     }),
     defineField({
       name: "body",
@@ -454,9 +475,19 @@ export const sectionText = defineArrayMember({
     }),
     defineField({
       name: "image",
-      title: "Image",
+      title: "First image",
       type: "image",
-      description: "Square image displayed alongside the text. Recommended 1:1 ratio.",
+      description: "The larger leading image. Its proportions and crop are preserved; landscape photography works well.",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+      ],
+    }),
+    defineField({
+      name: "secondaryImage",
+      title: "Second image",
+      type: "image",
+      description: "Optional smaller companion that overlaps the first image on desktop and mobile. Portrait or detail photography works well. Leave empty for one image and text.",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", title: "Alt Text", type: "string" }),
@@ -464,17 +495,17 @@ export const sectionText = defineArrayMember({
     }),
     defineField({
       name: "imageFirst",
-      title: "Image First",
+      title: "Images first",
       type: "boolean",
       description:
-        "When enabled, the image appears on the left (desktop) or top (mobile). When disabled, the text comes first.",
+        "Show the images before the text. Turn off to lead with the text, followed by the images. The heading stays at the top.",
       initialValue: false,
     }),
   ],
   preview: {
     select: { subtitle: "label" },
     prepare({ subtitle }) {
-      return { title: "Text + Image", subtitle };
+      return { title: "Text + Images", subtitle };
     },
   },
 });

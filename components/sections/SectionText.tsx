@@ -1,86 +1,77 @@
-import { PortableTextLink } from "@/components/ui/PortableTextLink";
-import Image from "next/image";
 import { PortableText } from "@portabletext/react";
-import { urlFor } from "@/sanity/lib/image";
+import { PortableTextLink } from "@/components/ui/PortableTextLink";
 import { Reveal } from "@/components/ui/Reveal";
+import {
+  SectionMedia,
+  type SectionImage,
+} from "@/components/homepage/SectionMedia";
+import styles from "@/components/homepage/Homepage.module.css";
 
-type SectionTextProps = {
+type Props = {
   label?: string | null;
   body?: any[] | null;
-  image?: {
-    asset?: { _id: string; url: string; metadata?: { lqip?: string } };
-    alt?: string;
-  } | null;
+  image?: SectionImage | null;
+  secondaryImage?: SectionImage | null;
   imageFirst?: boolean;
 };
-
-export function SectionText({
-  label,
-  body,
-  image,
-  imageFirst,
-}: SectionTextProps) {
-  if (!body) return null;
-
-  const hasImage = !!image?.asset;
-
-  const textColumn = (
-    <div className={`flex max-w-gutter flex-col gap-5${hasImage ? " xl:flex-1" : ""}`}>
-      <div className="text-section-heading font-medium text-foreground">
-        <PortableText value={body} components={{ marks: { link: PortableTextLink } }} />
-      </div>
-    </div>
+export function SectionText({ label, body, image, secondaryImage, imageFirst }: Props) {
+  const images = [image, secondaryImage].filter(
+    (item): item is SectionImage => !!item?.asset,
   );
+  if (!body?.length && !images.length) return null;
 
-  const imageColumn = image?.asset ? (
-    <div className="max-w-gutter xl:flex-1">
-      <div className="relative aspect-square overflow-hidden">
-        <Image
-          src={urlFor(image).width(624).height(624).url()}
-          alt={image.alt || ""}
-          fill
-          sizes="(max-width: 1280px) 100vw, 624px"
-          className="object-cover"
-          placeholder={image.asset.metadata?.lqip ? "blur" : undefined}
-          blurDataURL={image.asset.metadata?.lqip || undefined}
+  const copy = body?.length ? (
+    <Reveal className={styles.productCopy} duration={0.85}>
+      <div className={styles.richText}>
+        <PortableText
+          value={body}
+          components={{ marks: { link: PortableTextLink } }}
         />
       </div>
-    </div>
+    </Reveal>
   ) : null;
 
   return (
-    <Reveal>
-    <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
-      <div className="mx-auto max-w-[1856px]">
-        <div className="md:grid grid-cols-sidebar md:gap-10">
-          {/* Col-1: Label */}
-          {label && (
-            <div className="mb-8 md:mb-0 md:col-start-1">
-              <span className="text-base uppercase text-foreground">
-                {label}
-              </span>
+    <section
+      className={`${styles.section} ${styles.product}`}
+      data-home-section="product"
+    >
+      {label && (
+        <Reveal className={styles.sectionHeader}>
+          <h2 className={`${styles.title} ${styles.productTitle}`}>{label}</h2>
+        </Reveal>
+      )}
+      <div
+        className={styles.productGrid}
+        data-image-count={images.length}
+        data-image-first={!!imageFirst}
+      >
+        {!imageFirst && copy}
+        {images.length > 0 && (
+          <Reveal className={styles.productImageReveal} mask duration={0.9}>
+            <div className={styles.productImages} data-image-count={images.length}>
+              {images.map((item, index) => (
+                <figure
+                  key={index}
+                  className={index === 0 ? styles.productPrimary : styles.productSecondary}
+                >
+                  <SectionMedia
+                    image={item}
+                    natural
+                    maxWidth={2100}
+                    sizes={images.length === 1
+                      ? "(max-width: 767px) calc(100vw - 40px), (max-width: 2100px) 94vw, 1956px"
+                      : index === 0
+                        ? "(max-width: 767px) 80vw, (max-width: 2100px) 70vw, 1467px"
+                        : "(max-width: 767px) 50vw, (max-width: 2100px) 32vw, 652px"}
+                  />
+                </figure>
+              ))}
             </div>
-          )}
-
-          {/* Col-2: Text + Image */}
-          <div className="md:col-start-2">
-            <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
-              {imageFirst ? (
-                <>
-                  {imageColumn}
-                  {textColumn}
-                </>
-              ) : (
-                <>
-                  {textColumn}
-                  {imageColumn}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+          </Reveal>
+        )}
+        {imageFirst && copy}
       </div>
     </section>
-    </Reveal>
   );
 }

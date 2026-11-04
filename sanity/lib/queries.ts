@@ -100,6 +100,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         label,
         heading,
         image{ ${imageFields} },
+        secondaryImage{ ${imageFields} },
         "button": button[0]{
           label,
           "slug": select(
@@ -130,7 +131,8 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionQuote" => {
         author,
         quote,
-        image{ ${imageFields} }
+        image{ ${imageFields} },
+        secondaryImage{ ${imageFields} }
       },
       _type == "sectionLargeText" => {
         text
@@ -147,6 +149,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         label,
         body,
         image{ ${imageFields} },
+        secondaryImage{ ${imageFields} },
         imageFirst
       },
     },

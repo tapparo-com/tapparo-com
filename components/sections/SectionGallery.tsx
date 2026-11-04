@@ -1,62 +1,60 @@
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
 import { Reveal } from "@/components/ui/Reveal";
+import { GalleryScene } from "@/components/homepage/GalleryScene";
+import {
+  SectionMedia,
+  type SectionImage,
+} from "@/components/homepage/SectionMedia";
+import styles from "@/components/homepage/Homepage.module.css";
 
-type GalleryImage = {
-  _key: string;
-  asset?: { _id: string; url: string; metadata?: { lqip?: string } } | null;
-  alt?: string;
-};
-
-type SectionGalleryProps = {
-  images?: GalleryImage[] | null;
+type Props = {
+  images?: (SectionImage & { _key: string })[] | null;
   caption?: string | null;
 };
-
-export function SectionGallery({ images, caption }: SectionGalleryProps) {
-  const validImages = (images ?? []).filter((img) => img.asset);
-  if (validImages.length === 0) return null;
-
+export function SectionGallery({ images, caption }: Props) {
+  const selected = (images || []).filter((image) => image.asset);
+  if (!selected.length && !caption) return null;
+  // Repeat complete compositions without dropping or reordering owner-selected images.
+  const scenes = Array.from({ length: Math.ceil(selected.length / 3) }, (_, index) =>
+    selected.slice(index * 3, index * 3 + 3),
+  );
   return (
-    <Reveal>
-    <section className="overflow-clip bg-background px-3 py-10 md:px-8 md:py-10 xl:py-10">
-      {/* Horizontal image row — overflows off-screen */}
-      <div className="mx-auto max-w-[1856px]">
-        <div className="flex items-center gap-3 md:gap-10">
-          {validImages.map((img) => (
-            <div
-              key={img._key}
-              className="w-[328px] shrink-0 md:w-[480px] xl:w-[624px]"
-            >
-              <div className="relative aspect-[730/1015] overflow-hidden">
-                <Image
-                  src={urlFor(img).width(730).height(1015).url()}
-                  alt={img.alt || ""}
-                  fill
-                  sizes="(max-width: 768px) 328px, (max-width: 1280px) 480px, 624px"
-                  className="object-cover"
-                  placeholder={img.asset?.metadata?.lqip ? "blur" : undefined}
-                  blurDataURL={img.asset?.metadata?.lqip || undefined}
+    <section
+      className={`${styles.section} ${styles.gallery}`}
+      aria-label="Galerie"
+      data-home-section="gallery"
+    >
+      {scenes.map((scene) => (
+        <GalleryScene
+          key={scene[0]._key}
+          items={scene.map((image, index) => {
+            const sourceWidth = image.asset?.metadata?.dimensions?.width;
+            const croppedWidth = sourceWidth
+              ? sourceWidth * (1 - (image.crop?.left || 0) - (image.crop?.right || 0))
+              : undefined;
+            const small = !!croppedWidth && croppedWidth < 480;
+            return {
+              key: image._key,
+              sourceWidth: croppedWidth,
+              content: (
+                <SectionMedia
+                  image={image}
+                  natural
+                  sizes={small ? `${Math.ceil(croppedWidth!)}px` : scene.length === 1
+                    ? "(max-width: 767px) 90vw, 900px"
+                    : index === 2
+                      ? "(max-width: 767px) 64vw, 320px"
+                      : "(max-width: 767px) 90vw, (max-width: 2100px) 55vw, 1150px"}
                 />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Caption below in sidebar grid layout */}
+              ),
+            };
+          })}
+        />
+      ))}
       {caption && (
-        <div className="mx-auto max-w-[1856px] px-3 pt-10 md:px-8">
-          <div className="md:grid grid-cols-sidebar md:gap-10">
-            <div className="md:col-start-2">
-              <p className="max-w-gutter text-section-heading font-sans font-medium text-foreground">
-                {caption}
-              </p>
-            </div>
-          </div>
-        </div>
+        <Reveal className={styles.galleryCaption}>
+          <p>{caption}</p>
+        </Reveal>
       )}
     </section>
-    </Reveal>
   );
 }

@@ -1,83 +1,85 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
-import { PostCard, type Post } from "@/components/ui/PostCard";
+import type { Post } from "@/components/ui/PostCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { StoryPanel } from "@/components/homepage/StoryPanel";
+import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
+import { pathForSlug } from "@/lib/urls";
+import styles from "@/components/homepage/Homepage.module.css";
 
-type SectionStoriesProps = {
+type Props = {
   heading?: string | null;
   posts: Post[];
   pinnedStoryId?: string | null;
 };
-
-const INITIAL_COUNT = 4;
-
-export function SectionStories({
-  heading,
-  posts,
-  pinnedStoryId,
-}: SectionStoriesProps) {
-  // Reorder: pinned story first, then the rest in original (date) order
-  const orderedPosts = useMemo(() => {
-    if (!pinnedStoryId) return posts;
-    const pinned = posts.find((p) => p._id === pinnedStoryId);
-    if (!pinned) return posts;
-    return [pinned, ...posts.filter((p) => p._id !== pinnedStoryId)];
+export function SectionStories({ heading, posts = [], pinnedStoryId }: Props) {
+  const ordered = useMemo(() => {
+    const pinned = posts.find((post) => post._id === pinnedStoryId);
+    return pinned
+      ? [pinned, ...posts.filter((post) => post._id !== pinnedStoryId)]
+      : posts;
   }, [posts, pinnedStoryId]);
-
-  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
-  const visiblePosts = orderedPosts.slice(0, visibleCount);
-  const hasMore = visibleCount < orderedPosts.length;
-
-  if (!posts || posts.length === 0) return null;
-
+  const [visible, setVisible] = useState(4);
+  const [enhanced, setEnhanced] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const listId = useId();
+  const list = useRef<HTMLDivElement>(null);
+  const pendingFocus = useRef<number | null>(null);
+  useEffect(() => setEnhanced(true), []);
+  useEffect(() => {
+    if (pendingFocus.current === null) return;
+    const link = list.current?.querySelectorAll<HTMLAnchorElement>("article > a")[pendingFocus.current];
+    pendingFocus.current = null;
+    link?.focus({ preventScroll: true });
+    link?.scrollIntoView({ block: "start" });
+  }, [visible]);
+  const loadMore = () => {
+    const next = Math.min(visible + 2, ordered.length);
+    pendingFocus.current = visible;
+    setVisible(next);
+    setAnnouncement(`${next} von ${ordered.length} Stories angezeigt.`);
+  };
+  if (!ordered.length) return null;
   return (
-    <Reveal>
-      <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
-        <div className="mx-auto max-w-[1856px]">
-          <div className="flex flex-col gap-10 md:grid grid-cols-sidebar md:gap-10">
-            {/* Left column: heading + read all link */}
-            <div className="shrink-0 md:row-start-1 md:col-start-1">
-              <div className="flex flex-col">
-                <span className="text-base uppercase text-foreground">
-                  {heading || "Our Stories"}
-                </span>
-                <TransitionLink
-                  href="/stories"
-                  className="inline-flex items-center gap-1 self-start text-base uppercase text-accent hover:underline"
-                >
-                  <span>Read all</span>
-                  <span>{"->"}</span>
-                </TransitionLink>
-              </div>
-            </div>
-
-            {/* Right column: post grid + load more */}
-            <div className="flex flex-col gap-10 md:row-start-1 md:col-start-2">
-              <div className="flex flex-col gap-10 xl:flex-row xl:flex-wrap">
-                {visiblePosts.map((post) => (
-                  <div key={post._id} className="max-w-gutter xl:w-[calc((100%-var(--content-gap))/2)]">
-                    <PostCard post={post} />
-                  </div>
-                ))}
-              </div>
-
-              {hasMore && (
-                <div className="pt-10">
-                  <button
-                    onClick={() => setVisibleCount((prev) => prev + 2)}
-                    className="flex items-center gap-1 text-base uppercase text-accent hover:underline"
-                  >
-                    <span>Load more stories</span>
-                    <span>{"->"}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+    <section
+      className={`${styles.section} ${styles.stories}`}
+      data-home-section="stories"
+    >
+      <Reveal className={styles.sectionHeader}>
+        <h2 className={styles.title}>{heading || "Stories"}</h2>
+        <TransitionLink href="/stories" className={styles.animatedLink}>
+          <span>alle stories</span>
+          <AnimatedUnderline />
+        </TransitionLink>
+      </Reveal>
+      <div ref={list} id={listId} className={styles.storyPanels}>
+        {ordered.slice(0, visible).map((post) => <StoryPanel key={post._id} post={post} />)}
+      </div>
+      <p className="sr-only" role="status">{announcement}</p>
+      {enhanced && visible < ordered.length && (
+        <div className={styles.loadMore}>
+          <button
+            type="button"
+            className={styles.animatedLink}
+            aria-controls={listId}
+            onClick={loadMore}
+          >
+            <span>mehr stories</span>
+            <AnimatedUnderline />
+          </button>
         </div>
-      </section>
-    </Reveal>
+      )}
+      {ordered.length > 4 && (
+        <noscript>
+          <ul className={styles.storyFallbackLinks} aria-label="Mehr Stories">
+            {ordered.slice(4).map(post => (
+              <li key={post._id}><a href={pathForSlug(post.slug)}>{post.title}</a></li>
+            ))}
+          </ul>
+        </noscript>
+      )}
+    </section>
   );
 }

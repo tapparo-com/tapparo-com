@@ -1,57 +1,44 @@
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
+import type { CSSProperties } from "react";
 import { Reveal } from "@/components/ui/Reveal";
+import {
+  SectionMedia,
+  type SectionImage,
+} from "@/components/homepage/SectionMedia";
+import styles from "@/components/homepage/Homepage.module.css";
 
-type GridImage = {
-  _key: string;
-  asset?: { _id: string; url: string; metadata?: { lqip?: string } } | null;
-  alt?: string;
-};
-
-type SectionImageGridProps = {
+type Props = {
   title?: string | null;
-  images?: GridImage[] | null;
+  images?: (SectionImage & { _key: string })[] | null;
 };
-
-export function SectionImageGrid({ title, images }: SectionImageGridProps) {
-  const validImages = (images ?? []).filter((img) => img.asset);
-  const hasImages = validImages.length > 0;
-
+export function SectionImageGrid({ title, images }: Props) {
+  const selected = (images || []).filter((image) => image.asset);
+  if (!title && !selected.length) return null;
   return (
-    <Reveal>
-    <section className="bg-background">
-      <div className="mx-auto max-w-[1856px] px-3 py-24 md:px-8 md:py-24 xl:py-[180px]">
-        <div className="grid gap-8 md:grid-cols-[1fr_3fr]">
-          {title && (
-            <h2 className="font-sans text-base text-foreground">{title}</h2>
-          )}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {hasImages
-              ? validImages.map((img) => (
-                  <div key={img._key} className="aspect-[4/5] overflow-hidden">
-                    <Image
-                      src={urlFor(img).width(624).height(780).url()}
-                      alt={img.alt || ""}
-                      width={624}
-                      height={780}
-                      className="h-full w-full object-cover"
-                      placeholder={
-                        img.asset?.metadata?.lqip ? "blur" : undefined
-                      }
-                      blurDataURL={img.asset?.metadata?.lqip || undefined}
-                    />
-                  </div>
-                ))
-              : Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="aspect-[4/5] bg-[#A0A0A0]"
-                  />
-                ))}
-          </div>
-        </div>
+    <section className={styles.section} data-home-section="mood-images">
+      {title && (
+        <Reveal className={styles.sectionHeader}>
+          <h2 className={styles.title}>{title}</h2>
+        </Reveal>
+      )}
+      <div className={styles.galleryGrid}>
+        {selected.map((image, index) => {
+          const width = image.asset?.metadata?.dimensions?.width;
+          return (
+            <figure
+              className={styles.galleryFigure}
+              key={image._key}
+              data-small={!!width && width < 480}
+              style={
+                { "--source-width": `${width || 1600}px` } as CSSProperties
+              }
+            >
+              <Reveal mask delay={(index % 3) * 0.08}>
+                <SectionMedia image={image} natural />
+              </Reveal>
+            </figure>
+          );
+        })}
       </div>
     </section>
-    </Reveal>
   );
 }

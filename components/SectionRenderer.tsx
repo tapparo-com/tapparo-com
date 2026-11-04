@@ -54,6 +54,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 label={section.label}
                 heading={section.heading}
                 image={section.image}
+                secondaryImage={section.secondaryImage}
                 button={section.button}
                 showOpeningHours={section.showOpeningHours}
                 openingHours={shared?.openingHours}
@@ -88,6 +89,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 author={section.author}
                 quote={section.quote}
                 image={section.image}
+                secondaryImage={section.secondaryImage}
               />
             );
 
@@ -125,6 +127,7 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 label={section.label}
                 body={section.body}
                 image={section.image}
+                secondaryImage={section.secondaryImage}
                 imageFirst={section.imageFirst}
               />
             );

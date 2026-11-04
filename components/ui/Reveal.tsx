@@ -11,6 +11,7 @@ type RevealProps = {
   delay?: number;
   duration?: number;
   className?: string;
+  mask?: boolean;
 };
 
 const offsets = {
@@ -26,6 +27,7 @@ export function Reveal({
   delay = 0,
   duration = REVEAL_DURATION,
   className,
+  mask = false,
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
   const [hydrated, setHydrated] = useState(false);
@@ -35,13 +37,32 @@ export function Reveal({
   useEffect(() => setHydrated(true), []);
 
   const { x, y } = offsets[direction];
+  const shown = !hydrated || prefersReducedMotion || isInView;
 
   return (
     <motion.div
       ref={ref}
       initial={false}
-      animate={!hydrated || prefersReducedMotion || isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x, y }}
-      transition={{ duration: prefersReducedMotion ? 0 : duration, ease: REVEAL_EASE, delay: prefersReducedMotion ? 0 : delay }}
+      animate={
+        shown
+          ? {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              ...(mask ? { clipPath: "inset(0 0 0% 0)" } : {}),
+            }
+          : {
+              opacity: 0,
+              x: mask ? 0 : x,
+              y: mask ? 0 : y,
+              ...(mask ? { clipPath: "inset(0 0 18% 0)" } : {}),
+            }
+      }
+      transition={{
+        duration: prefersReducedMotion ? 0 : duration,
+        ease: REVEAL_EASE,
+        delay: prefersReducedMotion ? 0 : delay,
+      }}
       className={className}
     >
       {children}
