@@ -83,7 +83,7 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
         {previous && previous.id !== current?.id && <div className={styles.imageLayer} aria-hidden="true"><Image src={previous.src} alt="" fill sizes={IMAGE_SIZES} className={styles.photoImage} style={{ objectPosition: previous.position }} /></div>}
         {current && <motion.div key={slide.version} className={styles.imageLayer} data-active-image
           initial={slide.version && !reduced ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : CROSSFADE_SECONDS, ease: "linear" }}>
-          <Image src={current.src} alt={current.alt} fill sizes={IMAGE_SIZES} priority={slide.current === 0} className={styles.photoImage} style={{ objectPosition: current.position }}
+          <Image src={current.src} alt={current.alt} fill sizes={IMAGE_SIZES} priority={slide.current === 0} fetchPriority={slide.current === 0 ? "high" : "auto"} className={styles.photoImage} style={{ objectPosition: current.position }}
             onLoad={() => setLoaded(loaded => loaded.has(current.id) ? loaded : new Set(loaded).add(current.id))} onError={() => setFailed(true)} />
         </motion.div>}
         {(!current || failed) && <div className={styles.photoFallback}><BrandArtwork logo={brand.logo} /><span>{brand.tagline || brand.name}</span></div>}

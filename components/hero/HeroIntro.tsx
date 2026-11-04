@@ -48,14 +48,15 @@ export function HeroIntro({ photo, image, artwork }: {
         width={1070} height={1392} alt="" onError={() => setArtworkFailed(true)} />
     </motion.div>
     {!landed && <motion.div className={styles.introPhoto}
-      initial={{ ...start, clipPath: "inset(0 100% 0 0)" }}
-      animate={{ ...target, clipPath: "inset(0 0% 0 0)" }}
+      style={{ left: target.left, top: target.top, width: target.width }}
+      initial={{ x: start.left - target.left, y: start.top - target.top, height: start.height, clipPath: "inset(0 100% 0 0)" }}
+      animate={{ x: 0, y: 0, height: target.height, clipPath: "inset(0 0% 0 0)" }}
       transition={{
         default: { duration: 1, delay: 1.35, ease: HANDOFF_EASE },
         clipPath: { duration: 1.05, delay: 0, ease: HANDOFF_EASE },
       }} onAnimationComplete={() => setLanded(true)}>
       <div className={image.sketch ? styles.sketchFrame : styles.imageFrame}>
-        <Image src={image.src} alt="" fill priority sizes={IMAGE_SIZES} className={styles.photoImage} style={{ objectPosition: image.position }} />
+        <Image src={image.src} alt="" fill priority fetchPriority="high" sizes={IMAGE_SIZES} className={styles.photoImage} style={{ objectPosition: image.position }} />
       </div>
     </motion.div>}
   </div>;
