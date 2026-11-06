@@ -24,7 +24,10 @@ export function NavigationContent({
 }) {
   const links = getMenuLinks(navigation);
   return (
-    <div className="flex h-full overflow-y-auto overscroll-contain px-[var(--page-gutter)] pt-[calc(var(--header-height)_+_12px)] pb-12 max-[1024px]:pb-7">
+    <div
+      data-navigation-scroll
+      className="flex h-full overflow-y-auto overscroll-contain pt-[calc(var(--header-height)_+_12px)] pr-[max(var(--page-gutter),_env(safe-area-inset-right))] pb-[max(48px,_env(safe-area-inset-bottom))] pl-[max(var(--page-gutter),_env(safe-area-inset-left))] max-[1024px]:pb-[max(28px,_env(safe-area-inset-bottom))]"
+    >
       <div className="mx-auto my-auto w-full max-w-190 text-center">
         <nav
           aria-label="Hauptnavigation"

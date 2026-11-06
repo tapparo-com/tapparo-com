@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { lockPageScroll } from "@/lib/scroll-lock";
 
 type Category = { _id: string; title: string; slug: string };
 export function SectionMenuHeader({ categories }: { categories: Category[] }) {
@@ -8,6 +9,13 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
   const nav = useRef<HTMLElement>(null);
   const chooser = useRef<HTMLDetailsElement>(null);
   const summary = useRef<HTMLElement>(null);
+  const options = useRef<HTMLDivElement>(null);
+  const unlock = useRef<(() => void) | null>(null);
+  const closeChooser = useCallback(() => {
+    if (chooser.current) chooser.current.open = false;
+    unlock.current?.();
+    unlock.current = null;
+  }, []);
   useEffect(() => {
     const navigation = nav.current;
     const page = navigation?.closest<HTMLElement>("[data-menu-page]");
@@ -60,13 +68,49 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
     };
   }, [categories]);
   useEffect(() => {
-    const closeOutside = (event: PointerEvent) => {
-      if (!chooser.current?.contains(event.target as Node) && chooser.current)
-        chooser.current.open = false;
+    const details = chooser.current;
+    const panel = options.current;
+    const navigation = nav.current;
+    if (!details || !panel || !navigation) return;
+    const viewport = window.visualViewport;
+    const fitPanel = () => {
+      if (!details.open) return;
+      const bottom = viewport
+        ? viewport.offsetTop + viewport.height
+        : window.innerHeight;
+      // At the top of the page the chooser is below the page introduction,
+      // so its available height is smaller than when the bar is sticky.
+      panel.style.setProperty(
+        "--menu-available-height",
+        `${Math.max(0, bottom - navigation.getBoundingClientRect().bottom)}px`,
+      );
     };
-    document.addEventListener("pointerdown", closeOutside);
-    return () => document.removeEventListener("pointerdown", closeOutside);
-  }, []);
+    const onToggle = () => {
+      if (details.open) {
+        fitPanel();
+        unlock.current ??= lockPageScroll(panel);
+      } else closeChooser();
+    };
+    const closeOutside = (event: Event) => {
+      if (!details.contains(event.target as Node)) closeChooser();
+    };
+    const observer = new ResizeObserver(fitPanel);
+    observer.observe(navigation);
+    details.addEventListener("toggle", onToggle);
+    document.addEventListener("click", closeOutside);
+    window.addEventListener("resize", fitPanel);
+    viewport?.addEventListener("resize", fitPanel);
+    viewport?.addEventListener("scroll", fitPanel);
+    return () => {
+      closeChooser();
+      observer.disconnect();
+      details.removeEventListener("toggle", onToggle);
+      document.removeEventListener("click", closeOutside);
+      window.removeEventListener("resize", fitPanel);
+      viewport?.removeEventListener("resize", fitPanel);
+      viewport?.removeEventListener("scroll", fitPanel);
+    };
+  }, [closeChooser]);
   if (!categories.length) return null;
   return (
     <nav
@@ -81,8 +125,16 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
           onKeyDown={(event) => {
             if (event.key === "Escape" && chooser.current?.open) {
               event.preventDefault();
-              chooser.current.open = false;
-              summary.current?.focus();
+              closeChooser();
+              summary.current?.focus({ preventScroll: true });
+            }
+            if (event.key === "Tab" && chooser.current?.open) {
+              // Close when keyboard focus leaves. WebKit can briefly focus
+              // <main> on a pointer press, before the category link is clicked.
+              requestAnimationFrame(() => {
+                if (!chooser.current?.contains(document.activeElement))
+                  closeChooser();
+              });
             }
           }}
         >
@@ -103,7 +155,10 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
               />
             </svg>
           </summary>
-          <div className="absolute top-full right-0 bottom-auto left-0 max-h-[min(70dvh,_600px,_calc(100dvh_-_var(--header-height,_0px)_-_var(--menu-navigation-height,_70px)_-_16px))] overflow-y-auto overscroll-contain border-b border-solid border-b-border bg-[#eeece9] px-[clamp(20px,_3.4vw,_72px)] pt-3 pb-5 max-[768px]:px-5 [&_a]:flex [&_a]:min-h-11 [&_a]:items-center [&_a]:border-b [&_a]:border-solid [&_a]:border-b-border [&_a]:py-2 [&_a]:text-[16px] [&_a]:leading-[1.4] [&_a]:wrap-anywhere [&_a:hover]:[border-color:var(--color-accent)] [&_a[aria-current='location']]:[border-color:var(--color-accent)] [&_a[aria-current='location']]:font-medium">
+          <div
+            ref={options}
+            className="absolute top-full right-0 bottom-auto left-0 max-h-[min(70dvh,_600px,_calc(var(--menu-available-height,_70dvh)_-_max(16px,_env(safe-area-inset-bottom))))] overflow-y-auto overscroll-contain border-b border-solid border-b-border bg-[#eeece9] px-[clamp(20px,_3.4vw,_72px)] pt-3 pb-5 max-[768px]:px-5 [&_a]:flex [&_a]:min-h-11 [&_a]:items-center [&_a]:border-b [&_a]:border-solid [&_a]:border-b-border [&_a]:py-2 [&_a]:text-[16px] [&_a]:leading-[1.4] [&_a]:wrap-anywhere [&_a:hover]:[border-color:var(--color-accent)] [&_a[aria-current='location']]:[border-color:var(--color-accent)] [&_a[aria-current='location']]:font-medium"
+          >
             <div className="mx-auto grid max-w-156 grid-cols-2 gap-x-6 gap-y-1 max-[768px]:grid-cols-1">
               {categories.map((category) => (
                 <a
@@ -122,7 +177,7 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
                     )
                       return;
                     event.preventDefault();
-                    if (chooser.current) chooser.current.open = false;
+                    closeChooser();
                     setActive(category.slug);
                     // Keep focus on a visible control after collapsing the choices.
                     summary.current?.focus({ preventScroll: true });

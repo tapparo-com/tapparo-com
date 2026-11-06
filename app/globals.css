@@ -37,6 +37,7 @@ html {
   }
   html {
     scrollbar-gutter: stable;
+    background: var(--color-background);
   }
   body {
     @apply bg-background text-foreground antialiased;

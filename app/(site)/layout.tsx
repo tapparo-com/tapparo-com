@@ -22,8 +22,13 @@ import { ComingSoon } from "@/components/ComingSoon";
 import { SiteShell } from "@/components/hero/SiteShell";
 import { urlFor } from "@/sanity/lib/image";
 import { Footer } from "@/components/Footer";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { SiteData } from "@/components/hero/types";
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: "#f5f4f2",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await sanityFetch<SeoSettings | null>({

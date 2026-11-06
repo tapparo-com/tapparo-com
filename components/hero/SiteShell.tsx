@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useOpeningStatus } from "@/lib/opening-hours/useOpeningStatus";
 import type { OpeningStatus } from "@/lib/opening-hours";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { lockPageScroll } from "@/lib/scroll-lock";
 import { EASE } from "./HeroParts";
 import type { SiteData } from "./types";
 
@@ -73,9 +74,12 @@ export function SiteShell({
   }, [pathname]);
   useEffect(() => {
     if (!menuPresent) return;
-    const overflow = document.body.style.overflow;
+    const panel = root.current?.querySelector<HTMLElement>(
+      "[data-navigation-scroll]",
+    );
+    if (!panel) return;
+    const unlock = lockPageScroll(panel);
     const menuButton = button.current;
-    document.body.style.overflow = "hidden";
     menuButton?.focus({ preventScroll: true });
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -107,7 +111,7 @@ export function SiteShell({
     };
     document.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = overflow;
+      unlock();
       document.removeEventListener("keydown", onKey);
       menuButton?.focus({ preventScroll: true });
     };
@@ -119,17 +123,13 @@ export function SiteShell({
     >
       <div
         ref={root}
-        className="hero-stage site-shell bg-background [font-family:var(--font-instrument-sans),_sans-serif] text-foreground [--header-height:108px] [--page-gutter:32px] max-[1024px]:[--header-height:84px] max-[1024px]:[--page-gutter:20px] [&_:is(a,_button,_select,_textarea,_summary,_input):focus-visible]:[outline:2px_solid_var(--color-accent)] [&_:is(a,_button,_select,_textarea,_summary,_input):focus-visible]:outline-offset-[5px] [&_:is(button,_a,_summary,_select,_textarea)]:[-webkit-tap-highlight-color:transparent] [&_:is(button,_summary)]:cursor-pointer [&_button:disabled]:cursor-default [&_button:disabled]:opacity-[.5] [&[data-entrance='first']]:[--entry-delay:.7s] [&[data-entrance='return']]:[--entry-delay:0s]"
+        className="hero-stage site-shell bg-background pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] [font-family:var(--font-instrument-sans),_sans-serif] text-foreground [--header-height:calc(108px_+_env(safe-area-inset-top))] [--page-gutter:32px] max-[1024px]:[--header-height:calc(84px_+_env(safe-area-inset-top))] max-[1024px]:[--page-gutter:20px] [&_:is(a,_button,_select,_textarea,_summary,_input):focus-visible]:[outline:2px_solid_var(--color-accent)] [&_:is(a,_button,_select,_textarea,_summary,_input):focus-visible]:outline-offset-[5px] [&_:is(button,_a,_summary,_select,_textarea)]:[-webkit-tap-highlight-color:transparent] [&_:is(button,_summary)]:cursor-pointer [&_button:disabled]:cursor-default [&_button:disabled]:opacity-[.5] [&[data-entrance='first']]:[--entry-delay:.7s] [&[data-entrance='return']]:[--entry-delay:0s]"
         data-site-shell
         data-reduced-motion={reduced}
         role={menuPresent ? "dialog" : undefined}
         aria-modal={menuPresent || undefined}
         aria-label={menuPresent ? "Hauptnavigation" : undefined}
       >
-        <div
-          className="pointer-events-none fixed top-0 right-0 bottom-0 left-0 z-[110] h-dvh border border-solid border-accent"
-          aria-hidden="true"
-        />
         <div inert={menuPresent} aria-hidden={menuPresent || undefined}>
           <a
             className="fixed top-2 left-2 z-[120] [transform:translateY(-200%)] bg-background px-3 py-3 focus:[transform:none]"
