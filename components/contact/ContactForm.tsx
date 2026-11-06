@@ -11,11 +11,10 @@ import shared from "@/components/homepage/Homepage.module.css";
 import page from "@/components/pages/Pages.module.css";
 import styles from "./ContactForm.module.css";
 
-type Props = { section: ContactSection; documentId: string; mode: "demo" | "live" | "disabled"; siteKey?: string };
+type Props = { section: ContactSection; documentId: string; mode: "demo" | "live" | "disabled"; siteKey?: string; contactEmail?: string };
 const fieldLabels = { reason: "Anliegen", name: "Name", email: "E-Mail", message: "Nachricht" };
-const fallbackEmail = "hello@tapparo.com";
 
-export function ContactForm({ section, documentId, mode, siteKey }: Props) {
+export function ContactForm({ section, documentId, mode, siteKey, contactEmail = "hello@tapparo.de" }: Props) {
   const copy = resolveContactCopy(section);
   const [reasons, setReasons] = useState(() => enabledReasons(section.reasons));
   const [answers, setAnswers] = useState<ContactAnswers>({ ...emptyContactAnswers });
@@ -48,7 +47,14 @@ export function ContactForm({ section, documentId, mode, siteKey }: Props) {
   }, [section.reasons]);
 
   useEffect(() => {
-    if (didNavigate.current) heading.current?.focus({ preventScroll: true });
+    if (!didNavigate.current) return;
+    heading.current?.focus({ preventScroll: true });
+    // Measure after the new question and compact introduction have rendered.
+    const target = step === 0 ? form.current?.closest("section") : form.current || heading.current;
+    const top = target?.getBoundingClientRect().top;
+    if (top != null && (top < 100 || window.matchMedia("(max-width: 767px)").matches)) {
+      window.scrollBy({ top: top - 100, behavior: "instant" });
+    }
   }, [step, receipt]);
 
   function change(field: ContactField, value: string) {
@@ -59,9 +65,6 @@ export function ContactForm({ section, documentId, mode, siteKey }: Props) {
   function navigate(next: number) {
     didNavigate.current = true;
     setStep(next);
-    // Keep a long message/review from leaving the next question above the viewport.
-    const top = form.current?.getBoundingClientRect().top;
-    if (top != null && top < 110) window.scrollBy({ top: top - 120, behavior: "instant" });
   }
   function showFieldError(field: ContactField, message: string) {
     setErrors(current => ({ ...current, [field]: message }));
@@ -120,10 +123,10 @@ export function ContactForm({ section, documentId, mode, siteKey }: Props) {
   }
 
   const active = hydrated && mode !== "disabled" && reasons.length > 0 && !!section.privacySlug;
-  return <section className={`${page.container} ${styles.section}`} aria-label="Kontaktformular">
+  return <section className={`${page.container} ${styles.section}`} aria-label="Kontaktformular" data-contact-step={step}>
     <div className={styles.inner}>
       {mode === "demo" && <p className={styles.preview}>Formularvorschau · Es wird keine E-Mail versendet.</p>}
-      <noscript><p>Bitte schreib uns direkt an <a href={`mailto:${fallbackEmail}`}>{fallbackEmail}</a>. Das geführte Formular benötigt JavaScript.</p></noscript>
+      <noscript><p>Bitte schreib uns direkt an <a href={`mailto:${contactEmail}`}>{contactEmail}</a>. Das geführte Formular benötigt JavaScript.</p></noscript>
       {receipt ? <div className={styles.confirmation}>
         <h2 className={styles.question} ref={heading} tabIndex={-1}>{receipt.demo ? "Danke! So sieht die Bestätigung aus." : copy.successTitle}</h2>
         <p>{receipt.demo ? "Die Vorschau ist abgeschlossen. Es wurde keine E-Mail versendet." : copy.successMessage}</p>
@@ -177,7 +180,7 @@ export function ContactForm({ section, documentId, mode, siteKey }: Props) {
           </div>
         </form>}
       </>}
-      <p className={styles.fallback}>Lieber direkt schreiben?<br /><a href={`mailto:${fallbackEmail}`}>{fallbackEmail}</a></p>
+      <p className={styles.fallback}>Lieber direkt schreiben?<br /><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
     </div>
   </section>;
 }

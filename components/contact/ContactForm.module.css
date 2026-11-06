@@ -21,7 +21,7 @@
 .input::placeholder { color: var(--color-foreground); opacity: .45; }
 .input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 6px; }
 .input[aria-invalid=true] { border-color: #923c2e; }
-.message { min-height: 200px; resize: vertical; font-size: 18px; line-height: 1.6; }
+.message { border: 1px solid var(--color-foreground); padding: 16px; min-height: 200px; resize: vertical; font-size: 18px; line-height: 1.6; }
 .count { text-align: right; margin-top: 12px; font-size: 13px; font-variant-numeric: tabular-nums; }
 .actions { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 40px; }
 .primary { margin-left: auto; }
@@ -48,10 +48,14 @@
 .challenge { margin-top: 24px; min-height: 65px; }
 @media (max-width: 767px) {
   .intro { font-size: 16px; margin-bottom: 32px; }
-  .track { margin-bottom: 32px; }
-  .step { min-height: 260px; }
+  .section:not([data-contact-step="0"]) .intro { display: none; }
+  .track { margin-bottom: 24px; }
+  .question { margin-bottom: 20px; }
+  .hint { margin-bottom: 20px; }
+  .step { min-height: 200px; }
+  .message { min-height: 160px; height: clamp(160px, 26svh, 220px); font-size: 16px; }
   .choice { padding-block: 18px; gap: 16px; }
-  .actions { margin-top: 28px; }
+  .actions { margin-top: 24px; }
   .review > div { gap: 8px 16px; }
   .review dd { font-size: 16px; }
 }
