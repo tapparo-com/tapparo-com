@@ -41,8 +41,8 @@ export function SectionQuote({
                       sizes={images.length === 1
                         ? "(max-width: 1023px) 70vw, (max-width: 1600px) 32vw, 480px"
                         : index === 0
-                          ? "(max-width: 1023px) 75vw, (max-width: 2100px) 27vw, 534px"
-                          : "(max-width: 1023px) 45vw, (max-width: 2100px) 16vw, 320px"}
+                          ? "(max-width: 1023px) 83vw, (max-width: 2100px) 30vw, 587px"
+                          : "(max-width: 1023px) 38vw, (max-width: 2100px) 14vw, 267px"}
                     />
                   </div>
                 ))}

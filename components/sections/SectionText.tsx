@@ -72,7 +72,7 @@ export function SectionText({ label, body, image, secondaryImage, imageFirst, co
                       ? "(max-width: 767px) calc(100vw - 40px), (max-width: 2100px) 94vw, 1956px"
                       : index === 0
                         ? "(max-width: 767px) 80vw, (max-width: 2100px) 70vw, 1467px"
-                        : "(max-width: 767px) 50vw, (max-width: 2100px) 32vw, 652px"}
+                        : "(max-width: 767px) 42vw, (max-width: 2100px) 32vw, 652px"}
                   />
                 </figure>
               ))}

@@ -63,14 +63,18 @@ export function SectionSubhero({
                     <SectionMedia
                       image={primary}
                       natural
-                      sizes="(max-width: 767px) 86vw, (max-width: 1200px) 42vw, 560px"
+                      sizes={imageCount === 1
+                        ? "(max-width: 767px) calc(100vw - 40px), 560px"
+                        : "(max-width: 767px) 78vw, (max-width: 1200px) 42vw, 560px"}
                     />
                   </TransitionLink>
                 ) : (
                   <SectionMedia
                     image={primary}
                     natural
-                    sizes="(max-width: 767px) 86vw, (max-width: 1200px) 42vw, 560px"
+                    sizes={imageCount === 1
+                      ? "(max-width: 767px) calc(100vw - 40px), 560px"
+                      : "(max-width: 767px) 78vw, (max-width: 1200px) 42vw, 560px"}
                   />
                 )}
               </Reveal>
@@ -82,7 +86,7 @@ export function SectionSubhero({
                 <SectionMedia
                   image={secondary}
                   ratio={4 / 3}
-                  sizes="(max-width: 767px) 86vw, (max-width: 2100px) 52vw, 1000px"
+                  sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 2100px) 52vw, 1000px"
                 />
               </Reveal>
             </figure>

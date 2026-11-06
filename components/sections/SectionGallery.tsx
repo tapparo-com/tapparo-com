@@ -43,7 +43,9 @@ export function SectionGallery({ images, caption }: Props) {
                     ? "(max-width: 767px) 90vw, 900px"
                     : index === 2
                       ? "(max-width: 767px) 64vw, 320px"
-                      : "(max-width: 767px) 90vw, (max-width: 2100px) 55vw, 1150px"}
+                      : index === 0
+                        ? "(max-width: 767px) 78vw, (max-width: 2100px) 47vw, 978px"
+                        : "(max-width: 767px) 100vw, (max-width: 2100px) 55vw, 1141px"}
                 />
               ),
             };
