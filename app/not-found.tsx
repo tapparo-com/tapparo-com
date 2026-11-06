@@ -29,7 +29,7 @@ export default async function NotFound() {
         <p className={styles.note}>404 — Diese Seite gibt’s leider nicht.</p>
         <h1 className={styles.title}>Suchst du nach<br />Focaccia?</h1>
         <Link href="/menu" className={`${shared.animatedLink} ${styles.menuLink}`}>
-          <span>Die gibt’s hier!</span><AnimatedUnderline />
+          <span>Zur Speisekarte</span><AnimatedUnderline />
         </Link>
         <Link href="/" className={styles.homeLink}>oder zurück zur Startseite</Link>
       </div>

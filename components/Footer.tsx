@@ -59,11 +59,12 @@ export function Footer({ settings, footerNav }: FooterProps) {
           )}
           {(pageLinks.length > 0 || socialLinks.length > 0) && (
             <nav className={styles.navigation} aria-label="Fußnavigation">
-              <h2>Entdecken</h2>
               {pageLinks.length > 0 && <div className={styles.linkGroup}>
+                <h2>Entdecken</h2>
                 {pageLinks.map(item => <TransitionLink key={item._key} href={pathForSlug(item.slug)}>{item.label}</TransitionLink>)}
               </div>}
               {socialLinks.length > 0 && <div className={styles.linkGroup}>
+                <h2>Im Netz</h2>
                 {socialLinks.map(link => <a key={link._id} href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>)}
               </div>}
             </nav>
