@@ -5,25 +5,29 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { usePageTransition } from "@/components/ui/PageTransition";
-import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, IMAGE_SIZES, OrderingLink, StatusDetails } from "@/components/hero/HeroParts";
+import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, OrderingLink, StatusDetails } from "@/components/hero/HeroParts";
 import { heroSlideInterval } from "@/lib/animation";
 import { HeroIntro } from "@/components/hero/HeroIntro";
 import { useSite } from "@/components/hero/SiteShell";
 import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "@/components/hero/useHeroEntrance";
-import { heroImage, type SanityHeroImage } from "@/lib/hero-images";
+import { heroImage, heroImageSizes, type SanityHeroImage } from "@/lib/hero-images";
+import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
+import shared from "@/components/homepage/Homepage.module.css";
 import styles from "@/components/hero/Hero.module.css";
 
 type HeroProps = {
   heroImages?: SanityHeroImage[] | null;
   tickerPhrases?: string[];
   imageDuration?: number | null;
+  description?: string;
+  menuLinkLabel?: string;
 };
 
-export function SectionHero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
-  return <Hero key={JSON.stringify(heroImages)} heroImages={heroImages} tickerPhrases={tickerPhrases} imageDuration={imageDuration} />;
+export function SectionHero(props: HeroProps) {
+  return <Hero key={JSON.stringify(props.heroImages)} {...props} />;
 }
 
-function Hero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
+function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menuLinkLabel }: HeroProps) {
   const slideInterval = heroSlideInterval(imageDuration);
   const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent, setEntrance } = useSite();
   const root = useRef<HTMLDivElement>(null);
@@ -56,11 +60,11 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
     if (!upcoming || images.length < 2 || loaded.has(upcoming.id) || stopped) return;
     let active = true;
     const image = new window.Image();
-    const { props } = getImageProps({ src: upcoming.src, alt: "", fill: true, sizes: IMAGE_SIZES });
+    const { props } = getImageProps({ src: upcoming.src, alt: "", fill: true, sizes: heroImageSizes(upcoming, frame) });
     image.onload = () => { if (active) setLoaded(current => new Set(current).add(upcoming.id)); };
     image.sizes = props.sizes || ""; image.srcset = props.srcSet || ""; image.src = props.src;
     return () => { active = false; image.onload = null; };
-  }, [upcoming, images.length, loaded, stopped]);
+  }, [upcoming, images.length, loaded, stopped, frame]);
   useEffect(() => {
     if (stopped || images.length < 2 || !loaded.has(current.id) || !loaded.has(upcoming.id)) return;
     const timer = setTimeout(() => {
@@ -79,15 +83,19 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration }: HeroProps) {
       <TransitionLink href="/" aria-label={`${brand.name} Startseite`} className={styles.logo} data-hero-logo>
         <span className={styles.artworkMask}><span className={styles.artworkEntrance}><BrandArtwork logo={brand.logo} /></span></span>
       </TransitionLink>
-      <div ref={photo} className={styles.photo} data-slide={slide.current} data-image-count={images.length}>
-        {previous && previous.id !== current?.id && <div className={styles.imageLayer} aria-hidden="true"><Image src={previous.src} alt="" fill sizes={IMAGE_SIZES} className={styles.photoImage} style={{ objectPosition: previous.position }} /></div>}
+      <div ref={photo} className={styles.photo} data-hero-photo data-slide={slide.current} data-image-count={images.length}>
+        {previous && previous.id !== current?.id && <div className={styles.imageLayer} aria-hidden="true"><Image src={previous.src} alt="" fill sizes={heroImageSizes(previous, frame)} className={styles.photoImage} style={{ objectPosition: previous.position }} /></div>}
         {current && <motion.div key={slide.version} className={styles.imageLayer} data-active-image
           initial={slide.version && !reduced ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : CROSSFADE_SECONDS, ease: "linear" }}>
-          <Image src={current.src} alt={current.alt} fill sizes={IMAGE_SIZES} priority={slide.current === 0} fetchPriority={slide.current === 0 ? "high" : "auto"} className={styles.photoImage} style={{ objectPosition: current.position }}
+          <Image src={current.src} alt={current.alt} fill sizes={heroImageSizes(current, frame)} priority={slide.current === 0} fetchPriority={slide.current === 0 ? "high" : "auto"} className={styles.photoImage} style={{ objectPosition: current.position }}
             onLoad={() => setLoaded(loaded => loaded.has(current.id) ? loaded : new Set(loaded).add(current.id))} onError={() => setFailed(true)} />
         </motion.div>}
         {(!current || failed) && <div className={styles.photoFallback}><BrandArtwork logo={brand.logo} /><span>{brand.tagline || brand.name}</span></div>}
       </div>
+      {(description || menuLinkLabel) && <div className={styles.heroIntroduction}>
+        {description && <p>{description}</p>}
+        {menuLinkLabel && <TransitionLink href="/menu" className={shared.animatedLink}><span>{menuLinkLabel}</span><AnimatedUnderline /></TransitionLink>}
+      </div>}
       <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
       <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
     </section>

@@ -4,14 +4,14 @@ import Image from "next/image";
 import { useLayoutEffect, useState, type RefObject } from "react";
 import { motion } from "motion/react";
 import styles from "./Hero.module.css";
-import { IMAGE_SIZES } from "./HeroParts";
+import { heroImageSizes } from "@/lib/hero-images";
 
 type Rect = { left: number; top: number; width: number; height: number };
 const HANDOFF_EASE = [0.76, 0, 0.24, 1] as const;
 
 export function HeroIntro({ photo, image, artwork }: {
   photo: RefObject<HTMLDivElement | null>;
-  image: { src: string; sketch?: boolean; position?: string };
+  image: { src: string; sketch?: boolean; position?: string; aspectRatio?: number };
   artwork?: string | null;
 }) {
   const [geometry, setGeometry] = useState<{ start: Rect; target: Rect; mobile: boolean } | null>(null);
@@ -56,7 +56,7 @@ export function HeroIntro({ photo, image, artwork }: {
         clipPath: { duration: 1.05, delay: 0, ease: HANDOFF_EASE },
       }} onAnimationComplete={() => setLanded(true)}>
       <div className={image.sketch ? styles.sketchFrame : styles.imageFrame}>
-        <Image src={image.src} alt="" fill priority fetchPriority="high" sizes={IMAGE_SIZES} className={styles.photoImage} style={{ objectPosition: image.position }} />
+        <Image src={image.src} alt="" fill priority fetchPriority="high" sizes={heroImageSizes(image, { width: target.width, height: Math.max(start.height, target.height) })} className={styles.photoImage} style={{ objectPosition: image.position }} />
       </div>
     </motion.div>}
   </div>;

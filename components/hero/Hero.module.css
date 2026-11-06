@@ -203,3 +203,34 @@
   .siteShell:has([data-site-hero][data-has-ticker="true"]) { --ticker-height: 28px; }
   .scrollHeader { --dock-top: 10px; }
 }
+
+/* Quiet desktop introduction balances the photograph without crowding mobile. */
+.heroIntroduction { grid-area: 1 / 2; align-self: center; justify-self: end; max-width: 24ch; text-align: right; padding-block: 88px; }
+.heroIntroduction p { font-size: clamp(24px, 2.5vw, 42px); line-height: 1.2; letter-spacing: -.035em; text-wrap: balance; }
+.heroIntroduction > a { margin-top: 28px; }
+.preview[data-entrance="first"] .heroIntroduction,
+.preview[data-entrance="return"] .heroIntroduction { animation: detailIn .8s both; animation-delay: calc(var(--entry-delay) + .48s); }
+.menuLinks a[aria-current="page"] { color: var(--color-accent); }
+.menuLinks > [data-social-start] { margin-top: 20px; }
+.menuLinks > div > a { min-height: 44px; }
+@media (min-width: 1024px) {
+  .menuLinks { grid-column: 1 / -1; justify-self: end; width: min(65%, 1040px); }
+  .menuLinks a { font-size: clamp(44px, 5.5vw, 100px); }
+}
+@media (max-width: 1023px), (max-height: 649px) { .heroIntroduction { display: none; } }
+@media (max-width: 1023px) {
+  .menuLinks a { font-size: clamp(34px, min(12vw, 8dvh), 80px); }
+  .menuLinks > [data-social-start] { margin-top: 12px; }
+}
+@media (min-width: 640px) and (max-width: 1023px) and (max-height: 500px) {
+  .menuLinks a { font-size: 32px; }
+}
+.menuButton, .travellingLogo > a { transition: opacity 180ms ease; }
+.siteShell[data-reading="true"] .menuButton:not(:focus-visible),
+.siteShell[data-reading="true"] .scrollHeader[data-docked="true"] .travellingLogo > a:not(:focus-visible) { opacity: 0; pointer-events: none; }
+.menuButton[data-over-image="true"] { color: white; filter: drop-shadow(0 1px 2px #0008); }
+.travellingLogo > a[data-over-image="true"] .artwork img { filter: brightness(0) invert(1) drop-shadow(0 1px 2px #0008); }
+@media (prefers-reduced-motion: reduce) {
+  .menuButton, .travellingLogo > a { transition: none; }
+  .heroIntroduction { animation: none !important; }
+}

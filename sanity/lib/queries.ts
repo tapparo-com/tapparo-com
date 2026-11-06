@@ -104,6 +104,8 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionHero" => {
         tickerPhrases,
         imageDuration,
+        description,
+        menuLinkLabel,
         heroImages[defined(asset)]{ _key, ${imageFields} }
       },
       _type == "sectionSubhero" => {

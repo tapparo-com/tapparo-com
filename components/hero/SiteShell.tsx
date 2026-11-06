@@ -12,6 +12,7 @@ import { BrandArtwork, EASE, MenuArtwork, MenuIcon, OrderingLink, StatusDetails 
 import type { SiteData } from "./types";
 import styles from "./Hero.module.css";
 import { ScrollHeader } from "./ScrollHeader";
+import { useHeaderBehavior } from "./useHeaderBehavior";
 
 type SiteContextValue = {
   data: SiteData;
@@ -42,6 +43,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
   const button = useRef<HTMLButtonElement>(null);
   const status = useOpeningStatus(data.hours);
   const { brand, contact, navigation } = data;
+  useHeaderBehavior(root, pathname, menuPresent);
   const links = [
     ...(navigation?.pageLinks || []).filter(link => link.slug).map(link => ({ key: link._key, label: link.label, href: pathForSlug(link.slug), external: false })),
     ...(navigation?.socialLinks || []).map(link => ({ key: link._id, label: link.label, href: link.url, external: true })),
@@ -113,7 +115,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
               <MenuArtwork reduced={reduced} delay={0.1}><BrandArtwork logo={brand.logo} /></MenuArtwork>
             </TransitionLink>
             <motion.nav aria-label="Hauptnavigation" className={styles.menuLinks} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : 0.15 }}>
-              {links.map((link, index) => <motion.div key={link.key}
+              {links.map((link, index) => <motion.div key={link.key} data-social-start={link.external && !links[index - 1]?.external || undefined}
                 initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: reduced ? 0 : 0.35, delay: reduced ? 0 : 0.08 + index * 0.05 }}>
                 <TransitionLink href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noopener noreferrer" : undefined}
@@ -131,7 +133,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
         </motion.div>}
       </AnimatePresence>
       <div className={styles.menuShell}>
-        <button ref={button} type="button" className={styles.menuButton}
+        <button ref={button} type="button" className={styles.menuButton} data-header-control
           onClick={() => { if (menuOpen) setMenuOpen(false); else { setMenuPresent(true); setMenuOpen(true); } }}
           aria-label={menuOpen ? "Navigation schließen" : "Navigation öffnen"} aria-haspopup="dialog" aria-expanded={menuOpen} aria-controls={menuPresent ? navigationId : undefined}>
           <MenuIcon open={menuOpen} reduced={reduced} />

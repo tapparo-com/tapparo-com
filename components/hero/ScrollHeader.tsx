@@ -93,7 +93,7 @@ export function ScrollHeader({ scope, brand, pathname, reduced }: {
   return <header ref={header} className={styles.scrollHeader} aria-label={brand.name} aria-hidden="true" data-scroll-header>
     <span ref={dock} className={styles.logoDock} aria-hidden="true" />
     <div ref={travelling} className={styles.travellingLogo}>
-      <TransitionLink href="/" aria-label={`${brand.name} Startseite`}><BrandArtwork logo={brand.logo} /></TransitionLink>
+      <TransitionLink href="/" aria-label={`${brand.name} Startseite`} data-header-control><BrandArtwork logo={brand.logo} /></TransitionLink>
     </div>
   </header>;
 }

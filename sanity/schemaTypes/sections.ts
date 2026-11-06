@@ -76,6 +76,8 @@ export const sectionHero = defineArrayMember({
   title: "Hero",
   icon: ImageIcon,
   fields: [
+    defineField({ name: "description", title: "Short introduction", type: "string", description: "Optional short description in the desktop hero. Hidden on compact screens to keep the order link and opening status in view.", validation: rule => rule.max(90) }),
+    defineField({ name: "menuLinkLabel", title: "Menu link label", type: "string", description: "Optional link to the Speisekarte below the desktop introduction. Leave empty to hide.", validation: rule => rule.max(40) }),
     defineField({
       name: "tickerPhrases",
       title: "Ticker phrases",

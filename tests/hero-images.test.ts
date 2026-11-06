@@ -27,3 +27,19 @@ test("responsive cover centers the cropped focal point and clamps at image edges
   assert.equal(heroImage({ ...image, crop: { left: .1, right: .2, top: .1, bottom: .1 } }, { width: 200, height: 800 })!.position, "100% 50%");
   assert.equal(heroImage(source, { width: 1000, height: 200 })!.position, "50% 50%");
 });
+
+test("responsive sources account for cover width, crop and native resolution", async () => {
+  const { heroImage, heroImageSizes } = await implementation;
+  const landscape = heroImage({ ...source, crop: { left: 0, right: 0, top: .2, bottom: .2 } })!;
+  assert(Math.abs(landscape.aspectRatio! - 1 / .6) < 1e-10);
+  assert.equal(heroImageSizes(landscape, { width: 355, height: 560 }), "934px");
+  assert.equal(heroImageSizes(landscape, { width: 1200, height: 500 }), "1200px");
+  assert.equal(new URL(landscape.src).searchParams.get("w"), "1000");
+  assert.equal(new URL(landscape.src).searchParams.get("fit"), "max");
+  const cropped = heroImage({ ...source, crop: { left: .1, right: .2, top: 0, bottom: 0 } })!;
+  assert.equal(new URL(cropped.src).searchParams.get("w"), "700");
+  const large = heroImage({ ...source, asset: { _id: "image-0000000000000000000000000000000000000000-6000x4000-jpg", url: "" } })!;
+  assert.equal(large.aspectRatio, 1.5);
+  assert.equal(new URL(large.src).searchParams.get("w"), "3840");
+  assert.match(heroImageSizes(large), /100svh/);
+});
