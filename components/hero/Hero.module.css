@@ -49,6 +49,7 @@
 @keyframes ticker { to { transform: translateX(-50%); } }
 .imageError { position: absolute; inset: auto 16px 16px; padding: 12px; background: var(--color-background); }
 .siteHeader { position: fixed; inset: 0 0 auto; height: var(--header-height); z-index: 63; pointer-events: none; }
+.siteShell:has([data-menu-page]) .siteHeader { background: var(--color-background); }
 .headerLogo { position: absolute; top: var(--gutter); left: var(--gutter); width: 160px; height: 44px; pointer-events: auto; transition: opacity .18s ease, visibility .18s ease; }
 .preview:has([data-site-hero]) .headerLogo:not([data-visible="true"]) { opacity: 0; visibility: hidden; pointer-events: none; }
 .headerLogo .artwork img { filter: brightness(0); }
@@ -75,6 +76,7 @@
 .pageHeader { height: var(--header-height); }
 .siteShell:has([data-section-page][data-has-leading-hero="true"]) .pageHeader { display: none; }
 .siteShell :global(main) > * { max-width: var(--content-max-width); margin-inline: auto; }
+.siteShell :global(main) > :is([data-section-page], [data-menu-page], [data-related-stories]) { max-width: none; }
 .review { position: relative; max-width: var(--content-max-width); margin-inline: auto; padding: 16px clamp(20px, 4vw, 80px); border-bottom: 1px solid var(--color-border); font-size: 13px; }
 .review summary { margin-left: auto; width: fit-content; padding: 9px 14px; background: var(--color-foreground); color: var(--color-background); list-style: none; }
 .review summary::-webkit-details-marker { display: none; }

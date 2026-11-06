@@ -10,6 +10,17 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
   const chooser = useRef<HTMLDetailsElement>(null);
   const summary = useRef<HTMLElement>(null);
   useEffect(() => {
+    const navigation = nav.current;
+    const page = navigation?.closest<HTMLElement>("[data-menu-page]");
+    if (!navigation || !page) return;
+    // Wrapped category labels can make the sticky bar taller than its default.
+    const update = () => page.style.setProperty("--menu-navigation-height", `${navigation.getBoundingClientRect().height}px`);
+    const observer = new ResizeObserver(update);
+    observer.observe(navigation);
+    update();
+    return () => { observer.disconnect(); page.style.removeProperty("--menu-navigation-height"); };
+  }, [categories.length]);
+  useEffect(() => {
     let frame = 0;
     const update = () => {
       frame = 0;
@@ -46,7 +57,7 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
           <span>{categories.find(category => category.slug === active)?.title}</span>
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><path d="m4 7 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
         </summary>
-        <div className={styles.categoryChoices}>{categories.map(category => <a key={category._id} href={`#${category.slug}`}
+        <div className={styles.categoryChoices}><div className={styles.categoryChoicesInner}>{categories.map(category => <a key={category._id} href={`#${category.slug}`}
           aria-current={active === category.slug ? "location" : undefined} onClick={event => {
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
             event.preventDefault();
@@ -57,7 +68,7 @@ export function SectionMenuHeader({ categories }: { categories: Category[] }) {
             // WebKit may cancel a hidden link's default action. Navigate through
             // the native fragment after the new summary height has rendered.
             requestAnimationFrame(() => { window.location.hash = category.slug; });
-          }}>{category.title}</a>)}</div>
+          }}>{category.title}</a>)}</div></div>
       </details>
     </div>
   </nav>;

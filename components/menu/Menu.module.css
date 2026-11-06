@@ -1,5 +1,6 @@
-.navigation { position: sticky; top: 0; z-index: 20; background: var(--color-background); border-block: 1px solid var(--color-border); }
-.navigationInner { max-width: var(--content-max-width); margin-inline: auto; padding: 12px 90px; }
+.page { --menu-navigation-height: 70px; --menu-anchor-clearance: calc(var(--header-height, 0px) + var(--menu-navigation-height) + 24px); }
+.navigation { position: sticky; top: var(--header-height, 0px); z-index: 20; background: var(--color-background); border-block: 1px solid var(--color-border); }
+.navigationInner { max-width: var(--content-max-width); margin-inline: auto; padding: 12px clamp(20px, 3.4vw, 72px); }
 .categoryChooser { max-width: 624px; margin-inline: auto; }
 .categorySummary { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 4px 24px; min-height: 44px; padding-right: 36px; cursor: pointer; list-style: none; }
 .categorySummary::-webkit-details-marker { display: none; }
@@ -7,12 +8,13 @@
 .categorySummary > span:nth-child(2) { font-size: 16px; line-height: 1.4; text-align: right; align-self: center; overflow-wrap: anywhere; }
 .categorySummary svg { position: absolute; right: 0; top: calc(50% - 10px); transition: transform 180ms ease; }
 .categoryChooser[open] .categorySummary svg { transform: rotate(180deg); }
-.categoryChoices { position: absolute; inset: 100% 0 auto; background: var(--color-background); border-bottom: 1px solid var(--color-border); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 40px; padding: 24px max(24px, calc((100% - 1312px) / 2)) 32px; max-height: min(70dvh, 600px); overflow-y: auto; overscroll-behavior: contain; }
+.categoryChoices { position: absolute; inset: 100% 0 auto; background: #eeece9; border-bottom: 1px solid var(--color-border); padding: 12px clamp(20px, 3.4vw, 72px) 20px; max-height: min(70dvh, 600px, calc(100dvh - var(--header-height, 0px) - var(--menu-navigation-height, 70px) - 16px)); overflow-y: auto; overscroll-behavior: contain; }
+.categoryChoicesInner { max-width: 624px; margin-inline: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 24px; }
 .categoryChoices a { display: flex; align-items: center; min-height: 44px; padding-block: 8px; border-bottom: 1px solid var(--color-border); font-size: 16px; line-height: 1.4; overflow-wrap: anywhere; }
 .categoryChoices a[aria-current="location"] { font-weight: 500; border-color: var(--color-accent); }
 .categoryChoices a:hover { border-color: var(--color-accent); }
 .categorySummary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
-.category { padding-block: clamp(40px, 4vw, 80px); scroll-margin-top: 110px; }
+.category { padding-block: clamp(40px, 4vw, 80px); scroll-margin-top: var(--menu-anchor-clearance, 110px); }
 .category + .category { border-top: 1px solid var(--color-border); }
 .categoryLayout { max-width: 624px; margin-inline: auto; }
 .categoryLayout[data-has-images="true"] { max-width: 1312px; }
@@ -45,7 +47,7 @@
 .legend { padding-block: clamp(48px, 6vw, 120px); border-top: 1px solid var(--color-border); }
 .legend h2 { margin-bottom: 32px; font-size: 28px; font-weight: 500; letter-spacing: -.035em; }
 .legend dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 48px; }
-.legend dl > div { display: flex; gap: 16px; font-size: 16px; line-height: 1.5; scroll-margin-top: 110px; }
+.legend dl > div { display: flex; gap: 16px; font-size: 16px; line-height: 1.5; scroll-margin-top: var(--menu-anchor-clearance, 110px); }
 .legend dt { font-weight: 600; flex-shrink: 0; }
 .legend dd { overflow-wrap: anywhere; }
 .navigation a:focus-visible,
@@ -58,13 +60,13 @@
   .legend dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 767px) {
-  .navigationInner { padding-left: 20px; padding-right: 76px; }
+  .navigationInner { padding-inline: 20px; }
   .categorySummary { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .categorySummary > span:nth-child(2) { text-align: left; font-size: 15px; }
-  .categoryChoices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 24px; padding: 12px 20px 24px; }
+  .categoryChoices { padding-inline: 20px; }
+  .categoryChoicesInner { grid-template-columns: minmax(0, 1fr); }
   .legend dl { grid-template-columns: minmax(0, 1fr); }
   .categoryHead p { font-size: 16px; }
 }
 
-@media (max-width: 359px) { .categoryChoices { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .categorySummary svg { transition: none; } }

@@ -26,30 +26,32 @@ function Price({ item }: { item: MenuItem }) {
 }
 export function SectionMenuCategory({ title, slug, description, items, extras, images }: Props) {
   const validImages = (images || []).filter(image => image?.asset);
-  return <section id={slug} aria-labelledby={`${slug}-heading`} className={`${page.container} ${styles.category}`} data-menu-category>
-    <div className={styles.categoryLayout} data-has-images={validImages.length > 0}>
-      <Reveal className={styles.categoryHead}>
-        <h2 id={`${slug}-heading`}>{title}</h2>
-        {description && <p>{description}</p>}
-      </Reveal>
-      <div className={styles.content} data-has-images={validImages.length > 0}>
-        <div>
-          <ul className={styles.items}>
-            {items.filter(Boolean).map(item => <li key={item._id} className={styles.item} data-menu-item={item._id}>
-              <div className={styles.itemHeading}><h3>{item.title}</h3><Price item={item} /></div>
-              {item.description && <p className={styles.itemDescription}>{item.description}</p>}
-              {!!item.allergens?.filter(Boolean).length && <ul className={styles.allergenCodes} aria-label={`Allergene: ${item.title}`}>
-                {item.allergens.filter((a): a is Allergen => !!a).map(allergen => <li key={allergen._id}>
-                  <a href={`#allergen-${allergen._id}`} aria-label={`${allergen.code}: ${allergen.label}`}><span>{allergen.code}</span></a>
-                </li>)}
-              </ul>}
-            </li>)}
-          </ul>
-          {!!extras?.length && <section className={styles.extras} aria-label={`Extras: ${title}`}>
-            <h3>Extras</h3><dl>{extras.map(extra => <div key={extra._key}><dt>{extra.name}</dt><dd>+{extra.price}</dd></div>)}</dl>
-          </section>}
+  return <section id={slug} aria-labelledby={`${slug}-heading`} className={styles.category} data-menu-category>
+    <div className={page.container}>
+      <div className={styles.categoryLayout} data-has-images={validImages.length > 0}>
+        <Reveal className={styles.categoryHead}>
+          <h2 id={`${slug}-heading`}>{title}</h2>
+          {description && <p>{description}</p>}
+        </Reveal>
+        <div className={styles.content} data-has-images={validImages.length > 0}>
+          <div>
+            <ul className={styles.items}>
+              {items.filter(Boolean).map(item => <li key={item._id} className={styles.item} data-menu-item={item._id}>
+                <div className={styles.itemHeading}><h3>{item.title}</h3><Price item={item} /></div>
+                {item.description && <p className={styles.itemDescription}>{item.description}</p>}
+                {!!item.allergens?.filter(Boolean).length && <ul className={styles.allergenCodes} aria-label={`Allergene: ${item.title}`}>
+                  {item.allergens.filter((a): a is Allergen => !!a).map(allergen => <li key={allergen._id}>
+                    <a href={`#allergen-${allergen._id}`} aria-label={`${allergen.code}: ${allergen.label}`}><span>{allergen.code}</span></a>
+                  </li>)}
+                </ul>}
+              </li>)}
+            </ul>
+            {!!extras?.length && <section className={styles.extras} aria-label={`Extras: ${title}`}>
+              <h3>Extras</h3><dl>{extras.map(extra => <div key={extra._key}><dt>{extra.name}</dt><dd>+{extra.price}</dd></div>)}</dl>
+            </section>}
+          </div>
+          {!!validImages.length && <CategoryImages images={validImages} title={title} />}
         </div>
-        {!!validImages.length && <CategoryImages images={validImages} title={title} />}
       </div>
     </div>
   </section>;

@@ -5,6 +5,7 @@ import { SectionPageIntro } from "@/components/sections/SectionPageIntro";
 import { SectionMenuHeader } from "@/components/sections/SectionMenuHeader";
 import { SectionMenuCategory } from "@/components/sections/SectionMenuCategory";
 import { SectionAllergensLegend } from "@/components/sections/SectionAllergensLegend";
+import styles from "@/components/menu/Menu.module.css";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,7 +35,7 @@ export default async function MenuPage() {
   const categories = (menuData?.categories || []).filter((category: any) => category?.slug);
 
   return (
-    <div className="relative z-10 bg-background">
+    <div className={`relative z-10 bg-background ${styles.page}`} data-menu-page>
       <SectionPageIntro
         narrow
         title={menuData?.title || "Speisekarte"}

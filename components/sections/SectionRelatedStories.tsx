@@ -7,8 +7,10 @@ import styles from "@/components/pages/Pages.module.css";
 
 export function SectionRelatedStories({ posts }: { posts: Post[] }) {
   if (!posts.length) return null;
-  return <section className={`${styles.container} ${styles.related}`} aria-label="Weitere Stories" data-related-stories>
-    <Reveal className={home.sectionHeader}><h2 className={styles.sectionHeading}>Weitere Stories</h2><StoriesLink /></Reveal>
-    <div className={home.storyPanels}>{posts.map(post => <StoryPanel key={post._id} post={post} />)}</div>
+  return <section className={styles.related} aria-label="Weitere Stories" data-related-stories>
+    <div className={styles.container}>
+      <Reveal className={home.sectionHeader}><h2 className={styles.sectionHeading}>Weitere Stories</h2><StoriesLink /></Reveal>
+      <div className={home.storyPanels}>{posts.map(post => <StoryPanel key={post._id} post={post} />)}</div>
+    </div>
   </section>;
 }

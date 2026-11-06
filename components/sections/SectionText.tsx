@@ -42,44 +42,46 @@ export function SectionText({ label, body, image, secondaryImage, imageFirst, co
 
   return (
     <section
-      className={`${styles.section} ${styles.product}`}
+      className={styles.product}
       data-home-section="product"
     >
-      {label && (
-        <Reveal className={styles.sectionHeader}>
-          <h2 className={`${styles.title} ${styles.productTitle}`}>{label}</h2>
-        </Reveal>
-      )}
-      <div
-        className={styles.productGrid}
-        data-image-count={images.length}
-        data-image-first={!!imageFirst}
-      >
-        {!imageFirst && copy}
-        {images.length > 0 && (
-          <Reveal className={styles.productImageReveal} mask duration={0.9}>
-            <div className={styles.productImages} data-image-count={images.length}>
-              {images.map((item, index) => (
-                <figure
-                  key={index}
-                  className={index === 0 ? styles.productPrimary : styles.productSecondary}
-                >
-                  <SectionMedia
-                    image={item}
-                    natural
-                    maxWidth={2100}
-                    sizes={images.length === 1
-                      ? "(max-width: 767px) calc(100vw - 40px), (max-width: 2100px) 94vw, 1956px"
-                      : index === 0
-                        ? "(max-width: 767px) 80vw, (max-width: 2100px) 70vw, 1467px"
-                        : "(max-width: 767px) 42vw, (max-width: 2100px) 32vw, 652px"}
-                  />
-                </figure>
-              ))}
-            </div>
+      <div className={styles.section}>
+        {label && (
+          <Reveal className={styles.sectionHeader}>
+            <h2 className={`${styles.title} ${styles.productTitle}`}>{label}</h2>
           </Reveal>
         )}
-        {imageFirst && copy}
+        <div
+          className={styles.productGrid}
+          data-image-count={images.length}
+          data-image-first={!!imageFirst}
+        >
+          {!imageFirst && copy}
+          {images.length > 0 && (
+            <Reveal className={styles.productImageReveal} mask duration={0.9}>
+              <div className={styles.productImages} data-image-count={images.length}>
+                {images.map((item, index) => (
+                  <figure
+                    key={index}
+                    className={index === 0 ? styles.productPrimary : styles.productSecondary}
+                  >
+                    <SectionMedia
+                      image={item}
+                      natural
+                      maxWidth={2100}
+                      sizes={images.length === 1
+                        ? "(max-width: 767px) calc(100vw - 40px), (max-width: 2100px) 94vw, 1956px"
+                        : index === 0
+                          ? "(max-width: 767px) 80vw, (max-width: 2100px) 70vw, 1467px"
+                          : "(max-width: 767px) 42vw, (max-width: 2100px) 32vw, 652px"}
+                    />
+                  </figure>
+                ))}
+              </div>
+            </Reveal>
+          )}
+          {imageFirst && copy}
+        </div>
       </div>
     </section>
   );
