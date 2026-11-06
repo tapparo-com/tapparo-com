@@ -13,7 +13,7 @@ type Article = {
   body?: any[];
 };
 
-export function StoryArticle({ post }: { post: Article }) {
+export function StoryArticle({ post, showBackLink = true }: { post: Article; showBackLink?: boolean }) {
   return <article className={`${styles.container} ${styles.article}`} data-story-article>
     <div className={styles.articleLayout} data-has-image={!!post.coverImage?.asset}>
       <header className={styles.articleHead}>
@@ -25,13 +25,15 @@ export function StoryArticle({ post }: { post: Article }) {
           </div>}
         </Reveal>
       </header>
-      {post.coverImage?.asset && <Reveal className={styles.articleCover} mask duration={.9} delay={.1}>
-        <SectionMedia image={{ ...post.coverImage, alt: post.coverImage.alt ?? post.title }} ratio={1}
-          sizes="(max-width: 663px) calc(100vw - 40px), (max-width: 1279px) 624px, (max-width: 1399px) 45vw, 624px" priority />
-      </Reveal>}
+      {post.coverImage?.asset && <div className={styles.articleCover}>
+        <Reveal mask duration={.9} delay={.1}>
+          <SectionMedia image={{ ...post.coverImage, alt: post.coverImage.alt ?? post.title }} ratio={1}
+            sizes="(max-width: 663px) calc(100vw - 40px), (max-width: 1279px) 624px, (max-width: 1399px) 45vw, 624px" priority />
+        </Reveal>
+      </div>}
       <div className={styles.articleBody}>
         {post.body?.length ? <PostBody value={post.body} /> : null}
-        <div className={styles.back}><StoriesLink /></div>
+        {showBackLink && <div className={styles.back}><StoriesLink /></div>}
       </div>
     </div>
   </article>;

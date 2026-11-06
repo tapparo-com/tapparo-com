@@ -21,7 +21,7 @@ export const post = defineType({
       title: "Excerpt",
       type: "text",
       rows: 3,
-      description: "Short teaser shown in Stories cards on the home page.",
+      description: "Plain-text teaser shown in Stories cards. Formatting such as **bold** is not supported here; use Body for formatted text.",
       validation: (rule) =>
         rule.max(200).warning("Keep it under 200 characters for best previews"),
     }),
@@ -36,8 +36,27 @@ export const post = defineType({
       name: "coverImage",
       title: "Cover Image",
       type: "image",
-      description: "Hero image shown at the top of the post and in Stories cards. Recommended 16:9, at least 1200px wide.",
+      description: "Shown on the post and in Stories cards. Use a photo at least 1200px wide, or choose Show full image for posters and artwork with text.",
       options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "fit",
+          title: "Image Framing",
+          type: "string",
+          initialValue: "cover",
+          options: {
+            layout: "radio",
+            list: [
+              { title: "Fill frame — photos", value: "cover" },
+              { title: "Show full image — posters and artwork", value: "contain" },
+            ],
+          },
+          description: "Applies to the article and all Stories cards. Show full image prevents automatic cropping; any crop you set in the image editor still applies. Existing images default to Fill frame.",
+          validation: (rule) => rule.custom((value) =>
+            !value || value === "cover" || value === "contain" || "Choose one of the image framing options."
+          ),
+        }),
+      ],
     }),
     defineField({
       name: "publishedAt",

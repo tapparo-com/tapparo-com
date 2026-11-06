@@ -13,6 +13,7 @@ export type SectionImage = {
     };
   } | null;
   alt?: string | null;
+  fit?: "cover" | "contain" | null;
   crop?: { left: number; right: number; top: number; bottom: number } | null;
   hotspot?: { x: number; y: number; width: number; height: number } | null;
 };
@@ -32,6 +33,7 @@ export function SectionMedia({
   priority?: boolean;
 }) {
   if (!image.asset) return null;
+  const fit = image.fit === "contain" ? "contain" : "cover";
   const dimensions = image.asset.metadata?.dimensions;
   const crop = image.crop;
   const nativeWidth = dimensions
@@ -44,18 +46,20 @@ export function SectionMedia({
   const width = Math.max(1, Math.min(maxWidth, Math.round(nativeWidth)));
   const source = urlFor(image).width(width).quality(85).auto("format");
   const src = (
-    natural ? source : source.height(Math.round(width / aspect)).fit("crop")
+    natural || fit === "contain" ? source : source.height(Math.round(width / aspect)).fit("crop")
   ).url();
   return (
     <div
       className={styles.media}
       style={{ aspectRatio: aspect }}
       data-content-image={image.asset._id || image.asset._ref}
+      data-image-fit={fit}
     >
       <Image
         src={src}
         alt={image.alt || ""}
         fill
+        style={{ objectFit: fit }}
         priority={priority}
         sizes={sizes}
         placeholder={image.asset.metadata?.lqip ? "blur" : undefined}

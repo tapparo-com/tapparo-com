@@ -129,7 +129,7 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         "story": story->{
           title,
           excerpt,
-          coverImage{ ${imageFields} },
+          coverImage{ ${imageFields}, fit },
           "slug": lower(slug.current)
         },
         buttonLabel
@@ -174,7 +174,7 @@ export const STORIES_QUERY = defineQuery(/* groq */ `
     _id,
     title,
     excerpt,
-    coverImage{ ${imageFields} },
+    coverImage{ ${imageFields}, fit },
     publishedAt,
     "slug": lower(slug.current),
     "authorName": author->name
@@ -226,7 +226,7 @@ export const RELATED_STORIES_QUERY = defineQuery(/* groq */ `
     _id,
     title,
     excerpt,
-    coverImage{ ${imageFields} },
+    coverImage{ ${imageFields}, fit },
     publishedAt,
     "slug": lower(slug.current),
     "authorName": author->name
@@ -275,7 +275,7 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
     "slug": lower(slug.current),
     excerpt,
     body[]{ ..., _type == "image" => { ${imageFields} } },
-    coverImage{ ${imageFields} },
+    coverImage{ ${imageFields}, fit },
     publishedAt,
     author->{name, image},
     showRelatedStories,
@@ -283,7 +283,7 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
       _id,
       title,
       excerpt,
-      coverImage{ ${imageFields} },
+      coverImage{ ${imageFields}, fit },
       publishedAt,
       "slug": lower(slug.current),
       "authorName": author->name

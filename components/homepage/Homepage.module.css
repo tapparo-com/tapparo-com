@@ -39,6 +39,9 @@
 .media img {
   object-fit: cover;
 }
+.media[data-image-fit="contain"] {
+  background: var(--color-background);
+}
 .mediaReveal {
   width: 100%;
 }
@@ -394,7 +397,7 @@
 .storyPanelMedia .media img {
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.storyPanelLink:hover .media img {
+.storyPanelLink:hover .media:not([data-image-fit="contain"]) img {
   transform: scale(1.025);
 }
 .storyPanelTitle {
@@ -420,7 +423,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px 24px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -708,7 +711,7 @@
   .link {
     transition: none;
   }
-  .storyPanelLink:hover .media img {
+  .storyPanelLink:hover .media:not([data-image-fit="contain"]) img {
     transform: none;
   }
 }

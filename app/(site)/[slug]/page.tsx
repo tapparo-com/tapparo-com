@@ -155,7 +155,7 @@ export default async function SlugPage({ params }: Props) {
 
   if (post) {
     return <>
-      <StoryArticle post={post} />
+      <StoryArticle post={post} showBackLink={!relatedPosts?.length} />
       {relatedPosts?.length ? <SectionRelatedStories posts={relatedPosts} /> : null}
     </>;
   }

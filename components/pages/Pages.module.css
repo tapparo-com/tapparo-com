@@ -51,6 +51,10 @@
 }
 .articleHead { grid-area: heading; padding-bottom: 40px; }
 .articleCover { grid-area: cover; }
+/* The 624px cover fits below the header at these sizes; shorter screens scroll normally. */
+@media (min-width: 1280px) and (min-height: 800px) {
+  .articleCover { position: sticky; top: 100px; }
+}
 .articleBody { grid-area: body; }
 .articleBody > .back { margin: 40px 0 0; }
 .back { display: flex; justify-content: flex-end; margin-bottom: clamp(28px, 4vw, 64px); }
