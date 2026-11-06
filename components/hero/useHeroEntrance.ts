@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 export const INTRO_SESSION_KEY = "tapparo:design-preview:intro:v2";
+export const SITE_INTRO_SESSION_KEY = "tapparo:site:intro:v1";
 export const FIRST_ENTRANCE_MS = 1800;
 export const RETURN_ENTRANCE_MS = 950;
 export type HeroEntrance = { mode: "idle" | "first" | "return"; run: number };
@@ -10,10 +11,11 @@ export type HeroEntrance = { mode: "idle" | "first" | "return"; run: number };
 // Progressive enhancement: no JS means visible content. A failed/late hydration
 // also reveals the page instead of leaving it behind an entrance screen.
 export const ENTRANCE_BOOTSTRAP = `(function(){var r=document.currentScript.parentElement;if(!matchMedia('(prefers-reduced-motion: reduce)').matches){r.dataset.preparing='true';setTimeout(function(){if(r.dataset.preparing){delete r.dataset.preparing;r.dataset.entryExpired='true'}},1500)}})()`;
+export const WELCOME_BOOTSTRAP = `(function(){var seen=false;try{seen=!!sessionStorage.getItem('${SITE_INTRO_SESSION_KEY}')}catch(e){}if(!seen){${ENTRANCE_BOOTSTRAP}}})()`;
 
 export function useHeroEntrance(
   root: RefObject<HTMLDivElement | null>,
-  photo: RefObject<HTMLDivElement | null>,
+  photo: RefObject<HTMLDivElement | null> | null,
   reduced: boolean,
   sessionKey = INTRO_SESSION_KEY,
   coveredByTransition = false,
@@ -48,6 +50,9 @@ export function useHeroEntrance(
     }
     let first = welcomeEnabled;
     try { first = welcomeEnabled && !sessionStorage.getItem(sessionKey); } catch { /* Still usable without storage. */ }
+    // Other landing pages share the first welcome without a photograph or
+    // repeat entrance. Home keeps its existing image-readiness/handoff logic.
+    if (!photo) { if (first) play("first"); else finish(); return; }
     const image = photo.current?.querySelector("img");
     if (!image) { play("return"); return; }
     const ready = () => play(first ? "first" : "return");

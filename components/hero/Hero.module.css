@@ -89,6 +89,7 @@
 .transitionDemo { position: fixed; inset: 0; z-index: 100; background: var(--color-accent); pointer-events: none; }
 
 .intro { position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+.intro[data-preparing] { background: var(--color-background); }
 .introBackdrop { position: absolute; inset: 0; background: var(--color-background); }
 .introPhoto { position: fixed; overflow: hidden; background: var(--color-background); }
 .introGreeting { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; }

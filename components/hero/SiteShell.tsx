@@ -13,6 +13,7 @@ import { SiteHeader } from "./SiteHeader";
 import { NavigationContent } from "./NavigationContent";
 import { useHeaderBehavior } from "./useHeaderBehavior";
 import { getMenuLinks } from "./navigation";
+import { SiteIntro } from "./SiteIntro";
 
 type SiteContextValue = {
   data: SiteData;
@@ -98,6 +99,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
       </AnimatePresence>
       <SiteHeader brand={brand} open={menuOpen} present={menuPresent} reduced={reduced} navigationId={navigationId} buttonRef={button}
         onHome={() => setMenuOpen(false)} onToggle={() => { if (menuOpen) setMenuOpen(false); else { setMenuPresent(true); setMenuOpen(true); } }} />
+      <SiteIntro enabled={data.intro?.enabled !== false} artwork={data.intro?.artworkUrl} reduced={reduced} menuPresent={menuPresent} />
     </div>
   </SiteContext.Provider>;
 }

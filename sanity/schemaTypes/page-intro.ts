@@ -12,7 +12,7 @@ export const settingsPageIntro = defineType({
       title: "Show first-visit welcome",
       type: "boolean",
       initialValue: true,
-      description: "Show the welcome once per tab session when Home opens at the top. Reduced-motion visitors skip it. Turning this off keeps the short hero entrance.",
+      description: "Show the welcome once per tab session on the first page visited, including direct links to Menu or Stories. Home adds its photograph handoff when opened at the top. Reduced-motion visitors skip it. Turning this off keeps the short hero entrance.",
     }),
     defineField({
       name: "artwork",

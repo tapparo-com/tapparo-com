@@ -58,7 +58,7 @@ The homepage logo travels toward a top-left sticky header as the visitor scrolls
 
 Open **Studio → Site Settings → Page Intro**. This dedicated singleton was added on 4 November 2026 and is populated in **development**.
 
-- **Show first-visit welcome:** turns the full welcome on/off. The brief hero entrance remains. The welcome runs once per tab session at the top of Home and respects reduced motion.
+- **Show first-visit welcome:** turns the full welcome on/off. The brief hero entrance remains. The welcome runs once per tab session on the first page visited, including direct links to Menu, Stories and other site pages, and respects reduced motion. Home keeps its photograph handoff; other landing pages show the same centered brand artwork and fade into their own content. Internal navigation does not replay the welcome.
 - **Intro artwork — iconmark and wordmark:** replace the complete transparent lockup, preferably with an SVG. The full image is contained without cropping. Clearing the field or an unavailable asset uses the supplied Tapparo lockup bundled with the site.
 - **Site Settings → Brand → Restaurant Name / Tagline:** these remain the shared text source for the screen-reader heading. No separate tagline is displayed in the visual intro.
 - **Pages → Home → Hero → Carousel images:** the first selected photograph supplies the intro image and its crop/hotspot. Reordering the carousel changes the opening photograph.

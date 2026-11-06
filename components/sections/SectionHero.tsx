@@ -8,7 +8,7 @@ import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, HeroChoices, StatusDetails
 import { heroSlideInterval } from "@/lib/animation";
 import { HeroIntro } from "@/components/hero/HeroIntro";
 import { useSite } from "@/components/hero/SiteShell";
-import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "@/components/hero/useHeroEntrance";
+import { ENTRANCE_BOOTSTRAP, SITE_INTRO_SESSION_KEY, useHeroEntrance } from "@/components/hero/useHeroEntrance";
 import { heroImage, heroImageSizes, type SanityHeroImage } from "@/lib/hero-images";
 import styles from "@/components/hero/Hero.module.css";
 
@@ -37,7 +37,7 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
   const [failed, setFailed] = useState(false);
   const inView = useInView(root, { amount: 0.1 });
   const { isTransitioning } = usePageTransition();
-  const { entrance, active, finish } = useHeroEntrance(root, photo, reduced, "tapparo:site:intro:v1", isTransitioning, intro?.enabled !== false);
+  const { entrance, active, finish } = useHeroEntrance(root, photo, reduced, SITE_INTRO_SESSION_KEY, isTransitioning, intro?.enabled !== false);
   const next = images.length ? (slide.current + 1) % images.length : 0;
   const current = images[slide.current], previous = images[slide.previous], upcoming = images[next];
   const stopped = !hydrated || reduced || !visible || !inView || active || menuPresent || isTransitioning;
