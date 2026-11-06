@@ -101,17 +101,17 @@
 .introGreeting { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; }
 .introGreeting img { display: block; width: min(76%, 340px); height: min(calc(100% - 24px), 440px); object-fit: contain; }
 .preview[data-preparing] :is(.hero, .menuShell) { visibility: hidden; }
-.preview[data-entrance="first"] { --entry-delay: 1.7s; }
+.preview[data-entrance="first"] { --entry-delay: .7s; }
 .preview[data-entrance="return"] { --entry-delay: 0s; }
-.preview:is([data-entrance="first"], [data-entrance="return"]) .logo .artworkEntrance { animation: artworkIn .9s cubic-bezier(.22, 1, .36, 1) var(--entry-delay) both; }
-.preview:is([data-entrance="first"], [data-entrance="return"]) .order .artworkEntrance { animation: artworkIn .9s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .12s) both; }
-.preview:is([data-entrance="first"], [data-entrance="return"]) .statusDetails > :first-child { animation: detailIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .35s) both; }
-.preview:is([data-entrance="first"], [data-entrance="return"]) .statusDetails > .address { animation: detailIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .43s) both; }
-.preview:is([data-entrance="first"], [data-entrance="return"]) .menuButton > svg { animation: detailIn .45s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .38s) both; }
-.preview:is([data-entrance="first"], [data-entrance="return"]) .ticker { animation: tickerIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .5s) both; }
-.preview[data-entrance="first"] .photo { animation: photoHandoff .001s linear 2.35s both; }
-.preview[data-entrance="return"] .photo { animation: photoIn .95s cubic-bezier(.76, 0, .24, 1) both; }
-.preview[data-entrance="return"] .photoImage { animation: photoSettle 1.1s cubic-bezier(.22, 1, .36, 1) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .logo .artworkEntrance { animation: artworkIn .65s cubic-bezier(.22, 1, .36, 1) var(--entry-delay) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .order .artworkEntrance { animation: artworkIn .65s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .08s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .statusDetails > :first-child { animation: detailIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .15s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .statusDetails > .address { animation: detailIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .2s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .menuButton > svg { animation: detailIn .45s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .12s) both; }
+.preview:is([data-entrance="first"], [data-entrance="return"]) .ticker { animation: tickerIn .55s cubic-bezier(.22, 1, .36, 1) calc(var(--entry-delay) + .2s) both; }
+.preview[data-entrance="first"] .photo { animation: photoHandoff .001s linear 1.35s both; }
+.preview[data-entrance="return"] .photo { animation: photoIn .75s cubic-bezier(.76, 0, .24, 1) both; }
+.preview[data-entrance="return"] .photoImage { animation: photoSettle .9s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes artworkIn { from { transform: translateY(105%) scaleY(.96); } to { transform: translateY(0) scaleY(1); } }
 @keyframes detailIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes tickerIn { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }

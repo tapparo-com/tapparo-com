@@ -213,7 +213,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
             <button type="button" disabled={reduced || introActive} onClick={() => { window.scrollTo({ top: 0, behavior: "instant" }); play("return"); }}>Kurzen Einstieg ansehen</button>
             <button type="button" disabled={reduced} onClick={() => setTransitionDemo(value => value + 1)}>Seitenwechsel ansehen</button>
           </div>
-          <p>Erstbesuch: ca. 2,85 s, danach kurzer Einstieg mit 1,15 s. 100 ms Crossfade alle 2,5 s. Der Live-Status verwendet Europe/Berlin und aktualisiert sich zu jeder vollen Minute.</p>
+          <p>Erstbesuch: ca. 1,8 s, danach kurzer Einstieg mit 0,95 s. 100 ms Crossfade alle {(slideInterval / 1000).toLocaleString("de-DE")} s. Der Live-Status verwendet Europe/Berlin und aktualisiert sich zu jeder vollen Minute.</p>
         </div>
       </details>
     </div>

@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 export const INTRO_SESSION_KEY = "tapparo:design-preview:intro:v2";
-export const FIRST_ENTRANCE_MS = 2850;
-export const RETURN_ENTRANCE_MS = 1150;
+export const FIRST_ENTRANCE_MS = 1800;
+export const RETURN_ENTRANCE_MS = 950;
 export type HeroEntrance = { mode: "idle" | "first" | "return"; run: number };
 
 // Progressive enhancement: no JS means visible content. A failed/late hydration

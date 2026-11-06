@@ -26,22 +26,22 @@ export function HeroIntro({ photo, image, artwork }: {
     const mobile = window.innerWidth < 1024 && !compact;
     const target = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
     setGeometry({ mobile, target, start: {
-      left: mobile ? 0 : Math.max(0, heroRight - rect.width - 14),
-      top: mobile ? window.innerHeight * 0.32 : 14,
+      left: mobile ? 0 : Math.max(0, heroRight - rect.width - 20),
+      top: mobile ? window.innerHeight * 0.32 : 20,
       width: rect.width,
-      height: mobile ? window.innerHeight * 0.62 : window.innerHeight - 28,
+      height: mobile ? window.innerHeight * 0.62 : window.innerHeight - 40,
     } });
   }, [photo]);
 
   if (!geometry) return null;
   const { start, target, mobile } = geometry;
   return <div className={styles.intro} aria-hidden="true" data-first-intro>
-    <motion.div className={styles.introBackdrop} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.45, delay: 1.85 }} />
+    <motion.div className={styles.introBackdrop} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.3, delay: 1.05 }} />
     <motion.div className={styles.introGreeting}
       style={{ width: mobile ? "100%" : start.left, height: mobile ? start.top : "100%" }}
       initial={{ opacity: 0, filter: "blur(6px)" }}
       animate={{ opacity: [0, 1, 1, 0], filter: ["blur(6px)", "blur(0px)", "blur(0px)", "blur(4px)"] }}
-      transition={{ duration: 1.5, delay: 0.15, times: [0, 0.4, 0.72, 1], ease: "easeInOut" }}>
+      transition={{ duration: 1, delay: 0.05, times: [0, 0.4, 0.72, 1], ease: "easeInOut" }}>
       {/* Decorative visual duplicate: the persistent hero h1 supplies name + tagline. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={artworkFailed ? "/brand/intro-lockup.svg" : artwork || "/brand/intro-lockup.svg"}
@@ -52,8 +52,8 @@ export function HeroIntro({ photo, image, artwork }: {
       initial={{ x: start.left - target.left, y: start.top - target.top, height: start.height, clipPath: "inset(0 100% 0 0)" }}
       animate={{ x: 0, y: 0, height: target.height, clipPath: "inset(0 0% 0 0)" }}
       transition={{
-        default: { duration: 1, delay: 1.35, ease: HANDOFF_EASE },
-        clipPath: { duration: 1.05, delay: 0, ease: HANDOFF_EASE },
+        default: { duration: .7, delay: .65, ease: HANDOFF_EASE },
+        clipPath: { duration: .7, delay: 0, ease: HANDOFF_EASE },
       }} onAnimationComplete={() => setLanded(true)}>
       <div className={image.sketch ? styles.sketchFrame : styles.imageFrame}>
         <Image src={image.src} alt="" fill priority fetchPriority="high" sizes={heroImageSizes(image, { width: target.width, height: Math.max(start.height, target.height) })} className={styles.photoImage} style={{ objectPosition: image.position }} />
