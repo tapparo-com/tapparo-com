@@ -5,6 +5,7 @@ import { useLayoutEffect, useState, type RefObject } from "react";
 import { motion } from "motion/react";
 import styles from "./Hero.module.css";
 import { heroImageSizes } from "@/lib/hero-images";
+import { IntroWelcome } from "./IntroWelcome";
 
 type Rect = { left: number; top: number; width: number; height: number };
 const HANDOFF_EASE = [0.76, 0, 0.24, 1] as const;
@@ -16,14 +17,14 @@ export function HeroIntro({ photo, image, artwork }: {
 }) {
   const [geometry, setGeometry] = useState<{ start: Rect; target: Rect; mobile: boolean } | null>(null);
   const [landed, setLanded] = useState(false);
-  const [artworkFailed, setArtworkFailed] = useState(false);
 
   useLayoutEffect(() => {
     if (!photo.current) return;
-    const rect = photo.current.getBoundingClientRect();
-    const heroRight = photo.current.closest("section")!.getBoundingClientRect().right;
-    const compact = window.matchMedia("(max-height: 500px) and (min-width: 640px)").matches;
-    const mobile = window.innerWidth < 1024 && !compact;
+    const targetPhoto = photo.current;
+    targetPhoto.dataset.introPending = "true";
+    const rect = targetPhoto.getBoundingClientRect();
+    const heroRight = targetPhoto.closest("section")!.getBoundingClientRect().right;
+    const mobile = window.innerWidth < 1024;
     const target = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
     setGeometry({ mobile, target, start: {
       left: mobile ? 0 : Math.max(0, heroRight - rect.width - 20),
@@ -31,22 +32,13 @@ export function HeroIntro({ photo, image, artwork }: {
       width: rect.width,
       height: mobile ? window.innerHeight * 0.62 : window.innerHeight - 40,
     } });
+    return () => { delete targetPhoto.dataset.introPending; };
   }, [photo]);
 
   if (!geometry) return null;
   const { start, target, mobile } = geometry;
   return <div className={styles.intro} aria-hidden="true" data-first-intro>
-    <motion.div className={styles.introBackdrop} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.3, delay: 1.05 }} />
-    <motion.div className={styles.introGreeting}
-      style={{ width: mobile ? "100%" : start.left, height: mobile ? start.top : "100%" }}
-      initial={{ opacity: 0, filter: "blur(6px)" }}
-      animate={{ opacity: [0, 1, 1, 0], filter: ["blur(6px)", "blur(0px)", "blur(0px)", "blur(4px)"] }}
-      transition={{ duration: 1, delay: 0.05, times: [0, 0.4, 0.72, 1], ease: "easeInOut" }}>
-      {/* Decorative visual duplicate: the persistent hero h1 supplies name + tagline. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={artworkFailed ? "/brand/intro-lockup.svg" : artwork || "/brand/intro-lockup.svg"}
-        width={1070} height={1392} alt="" onError={() => setArtworkFailed(true)} />
-    </motion.div>
+    <IntroWelcome artwork={artwork} width={mobile ? "100%" : start.left} height={mobile ? start.top : "100%"} />
     {!landed && <motion.div className={styles.introPhoto}
       style={{ left: target.left, top: target.top, width: target.width }}
       initial={{ x: start.left - target.left, y: start.top - target.top, height: start.height, clipPath: "inset(0 100% 0 0)" }}
@@ -54,7 +46,12 @@ export function HeroIntro({ photo, image, artwork }: {
       transition={{
         default: { duration: .7, delay: .65, ease: HANDOFF_EASE },
         clipPath: { duration: .7, delay: 0, ease: HANDOFF_EASE },
-      }} onAnimationComplete={() => setLanded(true)}>
+      }} onAnimationComplete={() => {
+        // Reveal the real photo before removing its animated duplicate.
+        // A separate CSS timer can finish on a different frame and leave a gap.
+        if (photo.current) delete photo.current.dataset.introPending;
+        setLanded(true);
+      }}>
       <div className={image.sketch ? styles.sketchFrame : styles.imageFrame}>
         <Image src={image.src} alt="" fill priority fetchPriority="high" sizes={heroImageSizes(image, { width: target.width, height: Math.max(start.height, target.height) })} className={styles.photoImage} style={{ objectPosition: image.position }} />
       </div>

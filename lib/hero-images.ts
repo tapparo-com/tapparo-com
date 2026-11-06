@@ -38,5 +38,5 @@ export function heroImage(source: SanityHeroImage, frame?: { width: number; heig
 export function heroImageSizes(image: Pick<HeroImage, "aspectRatio">, frame?: { width: number; height: number }) {
   const ratio = image.aspectRatio || 1.5;
   if (frame && frame.width > 0 && frame.height > 0) return `${Math.ceil(Math.max(frame.width, frame.height * ratio))}px`;
-  return `(min-width: 2100px) max(calc((100vw - 2100px) / 2 + 1400px), calc((100svh - 94px) * ${ratio})), (min-width: 1024px) max(65vw, calc((100svh - 94px) * ${ratio})), (min-width: 640px) and (max-height: 500px) max(57vw, calc((100svh - 77px) * ${ratio})), max(100vw, calc((100svh - 180px) * ${ratio}))`;
+  return `(min-width: 1024px) max(60vw, calc(100svh * ${ratio})), max(100vw, calc((100svh - 400px) * ${ratio}))`;
 }

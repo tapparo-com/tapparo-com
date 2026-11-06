@@ -1,20 +1,18 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useOpeningStatus } from "@/lib/opening-hours/useOpeningStatus";
 import type { OpeningStatus } from "@/lib/opening-hours";
-import { pathForSlug } from "@/lib/urls";
 import { useReducedMotion } from "@/lib/useReducedMotion";
-import { TransitionLink } from "@/components/ui/TransitionLink";
-import { BrandArtwork, EASE, MenuArtwork, MenuIcon, OrderingLink, StatusDetails, HeroTicker } from "./HeroParts";
+import { EASE } from "./HeroParts";
 import type { SiteData } from "./types";
 import styles from "./Hero.module.css";
-import { MenuPhoto } from "./MenuPhoto";
-import type { SanityHeroImage } from "@/lib/hero-images";
-import { ScrollHeader } from "./ScrollHeader";
+import { SiteHeader } from "./SiteHeader";
+import { NavigationContent } from "./NavigationContent";
 import { useHeaderBehavior } from "./useHeaderBehavior";
+import { getMenuLinks } from "./navigation";
 
 type SiteContextValue = {
   data: SiteData;
@@ -23,8 +21,6 @@ type SiteContextValue = {
   hydrated: boolean;
   visible: boolean;
   menuPresent: boolean;
-  setEntrance: (mode: string) => void;
-  setHeroSource: (image: SanityHeroImage | null) => void;
 };
 const SiteContext = createContext<SiteContextValue | null>(null);
 export function useSite() {
@@ -39,37 +35,20 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
   const reduced = useReducedMotion();
   const [hydrated, setHydrated] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [entrance, setEntrance] = useState("idle");
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPresent, setMenuPresent] = useState(false);
-  const heroSource = useRef<SanityHeroImage | null>(null);
-  const setHeroSource = useCallback((image: SanityHeroImage | null) => { heroSource.current = image; }, []);
-  const [menuSource, setMenuSource] = useState<SanityHeroImage | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const status = useOpeningStatus(data.hours);
   const { brand, contact, navigation } = data;
-  const phrases = (data.navigationHero?.tickerPhrases || []).filter(phrase => phrase.trim());
   useHeaderBehavior(root, pathname, menuPresent);
-  const links = [
-    ...(navigation?.pageLinks || []).filter(link => link.slug).map(link => ({ key: link._key, label: link.label, href: pathForSlug(link.slug), external: false })),
-    ...(navigation?.socialLinks || []).map(link => ({ key: link._id, label: link.label, href: link.url, external: true })),
-  ];
+  const links = getMenuLinks(navigation);
 
   useEffect(() => {
     const visibility = () => setVisible(!document.hidden);
     visibility(); setHydrated(true);
     document.addEventListener("visibilitychange", visibility);
     return () => { document.removeEventListener("visibilitychange", visibility); };
-  }, []);
-  useEffect(() => {
-    const element = root.current;
-    if (!element) return;
-    const update = () => element.style.setProperty("--site-width", `${element.clientWidth}px`);
-    const observer = new ResizeObserver(update);
-    observer.observe(element);
-    update();
-    return () => observer.disconnect();
   }, []);
   useEffect(() => { setMenuOpen(false); }, [pathname]);
   useEffect(() => {
@@ -99,16 +78,13 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
     };
   }, [menuPresent]);
 
-  return <SiteContext.Provider value={{ data, status, reduced, hydrated, visible, menuPresent, setEntrance, setHeroSource }}>
-    <div ref={root} className={`${styles.preview} ${styles.siteShell}`} data-site-shell data-has-ticker={phrases.length > 0} data-reduced-motion={reduced} data-entrance={entrance}
+  return <SiteContext.Provider value={{ data, status, reduced, hydrated, visible, menuPresent }}>
+    <div ref={root} className={`${styles.preview} ${styles.siteShell}`} data-site-shell data-reduced-motion={reduced}
       role={menuPresent ? "dialog" : undefined} aria-modal={menuPresent || undefined} aria-label={menuPresent ? "Hauptnavigation" : undefined}>
       <div className={styles.viewportOutline} aria-hidden="true" />
       <div inert={menuPresent} aria-hidden={menuPresent || undefined}>
         <a className={styles.skipLink} href="#main-content">Zum Inhalt</a>
-        <header className={styles.pageHeader}>
-          <TransitionLink href="/" aria-label={`${brand.name} Startseite`}><BrandArtwork logo={brand.logo} /></TransitionLink>
-        </header>
-        <ScrollHeader scope={root} brand={brand} pathname={pathname} reduced={reduced} />
+        <div className={styles.pageHeader} aria-hidden="true" />
         <noscript><nav className={styles.fallbackNavigation} aria-label="Hauptnavigation">{links.map(link => <a key={link.key} href={link.href}>{link.label}</a>)}</nav></noscript>
         {children}
       </div>
@@ -117,39 +93,11 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
           initial={reduced ? false : { clipPath: "inset(0 0 100% 0)" }} animate={{ clipPath: "inset(0 0 0% 0)" }}
           transition={{ duration: reduced ? 0 : 0.45, ease: EASE }}
           exit={{ clipPath: "inset(0 0 100% 0)", transition: { duration: reduced ? 0 : 0.4, delay: reduced ? 0 : 0.12, ease: EASE } }}>
-          <div className={`${styles.viewportLayout} ${styles.navigationLayout}`}>
-            <MenuPhoto source={menuSource} brand={brand} />
-            <TransitionLink href="/" className={styles.menuLogo} aria-label={`${brand.name} Startseite`} onClick={() => setMenuOpen(false)}>
-              <MenuArtwork reduced={reduced} delay={0.1}><BrandArtwork logo={brand.logo} /></MenuArtwork>
-            </TransitionLink>
-            <motion.nav aria-label="Hauptnavigation" className={styles.menuLinks} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : 0.15 }}>
-              {links.map((link, index) => <motion.div key={link.key} data-social-start={link.external && !links[index - 1]?.external || undefined}
-                initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: reduced ? 0 : 0.35, delay: reduced ? 0 : 0.08 + index * 0.05 }}>
-                <TransitionLink href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noopener noreferrer" : undefined}
-                  aria-current={!link.external && pathname === link.href ? "page" : undefined}
-                  onClick={event => { if (!link.external && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) setMenuOpen(false); }}>{link.label}</TransitionLink>
-              </motion.div>)}
-              {navigation?.phone && <a className={styles.menuPhone} href={`tel:${navigation.phone.replace(/[^+\d]/g, "")}`}>{navigation.phone}</a>}
-            </motion.nav>
-            <div className={styles.heroActions}>
-              <div className={styles.order}><MenuArtwork reduced={reduced} delay={0.24}><OrderingLink /></MenuArtwork></div>
-              <motion.div className={styles.details} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.18 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : 0.15 } }}>
-                <StatusDetails status={status} contact={contact} />
-              </motion.div>
-            </div>
-          </div>
-          {phrases.length > 0 && <HeroTicker phrases={phrases} stopped reduced={reduced} />}
+          <NavigationContent navigation={navigation} status={status} contact={contact} pathname={pathname} reduced={reduced} onNavigate={() => setMenuOpen(false)} />
         </motion.div>}
       </AnimatePresence>
-      <div className={styles.menuShell}>
-        <button ref={button} type="button" className={styles.menuButton} data-header-control
-          onClick={() => { if (menuOpen) setMenuOpen(false); else { setMenuSource(heroSource.current || data.navigationHero?.image || null); setMenuPresent(true); setMenuOpen(true); } }}
-          aria-label={menuOpen ? "Navigation schließen" : "Navigation öffnen"} aria-haspopup="dialog" aria-expanded={menuOpen} aria-controls={menuPresent ? navigationId : undefined}>
-          <MenuIcon open={menuOpen} reduced={reduced} />
-        </button>
-      </div>
+      <SiteHeader brand={brand} open={menuOpen} present={menuPresent} reduced={reduced} navigationId={navigationId} buttonRef={button}
+        onHome={() => setMenuOpen(false)} onToggle={() => { if (menuOpen) setMenuOpen(false); else { setMenuPresent(true); setMenuOpen(true); } }} />
     </div>
   </SiteContext.Provider>;
 }

@@ -16,13 +16,14 @@ export function useHeroEntrance(
   photo: RefObject<HTMLDivElement | null>,
   reduced: boolean,
   sessionKey = INTRO_SESSION_KEY,
-  suspended = false,
+  coveredByTransition = false,
   welcomeEnabled = true,
 ) {
   const [entrance, setEntrance] = useState<HeroEntrance>({ mode: "idle", run: 0 });
   const started = useRef(false);
 
   const finish = useCallback(() => {
+    started.current = true;
     if (root.current) delete root.current.dataset.preparing;
     setEntrance(current => current.mode === "idle" ? current : { ...current, mode: "idle" });
   }, [root]);
@@ -36,8 +37,10 @@ export function useHeroEntrance(
   }, [finish, reduced, root, sessionKey, welcomeEnabled]);
 
   useLayoutEffect(() => {
-    if (started.current || suspended) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || root.current?.dataset.entryExpired
+    if (started.current) return;
+    // A route cover already reveals this hero. Consume its entrance now so
+    // uncovering the page cannot hide the photograph and start a second wipe.
+    if (coveredByTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches || root.current?.dataset.entryExpired
       || Math.abs(root.current?.getBoundingClientRect().top || 0) > 1) {
       started.current = true;
       finish();
@@ -51,17 +54,25 @@ export function useHeroEntrance(
     if (!first || (image?.complete && image.naturalWidth > 0)) { ready(); return; }
     // The image handoff needs a decoded photograph. On a slow/erroring request,
     // use the short element entrance rather than prolonging the welcome screen.
-    const fallback = () => { clearTimeout(timeout); play("return"); };
-    const loaded = () => { clearTimeout(timeout); ready(); };
+    let cancelled = false;
+    const cleanup = () => {
+      cancelled = true;
+      clearTimeout(timeout);
+      image.removeEventListener("load", loaded);
+      image.removeEventListener("error", fallback);
+    };
+    const settle = (mode: "first" | "return") => {
+      if (cancelled) return;
+      cleanup();
+      if (!started.current) play(mode);
+    };
+    const fallback = () => settle("return");
+    const loaded = () => settle(first ? "first" : "return");
     const timeout = window.setTimeout(fallback, 800);
     image?.addEventListener("load", loaded, { once: true });
     image?.addEventListener("error", fallback, { once: true });
-    return () => {
-      clearTimeout(timeout);
-      image?.removeEventListener("load", loaded);
-      image?.removeEventListener("error", fallback);
-    };
-  }, [finish, photo, play, root, sessionKey, suspended, welcomeEnabled]);
+    return cleanup;
+  }, [finish, photo, play, root, sessionKey, coveredByTransition, welcomeEnabled]);
 
   useEffect(() => { if (reduced) finish(); }, [reduced, finish]);
 
@@ -76,6 +87,7 @@ export function useHeroEntrance(
     window.addEventListener("wheel", finish, { passive: true });
     window.addEventListener("scroll", finish, { passive: true });
     window.addEventListener("touchstart", finish, { passive: true });
+    window.addEventListener("pointerdown", finish, { passive: true });
     document.addEventListener("keydown", onKey);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
@@ -84,6 +96,7 @@ export function useHeroEntrance(
       window.removeEventListener("wheel", finish);
       window.removeEventListener("scroll", finish);
       window.removeEventListener("touchstart", finish);
+      window.removeEventListener("pointerdown", finish);
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("visibilitychange", onVisibility);
     };

@@ -3,13 +3,14 @@
 import Image, { getImageProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
-import { TransitionLink } from "@/components/ui/TransitionLink";
-import { pathForSlug } from "@/lib/urls";
 import { type HoursSettings } from "@/lib/opening-hours";
 import { useOpeningStatus } from "@/lib/opening-hours/useOpeningStatus";
-import { ASSETS, EASE, IMAGE_SIZES, CROSSFADE_SECONDS, MenuIcon, BrandArtwork, OrderingLink, MenuArtwork, StatusDetails, HeroTicker } from "@/components/hero/HeroParts";
+import { EASE, IMAGE_SIZES, CROSSFADE_SECONDS, BrandArtwork, HeroChoices, StatusDetails, HeroTicker } from "@/components/hero/HeroParts";
 import { heroSlideInterval } from "@/lib/animation";
 import { HeroIntro } from "@/components/hero/HeroIntro";
+import { SiteHeader } from "@/components/hero/SiteHeader";
+import { NavigationContent } from "@/components/hero/NavigationContent";
+import { useHeaderBehavior } from "@/components/hero/useHeaderBehavior";
 import type { SiteData } from "@/components/hero/types";
 import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "@/components/hero/useHeroEntrance";
 import styles from "@/components/hero/Hero.module.css";
@@ -53,6 +54,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
   const inView = useInView(hero, { amount: 0.1 });
   const { images, contact, navigation, brand, tickerPhrases, intro } = content;
   const slideInterval = heroSlideInterval(content.imageDuration);
+  useHeaderBehavior(focusScope, "/design-preview", menuPresent);
   const { entrance, active: introActive, play, finish } = useHeroEntrance(focusScope, photo, reduced, undefined, false, intro?.enabled !== false);
   const next = (slide.current + 1) % images.length;
   const stopped = !hydrated || reduced || !visible || !inView || introActive || menuPresent;
@@ -124,17 +126,10 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
     <script dangerouslySetInnerHTML={{ __html: ENTRANCE_BOOTSTRAP }} />
     <div className={styles.viewportOutline} aria-hidden="true" />
     <div>
-      <section ref={hero} className={`${styles.viewportLayout} ${styles.hero}`} aria-label="Tapparo — Hero-Entwurf" inert={menuPresent} aria-hidden={menuPresent || undefined}>
-        <div className={styles.heroBackground}>
-          <h1 className="sr-only">{brand.name}{brand.tagline ? ` — ${brand.tagline}` : ""}</h1>
-          {tickerPhrases.length > 0 && <HeroTicker phrases={tickerPhrases} stopped={stopped} reduced={reduced} />}
-
-          <a href="/" aria-label={`${brand.name} Startseite`} className={styles.logo}>
-            <span className={styles.artworkMask}><span className={styles.artworkEntrance}><BrandArtwork logo={brand.logo} /></span></span>
-          </a>
-
+      <section ref={hero} className={`${styles.viewportLayout} ${styles.hero}`} data-site-hero aria-label="Tapparo — Hero-Entwurf" inert={menuPresent} aria-hidden={menuPresent || undefined}>
+        <h1 className="sr-only">{brand.name}{brand.tagline ? ` — ${brand.tagline}` : ""}</h1>
           <div ref={photo} className={styles.photo}
-            aria-label="Bilder von Tapparo" data-slide={slide.current}>
+            aria-label="Bilder von Tapparo" data-hero-photo data-slide={slide.current}>
             <div className={styles.imageLayer} aria-hidden="true">
               <div className={images[slide.previous].sketch ? styles.sketchFrame : styles.imageFrame}>
                 <Image src={images[slide.previous].src} alt="" fill sizes={IMAGE_SIZES} className={styles.photoImage} />
@@ -152,53 +147,26 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
             </motion.div>
             {failed && <p className={styles.imageError}>Bild vorübergehend nicht verfügbar.</p>}
           </div>
-        </div>
 
-        <div className={styles.heroActions}>
-          <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
-          <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
+        <div className={styles.heroInformation}>
+          <div className={styles.heroCopy}>
+            <div className={styles.heroBrand} aria-hidden="true"><BrandArtwork logo={brand.logo} /></div>
+            <div className={styles.heroIntroduction}><p>Tagesbar &amp; Focacceria in München.</p></div>
+            <HeroChoices />
+            <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
+          </div>
+          {tickerPhrases.length > 0 && <HeroTicker phrases={tickerPhrases} stopped={stopped} reduced={reduced} />}
         </div>
       </section>
 
-      {/* Reuse the hero's responsive grid, anchored to the viewport rather than
-          its current scroll offset. The page underneath stays in normal flow. */}
+      {/* The centered overlay shares the stationary header with the page. */}
       <AnimatePresence onExitComplete={() => { if (!menuOpen) setMenuPresent(false); }}>
         {menuOpen && <motion.div key="navigation" id="preview-navigation" className={styles.navigation}
           initial={reduced ? false : { clipPath: "inset(0 0 100% 0)" }}
           animate={{ clipPath: "inset(0 0 0% 0)" }}
           transition={{ duration: reduced ? 0 : 0.45, ease: EASE }}
           exit={{ clipPath: "inset(0 0 100% 0)", transition: { duration: reduced ? 0 : 0.4, delay: reduced ? 0 : 0.12, ease: EASE } }}>
-          {/* The opaque surface and every menu element share this one reveal.
-              Hero artwork remains underneath, so closing never swaps positions. */}
-          <div className={`${styles.viewportLayout} ${styles.navigationLayout}`}>
-            <div className={`${styles.photo} ${styles.menuPhoto}`} aria-hidden="true">
-              <Image src={images[slide.current].src} alt="" fill sizes={IMAGE_SIZES} className={styles.photoImage} />
-            </div>
-            <a href="/" className={styles.menuLogo} aria-label={`${brand.name} Startseite`}>
-              <MenuArtwork reduced={reduced} delay={0.1}>
-                <BrandArtwork logo={brand.logo} />
-              </MenuArtwork>
-            </a>
-            <motion.nav aria-label="Hauptnavigation" className={styles.menuLinks} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : 0.15 }}>
-              {[
-                ...(navigation?.pageLinks || []).filter(link => link.slug).map(link => ({ key: link._key, label: link.label, href: pathForSlug(link.slug), external: false })),
-                ...(navigation?.socialLinks || []).map(link => ({ key: link._id, label: link.label, href: link.url, external: true })),
-              ].map((link, index) => <motion.a key={link.key} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noopener noreferrer" : undefined}
-                initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: reduced ? 0 : 0.35, delay: reduced ? 0 : 0.08 + index * 0.05 }}>{link.label}</motion.a>)}
-              {navigation?.phone && <a className={styles.menuPhone} href={`tel:${navigation.phone.replace(/[^+\d]/g, "")}`}>{navigation.phone}</a>}
-            </motion.nav>
-            <div className={styles.heroActions}>
-              <div className={styles.order}><MenuArtwork reduced={reduced} delay={0.24}><OrderingLink /></MenuArtwork></div>
-              <motion.div className={styles.details}
-                initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.18 }}
-                exit={{ opacity: 0, transition: { duration: reduced ? 0 : 0.15, delay: 0 } }}>
-                <StatusDetails status={status} contact={contact} />
-              </motion.div>
-            </div>
-          </div>
-          {tickerPhrases.length > 0 && <HeroTicker phrases={tickerPhrases} stopped reduced={reduced} />}
+          <NavigationContent navigation={navigation} status={status} contact={contact} pathname="/design-preview" reduced={reduced} onNavigate={() => setMenuOpen(false)} />
         </motion.div>}
       </AnimatePresence>
 
@@ -218,13 +186,8 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
       </details>
     </div>
 
-    <div className={styles.menuShell}>
-      <button ref={menuButton} type="button" className={styles.menuButton}
-        onClick={() => { if (menuOpen) setMenuOpen(false); else { setMenuPresent(true); setMenuOpen(true); } }}
-        aria-label={menuOpen ? "Navigation schließen" : "Navigation öffnen"} aria-haspopup="dialog" aria-expanded={menuOpen} aria-controls={menuPresent ? "preview-navigation" : undefined}>
-        <MenuIcon open={menuOpen} reduced={reduced} />
-      </button>
-    </div>
+    <SiteHeader brand={brand} open={menuOpen} present={menuPresent} reduced={reduced} navigationId="preview-navigation" buttonRef={menuButton}
+      onHome={() => setMenuOpen(false)} onToggle={() => { if (menuOpen) setMenuOpen(false); else { setMenuPresent(true); setMenuOpen(true); } }} />
 
     {entrance.mode === "first" && <HeroIntro key={entrance.run} photo={photo} image={images[slide.current]} artwork={intro?.artworkUrl} />}
 

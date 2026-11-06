@@ -8,7 +8,6 @@ import {
   SEO_QUERY,
   HEADER_NAV_QUERY,
   FOOTER_NAV_QUERY,
-  NAVIGATION_HERO_QUERY,
 } from "@/sanity/lib/queries";
 import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { PageTransitionProvider } from "@/components/ui/PageTransition";
@@ -39,7 +38,7 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [brand, contact, hours, seo, headerNav, footerNav, intro, navigationHero] =
+  const [brand, contact, hours, seo, headerNav, footerNav, intro] =
     await Promise.all([
       sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
       sanityFetch<any>({ query: CONTACT_QUERY, tags: ["settingsContact"] }),
@@ -54,7 +53,6 @@ export default async function SiteLayout({
         tags: ["navigationFooter", "socialLink"],
       }),
       sanityFetch<SiteData["intro"]>({ query: PAGE_INTRO_QUERY, tags: ["settingsPageIntro"] }),
-      sanityFetch<SiteData["navigationHero"]>({ query: NAVIGATION_HERO_QUERY, tags: ["page"] }),
     ]);
 
   const logoSvg = await fetchLogoSvg(brand?.logo);
@@ -78,7 +76,7 @@ export default async function SiteLayout({
     <PageTransitionProvider>
       <SiteShell data={{
         brand: { name: brand?.restaurantName || "Tapparo", tagline: brand?.tagline, logo: brand?.logo?.asset ? urlFor(brand.logo).url() : null },
-        contact, hours, navigation: headerNav, intro, navigationHero,
+        contact, hours, navigation: headerNav, intro,
       }}>
       <main id="main-content" tabIndex={-1} className="min-h-svh">{children}</main>
       <Footer

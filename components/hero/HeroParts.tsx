@@ -1,17 +1,19 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import type { OpeningStatus } from "@/lib/opening-hours";
 import { ORDER_PATH } from "@/lib/ordering";
 import type { SiteData } from "./types";
 import { REVEAL_EASE, HERO_CROSSFADE } from "@/lib/animation";
+import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
+import shared from "@/components/homepage/Homepage.module.css";
 import styles from "./Hero.module.css";
 
 export const ASSETS = "/design-preview/";
 export const EASE = REVEAL_EASE;
-export const IMAGE_SIZES = "(min-width: 2100px) calc((100vw - 2100px) / 2 + 1400px), (min-width: 1024px) 65vw, 100vw";
+export const IMAGE_SIZES = "(min-width: 1024px) 60vw, 100vw";
 export const CROSSFADE_SECONDS = HERO_CROSSFADE;
 
 // Original Figma strokes: translate/rotate these same lines into a handdrawn cross.
@@ -44,21 +46,19 @@ export function BrandArtwork({ logo }: { logo?: string | null }) {
 }
 
 export function OrderingLink() {
-  return <TransitionLink href={ORDER_PATH} aria-label="Jetzt bestellen" className={styles.orderingLink}>
-    <span className={styles.orderArtwork} aria-hidden="true" />
+  return <TransitionLink href={ORDER_PATH} className={`${shared.animatedLink} ${styles.actionLink}`}>
+    <span>jetzt bestellen</span><AnimatedUnderline />
   </TransitionLink>;
 }
 
-export function MenuArtwork({ children, reduced, delay }: { children: ReactNode; reduced: boolean; delay: number }) {
-  return <span className={styles.menuArtworkMask}>
-    <motion.span className={styles.menuArtwork}
-      initial={reduced ? false : { y: "105%", opacity: 0 }}
-      animate={{ y: "0%", opacity: 1 }}
-      transition={{ duration: reduced ? 0 : 0.5, delay: reduced ? 0 : delay, ease: EASE }}
-      exit={{ y: reduced ? "0%" : "-105%", opacity: 0, transition: { duration: reduced ? 0 : 0.18, delay: 0, ease: EASE } }}>
-      {children}
-    </motion.span>
-  </span>;
+export function HeroChoices({ menuLinkLabel }: { menuLinkLabel?: string }) {
+  const menuLabel = !menuLinkLabel?.trim() || /^speisekarte$/i.test(menuLinkLabel.trim()) ? "speisekarte ansehen" : menuLinkLabel;
+  return <div className={styles.heroChoices}>
+    <TransitionLink href="/menu" className={`${shared.animatedLink} ${styles.actionLink}`}>
+      <span>{menuLabel}</span><AnimatedUnderline />
+    </TransitionLink>
+    <OrderingLink />
+  </div>;
 }
 
 export function StatusDetails({ status, contact }: { status: OpeningStatus; contact: SiteData["contact"] }) {
@@ -93,13 +93,7 @@ export function HeroTicker({ phrases, stopped, reduced = false }: { phrases: str
     return () => observer.disconnect();
   }, [phrases]);
 
-  return <div ref={windowRef} className={styles.ticker} data-static={reduced} tabIndex={reduced ? 0 : undefined} role="region" aria-label="Tapparo in Worten"
-    onKeyDown={event => {
-      if (!reduced || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-      // WebKit can lose native arrow scrolling after the menu releases its body lock.
-      event.preventDefault();
-      event.currentTarget.scrollLeft += event.key === "ArrowRight" ? 64 : -64;
-    }}>
+  return <div ref={windowRef} className={styles.ticker} data-static={reduced} role="region" aria-label="Tapparo in Worten">
     <p className="sr-only">{phrases.join(", ")}</p>
     <div className={styles.tickerTrack} aria-hidden="true" style={{ animationPlayState: stopped ? "paused" : "running", animationDuration: `${track.duration}s` }}>
       {[0, 1].map(copy => <span className={styles.tickerCopy} key={copy}>

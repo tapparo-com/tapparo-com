@@ -61,7 +61,7 @@ export const navigationHeader = defineType({
       title: "Pages",
       type: "array",
       description:
-        "Page links shown in the menu overlay. Drag to reorder.",
+        'Seitenlinks im Menü. Zum Sortieren verschieben. „Jetzt bestellen“ wird auf der Website automatisch direkt nach Home eingefügt und führt über /order zum externen Bestellsystem Degaso. Dieser feste Link wird nicht in dieser Liste bearbeitet. Ohne Home erscheint er an erster Stelle.',
       of: [navPageLink],
     }),
     defineField({
@@ -69,7 +69,7 @@ export const navigationHeader = defineType({
       title: "Social Links",
       type: "array",
       description:
-        "Select which social links to show in the menu overlay. Pick from Site Settings > Social Links.",
+        "Social Links aus Site Settings > Social Links auswählen. Sie erscheinen nach den Seitenlinks und werden im Menü genauso groß dargestellt.",
       of: [
         defineArrayMember({
           type: "reference",

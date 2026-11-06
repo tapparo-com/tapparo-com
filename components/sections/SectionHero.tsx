@@ -3,16 +3,13 @@
 import Image, { getImageProps } from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
-import { TransitionLink } from "@/components/ui/TransitionLink";
 import { usePageTransition } from "@/components/ui/PageTransition";
-import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, OrderingLink, StatusDetails } from "@/components/hero/HeroParts";
+import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, HeroChoices, StatusDetails } from "@/components/hero/HeroParts";
 import { heroSlideInterval } from "@/lib/animation";
 import { HeroIntro } from "@/components/hero/HeroIntro";
 import { useSite } from "@/components/hero/SiteShell";
 import { ENTRANCE_BOOTSTRAP, useHeroEntrance } from "@/components/hero/useHeroEntrance";
 import { heroImage, heroImageSizes, type SanityHeroImage } from "@/lib/hero-images";
-import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
-import shared from "@/components/homepage/Homepage.module.css";
 import styles from "@/components/hero/Hero.module.css";
 
 type HeroProps = {
@@ -29,7 +26,7 @@ export function SectionHero(props: HeroProps) {
 
 function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menuLinkLabel }: HeroProps) {
   const slideInterval = heroSlideInterval(imageDuration);
-  const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent, setEntrance, setHeroSource } = useSite();
+  const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent } = useSite();
   const root = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState<{ width: number; height: number }>();
@@ -45,9 +42,6 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
   const current = images[slide.current], previous = images[slide.previous], upcoming = images[next];
   const stopped = !hydrated || reduced || !visible || !inView || active || menuPresent || isTransitioning;
 
-  const currentSource = heroImages?.find(image => image._key === current?.id);
-  useEffect(() => { setHeroSource(currentSource || null); return () => setHeroSource(null); }, [currentSource, setHeroSource]);
-  useEffect(() => { setEntrance(entrance.mode); return () => setEntrance("idle"); }, [entrance.mode, setEntrance]);
   useEffect(() => { if (menuPresent) finish(); }, [menuPresent, finish]);
   useEffect(() => {
     if (!photo.current) return;
@@ -82,9 +76,6 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
     <section className={`${styles.viewportLayout} ${styles.hero}`} aria-label={brand.name}>
       {/* Keep the intro's spoken identity available after its decorative artwork exits. */}
       <h1 className="sr-only">{brand.name}{brand.tagline ? ` — ${brand.tagline}` : ""}</h1>
-      <TransitionLink href="/" aria-label={`${brand.name} Startseite`} className={styles.logo} data-hero-logo>
-        <span className={styles.artworkMask}><span className={styles.artworkEntrance}><BrandArtwork logo={brand.logo} /></span></span>
-      </TransitionLink>
       <div ref={photo} className={styles.photo} data-hero-photo data-slide={slide.current} data-image-count={images.length}>
         {previous && previous.id !== current?.id && <div className={styles.imageLayer} aria-hidden="true"><Image src={previous.src} alt="" fill sizes={heroImageSizes(previous, frame)} className={styles.photoImage} style={{ objectPosition: previous.position }} /></div>}
         {current && <motion.div key={slide.version} className={styles.imageLayer} data-active-image
@@ -94,16 +85,16 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
         </motion.div>}
         {(!current || failed) && <div className={styles.photoFallback}><BrandArtwork logo={brand.logo} /><span>{brand.tagline || brand.name}</span></div>}
       </div>
-      {(description || menuLinkLabel) && <div className={styles.heroIntroduction}>
-        {description && <p>{description}</p>}
-        {menuLinkLabel && <TransitionLink href="/menu" className={shared.animatedLink}><span>{menuLinkLabel}</span><AnimatedUnderline /></TransitionLink>}
-      </div>}
-      <div className={styles.heroActions}>
-        <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
-        <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
+      <div className={styles.heroInformation}>
+        <div className={styles.heroCopy}>
+          <div className={styles.heroBrand} aria-hidden="true"><BrandArtwork logo={brand.logo} /></div>
+          {description && <div className={styles.heroIntroduction}><p>{description}</p></div>}
+          <HeroChoices menuLinkLabel={menuLinkLabel} />
+          <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
+        </div>
+        {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} reduced={reduced} />}
       </div>
     </section>
-    {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} reduced={reduced} />}
     {entrance.mode === "first" && current && <HeroIntro key={entrance.run} photo={photo} image={current} artwork={intro?.artworkUrl} />}
   </div>;
 }
