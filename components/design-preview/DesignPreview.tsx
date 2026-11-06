@@ -152,7 +152,7 @@ export function DesignPreview({ content }: { content: PreviewContent }) {
           <div className={styles.heroCopy}>
             <div className={styles.heroBrand} aria-hidden="true"><BrandArtwork logo={brand.logo} /></div>
             <div className={styles.heroIntroduction}><p>Tagesbar &amp; Focacceria in München.</p></div>
-            <HeroChoices />
+            <HeroChoices secondaryLink={{ enabled: true, label: "speisekarte ansehen", slug: "menu" }} />
             <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
           </div>
           {tickerPhrases.length > 0 && <HeroTicker phrases={tickerPhrases} stopped={stopped} reduced={reduced} />}

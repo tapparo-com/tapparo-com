@@ -51,7 +51,7 @@ export async function SectionRenderer({ sections, shared, documentId }: Props) {
           case "sectionContactForm":
             return documentId ? <SectionContactForm key={section._key} documentId={documentId} section={section as ContactSection} /> : null;
           case "sectionHero":
-            return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} imageDuration={section.imageDuration} description={section.description} menuLinkLabel={section.menuLinkLabel} />;
+            return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} imageDuration={section.imageDuration} description={section.description} secondaryLink={section.secondaryLink} />;
           case "sectionSubhero":
             return (
               <SectionSubhero

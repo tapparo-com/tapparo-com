@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import type { OpeningStatus } from "@/lib/opening-hours";
 import { ORDER_PATH } from "@/lib/ordering";
+import { resolveHeroSecondaryLink, type HeroSecondaryLink } from "@/lib/hero-links";
 import type { SiteData } from "./types";
 import { REVEAL_EASE, HERO_CROSSFADE } from "@/lib/animation";
 import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
@@ -51,13 +52,13 @@ export function OrderingLink() {
   </TransitionLink>;
 }
 
-export function HeroChoices({ menuLinkLabel }: { menuLinkLabel?: string }) {
-  const menuLabel = !menuLinkLabel?.trim() || /^speisekarte$/i.test(menuLinkLabel.trim()) ? "speisekarte ansehen" : menuLinkLabel;
+export function HeroChoices({ secondaryLink }: { secondaryLink?: HeroSecondaryLink | null }) {
+  const link = resolveHeroSecondaryLink(secondaryLink);
   return <div className={styles.heroChoices}>
-    <TransitionLink href="/menu" className={`${shared.animatedLink} ${styles.actionLink}`}>
-      <span>{menuLabel}</span><AnimatedUnderline />
-    </TransitionLink>
     <OrderingLink />
+    {link && <TransitionLink href={link.href} className={`${shared.animatedLink} ${styles.actionLink}`}>
+      <span>{link.label}</span><AnimatedUnderline />
+    </TransitionLink>}
   </div>;
 }
 

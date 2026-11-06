@@ -74,11 +74,43 @@ export const sectionHero = defineArrayMember({
   type: "object",
   name: "sectionHero",
   title: "Hero",
-  description: "Homepage opening section: carousel, introduction, two links, opening status and ticker. Place it first on Home. Edit images and copy here; logo, contact details, hours and welcome artwork come from Site Settings. Layout, link destinations and animation style are fixed by the site.",
+  description: "Homepage opening section: carousel, introduction, ordering link, optional second link, opening status and ticker. Place it first on Home. Edit images, copy and the second link here; logo, contact details, hours and welcome artwork come from Site Settings. Layout and animation style are fixed by the site.",
   icon: ImageIcon,
+  initialValue: { secondaryLink: { _type: "secondaryLink", enabled: false } },
   fields: [
     defineField({ name: "description", title: "Short introduction", type: "string", description: "Short text below the hero wordmark on desktop and mobile. Leave empty to hide this text; links and opening status remain visible.", validation: rule => rule.max(90) }),
-    defineField({ name: "menuLinkLabel", title: "Menu link label", type: "string", description: "Text for the always-visible menu link on desktop and mobile. Leave empty, or enter 'Speisekarte', to use 'speisekarte ansehen'. Other wording is displayed as entered. The destination stays /menu; this field cannot hide the link or change the separate 'jetzt bestellen' action.", validation: rule => rule.max(40) }),
+    defineField({
+      name: "secondaryLink", title: "Second link", type: "object",
+      description: "Optional link after 'jetzt bestellen' on desktop and mobile. Choose its wording and an existing CMS page. The ordering link stays first and always points to /order.",
+      options: { collapsible: false },
+      initialValue: { enabled: false },
+      fields: [
+        defineField({
+          name: "enabled", title: "Show second link", type: "boolean", initialValue: false,
+          description: "Turn on to show a second link and edit its label and destination. Turn off to hide it while keeping those values for later.",
+        }),
+        defineField({
+          name: "label", title: "Link label", type: "string",
+          description: "The exact wording displayed, for example 'alle stories', 'speisekarte' or 'kontakt'. Required while the second link is enabled; no automatic wording is substituted.",
+          hidden: ({ parent }) => parent?.enabled !== true,
+          validation: rule => rule.max(80).custom((value, context) =>
+            (context.parent as { enabled?: boolean } | undefined)?.enabled === true && !value?.trim()
+              ? "Enter a label for the enabled second link." : true),
+        }),
+        defineField({
+          name: "page", title: "Destination page", type: "reference",
+          description: "Select an existing page, Menu, Stories overview, article or legal page. Publish the destination before publishing this link. External URLs and inline page creation are not available here. Required while the second link is enabled.",
+          to: [{ type: "page" }, { type: "menuPage" }, { type: "storiesPage" }, { type: "post" }, { type: "legalPage" }],
+          options: { disableNew: true, filter: '_type in ["menuPage", "storiesPage"] || defined(slug.current)' },
+          hidden: ({ parent }) => parent?.enabled !== true,
+          validation: rule => rule.custom((value, context) =>
+            (context.parent as { enabled?: boolean } | undefined)?.enabled === true && !value?._ref
+              ? "Select a destination for the enabled second link." : true),
+        }),
+      ],
+    }),
+    // Preserve legacy data; the website now reads secondaryLink only.
+    defineField({ name: "menuLinkLabel", title: "Legacy menu link label", type: "string", hidden: true, validation: rule => rule.max(40) }),
     defineField({
       name: "tickerPhrases",
       title: "Ticker phrases",

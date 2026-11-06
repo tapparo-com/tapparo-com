@@ -1,6 +1,6 @@
 # CMS section editing guide and audit
 
-6 November 2026. Audited all **10 page-builder sections** and **17 registered document types** against the local Studio schema, GROQ projections, section renderer and frontend components. The local Studio definitions are authoritative. This audit updates editor documentation: field names, types, defaults, validation, references and stored content are unchanged.
+6 November 2026. Audited all **10 page-builder sections** and **17 registered document types** against the local Studio schema, GROQ projections, section renderer and frontend components. The local Studio definitions are authoritative. The initial audit updated documentation only. The subsequent requested Hero enhancement adds the optional second-link controls described below.
 
 ## How editing works
 
@@ -14,7 +14,7 @@
 
 | Section | What editors can change | Shared or fixed behavior |
 | --- | --- | --- |
-| Hero | Introduction, menu-link wording, ticker phrases/order, carousel images/order/crops/alternative text, image interval (1.2–15 seconds). | Use first on Home. Desktop/mobile composition is fixed. Wordmark, hours, address and welcome come from Site Settings. Both actions remain visible; destinations are `/menu` and `/order`. Ordering label is fixed. Ticker speed and crossfade style are fixed; reduced motion pauses autoplay and wraps ticker text. |
+| Hero | Introduction, second-link visibility/wording/CMS destination, ticker phrases/order, carousel images/order/crops/alternative text, image interval (1.2–15 seconds). | Use first on Home. Desktop/mobile composition is fixed. Wordmark, hours, address and welcome come from Site Settings. “jetzt bestellen” always appears first and leads to `/order`; the optional second link follows it. Ticker speed and crossfade style are fixed; reduced motion pauses autoplay and wraps ticker text. |
 | SubHero | Rich introduction text, up to two images, one internal link, optional opening-hours table. Section name is an editor/accessibility label. | No visible overline. The first image shares the optional link destination. Bold text uses the orange accent. Hours are shared. Image arrangement, typography and link styling are fixed; the legacy button style field stays hidden and is not used. |
 | Story Highlight | One story reference, optional local title/excerpt overrides, section label and link wording. | Uses the referenced story's image and framing. Overrides affect this section only. Image, title and action link to the story. It hides if the reference cannot resolve. The small section label is uppercase by design. |
 | Image Grid | Optional heading and up to three images with order/crops/alternative text. | Fixed offset composition with responsive stacking. Original proportions are retained; small images remain details. No slideshow or lightbox. |
@@ -25,9 +25,17 @@
 | Text + Images | Optional heading, rich body, two images, images-first/text-first order, optional enquiry link with reason preselection. | Requires body or an image. The enquiry action requires body text, a label and a published destination with a slug. Image overlap, link style and typography are fixed. Unknown/disabled enquiry identifiers do not preselect a reason. |
 | Contact Form | Introduction, enquiry reasons/order/enablement, four question headings, email/message guidance, reason-specific message overrides, send label, live confirmation copy and privacy-page reference. | Fixed reason → name → email → message → review sequence. No custom fields, attachments, arbitrary branching or per-reason inboxes. Details below. |
 
-### Hero menu-link correction
+### Hero second link
 
-**Menu link label is used.** Empty text or the value “Speisekarte” (ignoring case and surrounding spaces) uses **“speisekarte ansehen”**. Other wording is rendered as supplied. The link appears on mobile and desktop and always points to `/menu`. It cannot be hidden with this field. The earlier “optional desktop link / leave empty to hide” description was incorrect.
+Open **Pages → Home → Hero → Second link**:
+
+1. Enable **Show second link** to reveal the label and destination fields. Disable it to hide the link while retaining those values.
+2. Enter **Link label** exactly as visitors should see it, such as “alle stories”, “Speisekarte” or “kontakt”. No wording is automatically substituted. A non-blank label is required while enabled.
+3. Choose **Destination page** from existing CMS pages: Menu, Stories overview, ordinary pages such as Kontakt, articles or legal pages. The destination must be published; ordinary pages need a URL slug. There is no external URL field or inline page creation.
+
+The fixed **“jetzt bestellen”** link remains first on both desktop and mobile and leads to `/order`. The optional link follows it. New Hero sections start with the second link disabled. Missing settings or an unresolved destination hide the second link; they do not restore a default Menu link.
+
+The existing development Home hero was migrated to an enabled “speisekarte ansehen” link referencing Menu, preserving its current wording and destination. The old `menuLinkLabel` data is retained as a hidden legacy field and is no longer rendered. Before production rollout, carry over the approved second-link configuration explicitly; production content has not been migrated.
 
 The Short introduction is also shown on mobile. Clearing that field hides the introduction only. Clearing the ticker phrases hides the ticker. Carousel timing is separate from welcome animation timing.
 
@@ -81,9 +89,11 @@ The public fallback email comes from **Site Settings → Contact → Email**, wi
 ## Verification and scope
 
 - Compared every registered section with its query projection and renderer, including empty values, shared settings and fixed labels.
-- All 216 nested/reused field definitions have help text where visible; all ten section types have English section-level descriptions. Appropriate existing descriptions were retained.
-- Structural schema comparison confirms unchanged field names/types, defaults, validation, references, options and visibility rules. Only editor titles/descriptions changed.
+- The initial audit covered 216 nested/reused field definitions with help where visible and all ten section descriptions. The subsequent second-link object and its three controls also include English help text.
+- The initial documentation-only audit preserved schema structure. The requested follow-up adds `secondaryLink`, hides the legacy field, and updates the query and hero rendering. Label/destination validation is conditional on enablement.
 - TypeScript and Sanity schema extraction pass. The installed CLI emitted its existing path-with-spaces launcher warning but successfully produced a parseable schema export.
 - Local evidence: `.sanity-backups/cms-section-audit-2026-11-06/`. Fresh visual inspection of Studio remains pending because browser automation is unavailable.
 
-This documentation audit is committed locally. No frontend behavior, published documents, draft content, live delivery configuration, hosted Studio or production deployment was changed.
+The Hero follow-up passes all 42 regression tests, TypeScript, schema extraction, six validation cases, ten query/destination cases, and a rendered-HTML check of action order. Only the development Home document changed, adding `secondaryLink`; its previous content and all 210 other document/asset revisions, including owner drafts, are preserved. No Home draft remains from the migration. Evidence is in `.sanity-backups/hero-secondary-link-2026-11-06/`.
+
+The documentation audit is committed as `3b420b0`; the optional Hero link and this updated guide are included in the accompanying feature commit at the user's request. No live delivery configuration, hosted Studio or production deployment/content was changed. Studio visual inspection remains pending because browser access is unavailable.

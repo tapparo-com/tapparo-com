@@ -6,6 +6,7 @@ import { motion, useInView } from "motion/react";
 import { usePageTransition } from "@/components/ui/PageTransition";
 import { BrandArtwork, CROSSFADE_SECONDS, HeroTicker, HeroChoices, StatusDetails } from "@/components/hero/HeroParts";
 import { heroSlideInterval } from "@/lib/animation";
+import type { HeroSecondaryLink } from "@/lib/hero-links";
 import { HeroIntro } from "@/components/hero/HeroIntro";
 import { useSite } from "@/components/hero/SiteShell";
 import { ENTRANCE_BOOTSTRAP, SITE_INTRO_SESSION_KEY, useHeroEntrance } from "@/components/hero/useHeroEntrance";
@@ -17,14 +18,14 @@ type HeroProps = {
   tickerPhrases?: string[];
   imageDuration?: number | null;
   description?: string;
-  menuLinkLabel?: string;
+  secondaryLink?: HeroSecondaryLink | null;
 };
 
 export function SectionHero(props: HeroProps) {
   return <Hero key={JSON.stringify(props.heroImages)} {...props} />;
 }
 
-function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menuLinkLabel }: HeroProps) {
+function Hero({ heroImages, tickerPhrases = [], imageDuration, description, secondaryLink }: HeroProps) {
   const slideInterval = heroSlideInterval(imageDuration);
   const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent } = useSite();
   const root = useRef<HTMLDivElement>(null);
@@ -89,7 +90,7 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
         <div className={styles.heroCopy}>
           <div className={styles.heroBrand} aria-hidden="true"><BrandArtwork logo={brand.logo} /></div>
           {description && <div className={styles.heroIntroduction}><p>{description}</p></div>}
-          <HeroChoices menuLinkLabel={menuLinkLabel} />
+          <HeroChoices secondaryLink={secondaryLink} />
           <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
         </div>
         {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} reduced={reduced} />}

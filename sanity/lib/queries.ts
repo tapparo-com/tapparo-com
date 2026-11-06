@@ -105,7 +105,16 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         tickerPhrases,
         imageDuration,
         description,
-        menuLinkLabel,
+        secondaryLink{
+          enabled,
+          label,
+          "slug": select(
+            page->_type == "menuPage" => "menu",
+            page->_type == "storiesPage" => "stories",
+            page->_type in ["page", "post", "legalPage"] => lower(page->slug.current),
+            null
+          )
+        },
         heroImages[defined(asset)]{ _key, ${imageFields} }
       },
       _type == "sectionSubhero" => {
