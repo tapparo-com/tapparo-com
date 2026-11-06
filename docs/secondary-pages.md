@@ -46,3 +46,28 @@ No CMS fields, documents, queries, URLs or content changed in this feedback pass
 Follow-up alignment correction: the allergen heading and legend now share the menu categories' centered 624 px content wrapper, retaining the responsive legend grid and all allergen anchor targets. Browser checks at 390, 1440, 2560 and 5092 px confirm matching left edges/widths, all seven allergens and no horizontal overflow.
 
 Verification after the revisions: TypeScript and an isolated production build against development pass. Browser checks cover 36 page/viewport combinations from 320 to 5092 px, including the 1280 px article breakpoint, single-column menu rows, capped reading widths, compact typography and no horizontal overflow. All ten stories, full menu content/prices, legal wording, category anchors, loading/focus, related-story rules, fixtures and no-JavaScript behavior pass. Normal-motion navigation, menu scroll restoration, photo controls and live reduced motion also pass without browser errors. Desktop and mobile screenshots were visually reviewed. Evidence is in `.sanity-backups/step7-reading-review/`; the existing development server remains running.
+
+
+## Stories audit follow-up — 4 November 2026
+
+Implemented for review, uncommitted. The approved two-column desktop cards, compact titles, full excerpts, German animated links and 16px article prose remain. Shared card author/date metadata is now 13px; wide cards retain an inline, right-aligned “story lesen” action and aligned row footers. The bakery excerpt's two literal `**` markers were removed in development without changing its words or article body. Excerpt help text now explains that the field is plain text.
+
+**Owner control:** Stories → Posts → Cover Image → **Image Framing** now offers **Fill frame — photos** (the default for existing images) and **Show full image — posters and artwork**. This applies to the overview, homepage cards, related stories, story highlights and article cover. Full-image framing preserves the image aspect within the existing frame and disables card hover zoom so lettering stays visible; any crop explicitly set in Studio is still respected. The development `/opening` cover uses Show full image. No assets were replaced.
+
+On desktop viewports at least 1280px wide and 800px tall, the article cover stays alongside the prose, 100px below the viewport top, and stops at the end of the article. Mobile and shorter viewports retain ordinary scrolling. Articles with related stories now use the single “alle stories” link in that section; articles without related stories retain their return link below the body.
+
+Only two development fields changed: `coverImage.fit` on `44d73d40-b25a-4cad-8520-59cdffd04a3e` and `excerpt` on `0904d3f2-070d-4513-9a6b-dc2d291e2c59`. Before/after snapshots preserve all ten posts; the other 144 content/draft revisions are unchanged. The connector's draft-only mutation behavior did not fit the direct, revision-guarded field correction, so the existing Sanity CLI pattern was used with a hard development/project guard and an atomic transaction. Production remains untouched; these two field corrections must be reviewed separately at release.
+
+Verification: all 39 existing regression tests, TypeScript, schema extraction, slug checks and an isolated optimized build against development pass. Eight Chromium/WebKit layouts from 320–2560px verify card order/loading/focus, paired footer alignment, full artwork, mobile footer alignment and no overflow. Normal/reduced motion, no-JavaScript access and bounded desktop sticky behavior pass. All ten article routes retain full text, titles, cover references and canonical URLs; homepage cards retain their initial count and shared styling. Evidence: `.sanity-backups/stories-footer-review/`. Production, owner drafts and the existing development server remain untouched. No commit or deployment.
+
+
+## Speisekarte audit follow-up — 5 November 2026
+
+The clipped horizontal category strip is replaced by a native **Kategorie wählen** disclosure showing the current category. Opening it exposes every CMS-selected category by name in a responsive index. Native fragment links retain browser history and no-JavaScript access; JavaScript closes the index after selection, supports Escape/outside-click dismissal and keeps its current label synchronized while reading. The sticky chooser reserves space for the global navigation toggle. Its small text remains dark; an orange underline identifies the current category.
+
+Development's page title and header/footer menu links now say **Speisekarte**. Six allergen labels were translated: Sellerie, Milchprodukte, Eier, Fisch, Nüsse and Soja; Gluten was already German. Codes, item references and underlying allergen information are unchanged. All menu categories, items, prices, variants, extras, availability, images and ordering are preserved, as are the centered 624px reading column and allergen block. These narrow content changes require separate production review; no production edits were made.
+
+
+## Audit work committed — 6 November 2026
+
+The user authorized committing the prior audit refinements before the next hero/menu revision. Commits: `b891ad1` (legal/404/footer), `f2046b9` (Stories), `1bac920` (homepage sections), `ae14093` (hero/navigation/Speisekarte), and `714d982` (Kontakt). The historical “uncommitted” notes above describe their original review state. All 40 tests, TypeScript and diff checks passed immediately before this commit series. No push, deployment, email or production changes. The newly approved hero/menu composition work is separate and remains subject to review.

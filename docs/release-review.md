@@ -4,6 +4,47 @@
 
 Implementation commits: `43acf65` (search metadata), `3527fe7` (accessibility), `fd98c53` (hero performance), and `d606b3f` (branded 404). All 39 tests, TypeScript and diff checks passed again before committing. Remaining release checks and limitations below stay open.
 
+## Audit follow-up — Impressum, 404 and footer
+
+**4 November 2026 · Implemented for user review; uncommitted.** The user selected these three areas from the design audit. Other audit recommendations remain outside this pass.
+
+- Added a compact contents row to the Impressum: Impressum, Datenschutz and Kontaktformular. Links are generated from existing CMS headings, with unique fragment IDs, keyboard-focusable destinations and clearance below the header. Native anchors work without JavaScript and use the existing reduced-motion handling. All legal text and the update date are preserved; no new CMS fields are required.
+- Clarified the 404's primary link to “Zur Speisekarte”, retaining its orange background, iconmark/wordmark, focaccia headline, animated underline and return-home link.
+- Tightened footer spacing and type, placed page/social links in adjacent groups with aligned headings, and retained 44px link targets. Tablet uses a two-column information layout; small screens stack the information above the link groups. The small logo and back-to-top control remain. All destinations, hours, contact details and visibility controls still come from the CMS.
+- The user confirmed `hello@tapparo.de` as the public contact address. Kontakt's visible email links now read the same Contact site setting as the footer, including the no-JavaScript fallback. Existing Impressum wording already uses `.de`. Server delivery remains separately configured under the original `.com` requirement; confirm the receiving inbox during Kontakt activation, as tracked in its owner guide.
+
+Verification: isolated optimized build against development, all 39 existing tests, TypeScript and diff checks; Chromium/WebKit views from 320–2560px; full legal-text comparison; unique heading IDs; keyboard/native anchors, direct fragments and reduced/normal motion; single footer link-group variants; 44px link targets; real 404 status and no overflow; public email links without JavaScript. Browser evidence is saved locally in `.sanity-backups/footer-legal-review/`. No emails were sent, no CMS documents were changed, and production remains untouched.
+
+## Audit follow-up — mobile footer and Stories
+
+**4 November 2026 · Implemented for user review; uncommitted.** Footer hours, contact details and page/social groups are now left-aligned below 768px. Desktop/tablet alignment and the compact logo/back-to-top row remain as previously reviewed. All CMS links and touch target sizes are preserved.
+
+Stories receive 13px card metadata, a CMS cover-image framing choice for artwork, and a cleaned plain-text bakery excerpt. The `/opening` artwork now displays in full, including on cards. Long desktop articles have a cover that stays alongside the prose within the article's bounds; small/short viewports scroll normally. The duplicate return action before related stories has been removed. Full titles, bodies, dates, cover references, related-story choices, card order and two-column layout are preserved. See the [secondary-page owner guide](secondary-pages.md#stories-audit-follow-up--4-november-2026).
+
+Verification: 39 tests, TypeScript, schema extraction, slug audit and isolated optimized development build pass. Chromium/WebKit checks cover eight layouts from 320–2560px, all ten articles, card alignment and loading/focus, full artwork, bounded scrolling, normal/reduced motion and no-JavaScript access. Only the two documented development story fields changed; all 144 unrelated content/draft revisions remain unchanged. Evidence and snapshots: `.sanity-backups/stories-footer-review/`. No production changes, emails, commits, push or deployment.
+
+## Audit follow-up — homepage sections
+
+**5 November 2026 · Implemented for user review; uncommitted.** Refined mobile reading sizes/line spacing in About, Product and the founders’ quote. Varied the image compositions: narrower About portrait with a wider companion, more prominence for the gallery’s food image, a smaller Product preparation inset, and a larger main portrait with a smaller companion in the quote. Preserved desktop type, full text, selected assets, ordering, links, hours-before-menu sequence and motion. Responsive image sizes track the adjusted layouts. The hero/header/navigation and Speisekarte audit items remain separate.
+
+TypeScript, all 39 tests, slug audit, isolated optimized build and diff checks pass. Ten Chromium/WebKit layouts from 320–2560px and fourteen content variants at two widths in both engines cover content preservation, image fallbacks, centering, source-size caps, motion/focus, reduced motion and no JavaScript. All 146 development content/draft revisions are unchanged. There is no additional production content migration for this pass. See the [homepage implementation record](homepage-redesign.md#homepage-sections-audit-follow-up--5-november-2026); local evidence is in `.sanity-backups/home-sections-review/`.
+
+## Audit follow-up — header, hero, navigation, Speisekarte and Kontakt
+
+**5 November 2026 · Implemented for user review; uncommitted.** Completed the remaining actionable design-audit items. The header remains transparent, retreats during downward reading and returns upward/on keyboard focus. Known photograph regions use white artwork with a small shadow. The hero leads with existing finished food/preparation imagery, requests cover-aware image sizes and has optional owner-editable desktop introductory copy and a Speisekarte link. The original viewport composition, ordering route and carousel cadence remain.
+
+Navigation has a visible current-page state, room for German labels, a separate social-link gap and 44px minimum link heights. Speisekarte exposes all twelve named categories through a native sticky chooser, with a current category, native anchors, Escape/outside dismissal and small dark text. Its centered menu/prices/allergen layout remains. Kontakt collapses repeated mobile introduction copy after question one, clarifies the message field and updates focus/scroll after rendering each question. The owner declined a response-time promise, so the wording is unchanged.
+
+Development-only content changes: the Home hero's image order plus two new optional strings; header, existing header draft and footer menu labels; `menuPage.title`; six allergen labels. The connector's draft-only mutation does not provide the required atomic published-and-draft field update, so the established CLI pattern used a hard project/development guard, a full before snapshot and revision-guarded transaction. Full-content comparison of all 146 documents verifies exactly these fields; 135 unrelated document/draft revisions are unchanged. No draft was published or discarded. All eight selected images/crops/hotspots/alt text, menu items/prices, legal and story bodies are preserved. There are no production changes.
+
+Verification: 40 regression tests (including cover/crop/source-size regression coverage), TypeScript, schema extraction, development slug checks, diff checks and an isolated optimized build pass. Ten Chromium/WebKit layouts from 320–2560px cover viewport-fitting hero/order/status, 44px navigation links, menu focus containment, all twelve category destinations, native history/same-fragment keyboard navigation, current-category tracking, header direction/contrast/focus behavior and Kontakt's complete review/edit flow without submitting. No-JavaScript category and email fallbacks pass. Mobile Kontakt's message-step action is visible at 320×568 and 390×844; short landscape can still require scrolling. Physical keyboard/screen-reader checks and real email activation remain open.
+
+Four additional normal-motion Chromium/WebKit checks at 390px and 1440px verify first/repeat entrances, image playback, live reduced-motion stopping, stationary ordering hover, scrolled-menu visibility/restoration and smooth category jumps without runtime errors. WebKit correctly skips the intro when it restores a scrolled page.
+
+Photo playback retains the 1.2-second nominal interval and waits for loaded images; cold high-density image requests can make the first pass slower. This is not a fresh performance certification or a closure of the earlier mobile LCP finding. The owner’s existing development server and its build directory were preserved.
+
+Owner controls and details: [hero/header](homepage-redesign.md#remaining-design-audit--5-november-2026), [Speisekarte](secondary-pages.md#speisekarte-audit-follow-up--5-november-2026), [Kontakt](contact-page.md#mobile-audit-follow-up--5-november-2026). Backups and review evidence are in `.sanity-backups/remaining-audit/`. The narrow production candidates are added to the handover table below; they require fresh comparisons and owner reconciliation, not a dataset import.
+
 ## Changes made during verification
 
 - Corrected the document language to German and Open Graph locale to `de_DE`.
@@ -74,18 +115,21 @@ This is a **review inventory**, not permission to execute it. The ignored `.sani
 
 | Document / area | Targeted change to review |
 | --- | --- |
-| Home (`f803c306-580e-4053-9b34-84d9cda1f91a`) | Reconcile approved section changes by `_key`: selected hero images and ticker phrases, About image pair/menu link, removed standalone location section, Product images/enquiry link, optional second quote image. Preserve text and production-only edits. |
+| Home (`f803c306-580e-4053-9b34-84d9cda1f91a`) | Reconcile approved section changes by `_key`: selected hero images and ticker phrases, the reviewed food-first hero order and optional `description`/`menuLinkLabel`, About image pair/menu link, removed standalone location section, Product images/enquiry link, optional second quote image. Preserve text and production-only edits. |
+| Menu title / allergen labels | Review “Speisekarte” for `menuPage.title` and German labels for the existing C/D/E/F/N/S allergens. Preserve codes, item references and information; Gluten needs no change. Added after the original inventory. |
 | Page Intro (`settingsPageIntro`) | Add the reviewed enabled state and iconmark/wordmark image. Preserve Brand name/tagline and drafts; they provide the spoken identity. |
 | Hours (`settingsHours`) | Read-only migration proposes Monday–Saturday 10:00–21:00, Sunday closed and public holidays closed. Add missing structured fields only; retain original text. Recheck the owner's latest hours. |
-| Navigation Header / Footer | Reconcile the optional Kontakt reference into the current ordered links; preserve all other links/toggles/social references. |
+| Navigation Header / Footer | Reconcile the optional Kontakt reference and “Speisekarte” label for the menu reference into the current ordered links; preserve all other links/toggles/social references and owner drafts. |
 | Kontakt (`rmrWCUj4Zl318b4kDFBbDa`) | Optional new page with reviewed reasons/copy/privacy reference. Keep delivery disabled until activation is complete. If this page is deferred, defer its navigation entries and product enquiry link together. |
+| Opening story (`44d73d40-b25a-4cad-8520-59cdffd04a3e`) | Set `coverImage.fit` to `contain` after reviewing the latest cover. Preserve the asset, any owner crop, all text and any draft. Added after the original inventory. |
+| Bakery story (`0904d3f2-070d-4513-9a6b-dc2d291e2c59`) | Remove only the two literal `**` markers from the current plain-text excerpt, if still present. Preserve wording and body; reconcile newer edits/drafts. Added after the original inventory. |
 | Impressum (`af46cbb8-5fc8-4c34-bfa5-dc2109805a84`) | Case-only `Impressum` → `impressum`, using the existing guarded URL migration after compatible code is deployed. No legal wording changes. |
 
 **Existing production drafts on Home and Navigation Header must be reconciled by the owner.** Do not publish, discard or overwrite those drafts as a side effect of migration. The other three production drafts must also remain intact.
 
 The eight missing assets include the intro SVG and selected homepage photographs. Transfer the original asset binaries through Sanity's asset API/Studio, verify hashes and resulting asset IDs, then use the returned production references. Do not copy development CDN URLs into production content or import raw asset records without their files. Raw `--raw` archives preserve documents/references, **not asset binaries**.
 
-Stories, menu items/prices, legal body, contact details and Brand content do not require a redesign data replacement. Do not import the development dataset over production.
+Stories need only the two targeted corrections above, not a data replacement. Menu items/prices, legal body, contact details and Brand content do not require a redesign data replacement. Do not import the development dataset over production.
 
 ## User-owned release sequence
 
@@ -127,3 +171,8 @@ Ignored directory: `.sanity-backups/step8/`. Keep exports, logs and screenshots 
 - `production-slugs-dry-run.log`, `production-hours-dry-run.json`.
 - `lighthouse-mobile-final.json` and `lighthouse-desktop-final.json`, alongside earlier measurements.
 - `404-review.json`, `404-review.log`, `404-build.log` and `404-chromium/webkit-390/1440.png`: subsequent orange 404 review. Twelve layouts across both browsers, accessible contrast/focus, menu navigation and restoration of the normal page background pass; the no-JavaScript scope is documented above.
+
+
+## Audit work committed — 6 November 2026
+
+The user authorized committing the prior audit refinements before the next hero/menu revision. Commits: `b891ad1` (legal/404/footer), `f2046b9` (Stories), `1bac920` (homepage sections), `ae14093` (hero/navigation/Speisekarte), and `714d982` (Kontakt). The historical “uncommitted” notes above describe their original review state. All 40 tests, TypeScript and diff checks passed immediately before this commit series. No push, deployment, email or production changes. The newly approved hero/menu composition work is separate and remains subject to review.

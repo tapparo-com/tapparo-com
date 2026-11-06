@@ -1,7 +1,7 @@
 # Step 6 — homepage revision sub-project
 
 Created: 2 November 2026
-Last updated: 4 November 2026
+Last updated: 5 November 2026
 Status: Locked in and committed on 4 November 2026. Editorial sections: `e9395f8`; hero/header/intro controls: `8c3c53a`; footer: `03930e7`. The user authorized milestone 7 next. The records below preserve the review history. Production remains unchanged.
 
 ## Working sequence
@@ -286,3 +286,15 @@ Verification (4 November 2026): TypeScript, schema extraction, all 22 regression
 ## Homepage lock-in — 4 November 2026
 
 The user approved committing the complete homepage before starting milestone 7. The three implementation commits above contain all section revisions and refinements through 6.9. Existing verification remains applicable: all 22 regressions, TypeScript, schema extraction, development slug audit, isolated build and responsive/content/motion checks passed. Production rollout remains a separate approval.
+
+
+## Audit follow-up — 5 November 2026
+
+The user requested the homepage sections after the Stories/footer review. Implemented a focused below-hero refinement: more readable mobile About/Product/quote typography, distinct image proportions and offsets across About/gallery/Product/quote, and responsive image delivery hints. All words, assets, links, CMS controls and motion behavior are preserved; the brand statement and desktop type remain as approved. Hero/header/navigation and Speisekarte audit items remain separate.
+
+TypeScript, 39 tests, slug/build/diff checks, ten responsive Chromium/WebKit layouts, fourteen content variants at two widths in both engines, motion/focus/reduced-motion and no-JavaScript checks pass. All 146 development content/draft revisions remain unchanged. See the [implementation record](homepage-redesign.md#homepage-sections-audit-follow-up--5-november-2026). Ready for user review, uncommitted; no production changes.
+
+
+## Audit work committed — 6 November 2026
+
+The user authorized committing the prior audit refinements before the next hero/menu revision. Commits: `b891ad1` (legal/404/footer), `f2046b9` (Stories), `1bac920` (homepage sections), `ae14093` (hero/navigation/Speisekarte), and `714d982` (Kontakt). The historical “uncommitted” notes above describe their original review state. All 40 tests, TypeScript and diff checks passed immediately before this commit series. No push, deployment, email or production changes. The newly approved hero/menu composition work is separate and remains subject to review.

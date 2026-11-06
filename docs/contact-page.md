@@ -12,7 +12,7 @@ Previous milestone commits: `be135f0` (stories/legal), `91aeba5` (menu and cente
 - The local **Formularvorschau** banner and confirmation explicitly state that no email is sent. Preview success exercises the real endpoint and current published CMS configuration, but does not contact email, challenge or rate-limit providers.
 - The homepage product link **catering anfragen** opens `/kontakt?anliegen=catering`. The selection remains editable. Invalid identifiers do not preselect anything.
 
-The form uses the existing page title, fonts, colors, header/footer and animated underline buttons. Questions transition with a short fade/lift; reduced motion removes the movement. Only the active question is focusable. Errors are announced, step headings receive focus, Enter advances single-line fields, and Enter creates a new line in the message. A direct email link remains available, including without JavaScript or when the form is disabled.
+The form uses the existing page title, fonts, colors, header/footer and animated underline buttons. Questions transition with a short fade/lift; reduced motion removes the movement. Only the active question is focusable. Errors are announced, step headings receive focus, Enter advances single-line fields, and Enter creates a new line in the message. A direct email link remains available, including without JavaScript or when the form is disabled. It now reads Site Settings → Contact → Email, matching the footer; the user confirmed `hello@tapparo.de` as the public address on 4 November. Missing CMS email falls back to that address.
 
 ## Owner editing in Sanity
 
@@ -45,7 +45,7 @@ Live requests also require:
 3. A shared global ceiling of 80 verified sending attempts per day. Failures and retries may consume this ceiling; it is deliberately conservative and should be reviewed against actual provider quotas and traffic.
 4. Resend acceptance of the email. A rate-limit outage or timeout fails closed; it never bypasses the protection.
 
-Recipient is fixed to `hello@tapparo.com`. `CONTACT_FROM` supplies a verified Tapparo sender; the validated visitor email is Reply-To. The email contains the CMS reason label, name, email, complete message and reference in plain text and escaped HTML. Success means provider acceptance, not guaranteed arrival in the inbox. There is no visitor autoresponder, newsletter signup or lead database.
+Recipient is fixed to `hello@tapparo.com` under the original delivery requirement. The later confirmation of `.de` concerned visible contact links; this footer/legal refinement does not change server delivery. Confirm the receiving inbox when completing the activation checklist. `CONTACT_FROM` supplies a verified Tapparo sender; the validated visitor email is Reply-To. The email contains the CMS reason label, name, email, complete message and reference in plain text and escaped HTML. Success means provider acceptance, not guaranteed arrival in the inbox. There is no visitor autoresponder, newsletter signup or lead database.
 
 Repeat clicks are disabled. The browser retains a UUID for an unchanged payload across retries; editing the payload creates a new UUID. A short-lived Redis record freezes the CMS reason label, HMAC payload fingerprint and delivery status, keeping Resend's idempotency payload stable even after an owner edits the label. Records expire after 48 hours. Unresolved retries older than 23 hours are refused rather than risk exceeding Resend's 24-hour idempotency window. Duplicate protection is bounded by these retention windows, not permanent storage.
 
@@ -109,3 +109,15 @@ Evidence is kept locally in gitignored `.sanity-backups/contact/`. The pre-commi
 - Before/after data snapshots and a final revision comparison record the exact allowed changes above.
 
 Real Turnstile service integration, DNS, real inbox/Reply-To delivery, physical mobile keyboards and assistive-technology testing remain release checks. Browser viewport and accessibility semantics checks do not substitute for those.
+
+
+## Mobile audit follow-up — 5 November 2026
+
+Introductory form copy is hidden after the first question below 768px. After moving between questions, focus and scroll position are updated using the new layout so the question remains visible; returning to question one restores the introduction. The message textarea has a full visible border and a compact mobile height, with reduced gaps around progress and actions. The review/edit flow, existing questions, reason-specific prompts, validation, privacy link and direct-email fallback remain.
+
+The owner explicitly declined a fixed response-time promise; the existing introduction and success wording are unchanged. No sticky action bar or automatic text-input focus was introduced. Physical mobile keyboard and screen-reader verification remain release checks. Development stays in no-email preview mode; no enquiry was submitted during this audit follow-up.
+
+
+## Audit work committed — 6 November 2026
+
+The user authorized committing the prior audit refinements before the next hero/menu revision. Commits: `b891ad1` (legal/404/footer), `f2046b9` (Stories), `1bac920` (homepage sections), `ae14093` (hero/navigation/Speisekarte), and `714d982` (Kontakt). The historical “uncommitted” notes above describe their original review state. All 40 tests, TypeScript and diff checks passed immediately before this commit series. No push, deployment, email or production changes. The newly approved hero/menu composition work is separate and remains subject to review.
