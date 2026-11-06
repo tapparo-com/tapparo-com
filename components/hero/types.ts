@@ -1,8 +1,10 @@
 import type { HoursSettings } from "@/lib/opening-hours";
+import type { SanityHeroImage } from "@/lib/hero-images";
 
 export type SiteData = {
   brand: { name: string; logo: string | null; tagline?: string };
   intro?: { enabled?: boolean; artworkUrl?: string | null } | null;
+  navigationHero?: { image?: SanityHeroImage | null; tickerPhrases?: string[] } | null;
   contact: { address?: string; mapUrl?: string } | null;
   hours: HoursSettings | null;
   navigation: {

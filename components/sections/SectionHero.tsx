@@ -29,7 +29,7 @@ export function SectionHero(props: HeroProps) {
 
 function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menuLinkLabel }: HeroProps) {
   const slideInterval = heroSlideInterval(imageDuration);
-  const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent, setEntrance } = useSite();
+  const { data: { brand, contact, intro }, status, reduced, hydrated, visible, menuPresent, setEntrance, setHeroSource } = useSite();
   const root = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState<{ width: number; height: number }>();
@@ -45,6 +45,8 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
   const current = images[slide.current], previous = images[slide.previous], upcoming = images[next];
   const stopped = !hydrated || reduced || !visible || !inView || active || menuPresent || isTransitioning;
 
+  const currentSource = heroImages?.find(image => image._key === current?.id);
+  useEffect(() => { setHeroSource(currentSource || null); return () => setHeroSource(null); }, [currentSource, setHeroSource]);
   useEffect(() => { setEntrance(entrance.mode); return () => setEntrance("idle"); }, [entrance.mode, setEntrance]);
   useEffect(() => { if (menuPresent) finish(); }, [menuPresent, finish]);
   useEffect(() => {
@@ -96,10 +98,12 @@ function Hero({ heroImages, tickerPhrases = [], imageDuration, description, menu
         {description && <p>{description}</p>}
         {menuLinkLabel && <TransitionLink href="/menu" className={shared.animatedLink}><span>{menuLinkLabel}</span><AnimatedUnderline /></TransitionLink>}
       </div>}
-      <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
-      <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
+      <div className={styles.heroActions}>
+        <div className={styles.order}><span className={styles.artworkMask}><span className={styles.artworkEntrance}><OrderingLink /></span></span></div>
+        <div className={styles.details}><StatusDetails status={status} contact={contact} /></div>
+      </div>
     </section>
-    {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} />}
+    {phrases.length > 0 && <HeroTicker phrases={phrases} stopped={stopped} reduced={reduced} />}
     {entrance.mode === "first" && current && <HeroIntro key={entrance.run} photo={photo} image={current} artwork={intro?.artworkUrl} />}
   </div>;
 }

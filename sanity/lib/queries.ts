@@ -55,6 +55,15 @@ export const SEO_QUERY = defineQuery(/* groq */ `
 `);
 
 // --- Navigation ---
+// Reuse the owner's Home hero selection; the menu needs no separate image library.
+export const NAVIGATION_HERO_QUERY = defineQuery(/* groq */ `
+  *[_type == "page" && lower(slug.current) == "home"][0]
+    .sections[_type == "sectionHero"][0]{
+      "image": heroImages[defined(asset)][0]{ _key, ${imageFields} },
+      tickerPhrases
+    }
+`);
+
 export const HEADER_NAV_QUERY = defineQuery(/* groq */ `
   *[_type == "navigationHeader"][0]{
     pageLinks[]{

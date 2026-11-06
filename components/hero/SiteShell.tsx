@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useOpeningStatus } from "@/lib/opening-hours/useOpeningStatus";
@@ -8,9 +8,11 @@ import type { OpeningStatus } from "@/lib/opening-hours";
 import { pathForSlug } from "@/lib/urls";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { TransitionLink } from "@/components/ui/TransitionLink";
-import { BrandArtwork, EASE, MenuArtwork, MenuIcon, OrderingLink, StatusDetails } from "./HeroParts";
+import { BrandArtwork, EASE, MenuArtwork, MenuIcon, OrderingLink, StatusDetails, HeroTicker } from "./HeroParts";
 import type { SiteData } from "./types";
 import styles from "./Hero.module.css";
+import { MenuPhoto } from "./MenuPhoto";
+import type { SanityHeroImage } from "@/lib/hero-images";
 import { ScrollHeader } from "./ScrollHeader";
 import { useHeaderBehavior } from "./useHeaderBehavior";
 
@@ -22,6 +24,7 @@ type SiteContextValue = {
   visible: boolean;
   menuPresent: boolean;
   setEntrance: (mode: string) => void;
+  setHeroSource: (image: SanityHeroImage | null) => void;
 };
 const SiteContext = createContext<SiteContextValue | null>(null);
 export function useSite() {
@@ -39,10 +42,14 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
   const [entrance, setEntrance] = useState("idle");
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPresent, setMenuPresent] = useState(false);
+  const heroSource = useRef<SanityHeroImage | null>(null);
+  const setHeroSource = useCallback((image: SanityHeroImage | null) => { heroSource.current = image; }, []);
+  const [menuSource, setMenuSource] = useState<SanityHeroImage | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const status = useOpeningStatus(data.hours);
   const { brand, contact, navigation } = data;
+  const phrases = (data.navigationHero?.tickerPhrases || []).filter(phrase => phrase.trim());
   useHeaderBehavior(root, pathname, menuPresent);
   const links = [
     ...(navigation?.pageLinks || []).filter(link => link.slug).map(link => ({ key: link._key, label: link.label, href: pathForSlug(link.slug), external: false })),
@@ -73,7 +80,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") { event.preventDefault(); setMenuOpen(false); }
       if (event.key !== "Tab") return;
-      const focusable = Array.from(root.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") || [])
+      const focusable = Array.from(root.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled]), [tabindex='0']") || [])
         .filter(element => !element.closest("[inert]") && element.getClientRects().length > 0);
       if (!focusable.length) return;
       // Cycle explicitly: WebKit's default keyboard preference can skip links,
@@ -92,8 +99,8 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
     };
   }, [menuPresent]);
 
-  return <SiteContext.Provider value={{ data, status, reduced, hydrated, visible, menuPresent, setEntrance }}>
-    <div ref={root} className={`${styles.preview} ${styles.siteShell}`} data-site-shell data-reduced-motion={reduced} data-entrance={entrance}
+  return <SiteContext.Provider value={{ data, status, reduced, hydrated, visible, menuPresent, setEntrance, setHeroSource }}>
+    <div ref={root} className={`${styles.preview} ${styles.siteShell}`} data-site-shell data-has-ticker={phrases.length > 0} data-reduced-motion={reduced} data-entrance={entrance}
       role={menuPresent ? "dialog" : undefined} aria-modal={menuPresent || undefined} aria-label={menuPresent ? "Hauptnavigation" : undefined}>
       <div className={styles.viewportOutline} aria-hidden="true" />
       <div inert={menuPresent} aria-hidden={menuPresent || undefined}>
@@ -111,6 +118,7 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
           transition={{ duration: reduced ? 0 : 0.45, ease: EASE }}
           exit={{ clipPath: "inset(0 0 100% 0)", transition: { duration: reduced ? 0 : 0.4, delay: reduced ? 0 : 0.12, ease: EASE } }}>
           <div className={`${styles.viewportLayout} ${styles.navigationLayout}`}>
+            <MenuPhoto source={menuSource} brand={brand} />
             <TransitionLink href="/" className={styles.menuLogo} aria-label={`${brand.name} Startseite`} onClick={() => setMenuOpen(false)}>
               <MenuArtwork reduced={reduced} delay={0.1}><BrandArtwork logo={brand.logo} /></MenuArtwork>
             </TransitionLink>
@@ -124,17 +132,20 @@ export function SiteShell({ data, children }: { data: SiteData; children: ReactN
               </motion.div>)}
               {navigation?.phone && <a className={styles.menuPhone} href={`tel:${navigation.phone.replace(/[^+\d]/g, "")}`}>{navigation.phone}</a>}
             </motion.nav>
-            <div className={styles.order}><MenuArtwork reduced={reduced} delay={0.24}><OrderingLink /></MenuArtwork></div>
-            <motion.div className={styles.details} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }}
-              transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.18 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : 0.15 } }}>
-              <StatusDetails status={status} contact={contact} />
-            </motion.div>
+            <div className={styles.heroActions}>
+              <div className={styles.order}><MenuArtwork reduced={reduced} delay={0.24}><OrderingLink /></MenuArtwork></div>
+              <motion.div className={styles.details} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.18 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : 0.15 } }}>
+                <StatusDetails status={status} contact={contact} />
+              </motion.div>
+            </div>
           </div>
+          {phrases.length > 0 && <HeroTicker phrases={phrases} stopped reduced={reduced} />}
         </motion.div>}
       </AnimatePresence>
       <div className={styles.menuShell}>
         <button ref={button} type="button" className={styles.menuButton} data-header-control
-          onClick={() => { if (menuOpen) setMenuOpen(false); else { setMenuPresent(true); setMenuOpen(true); } }}
+          onClick={() => { if (menuOpen) setMenuOpen(false); else { setMenuSource(heroSource.current || data.navigationHero?.image || null); setMenuPresent(true); setMenuOpen(true); } }}
           aria-label={menuOpen ? "Navigation schließen" : "Navigation öffnen"} aria-haspopup="dialog" aria-expanded={menuOpen} aria-controls={menuPresent ? navigationId : undefined}>
           <MenuIcon open={menuOpen} reduced={reduced} />
         </button>

@@ -71,16 +71,21 @@ export function StatusDetails({ status, contact }: { status: OpeningStatus; cont
   </div>;
 }
 
-export function HeroTicker({ phrases, stopped }: { phrases: string[]; stopped: boolean }) {
+export function HeroTicker({ phrases, stopped, reduced = false }: { phrases: string[]; stopped: boolean; reduced?: boolean }) {
   const windowRef = useRef<HTMLDivElement>(null);
   const sequenceRef = useRef<HTMLSpanElement>(null);
-  const [repeats, setRepeats] = useState(4);
+  const [track, setTrack] = useState({ repeats: 4, duration: 80 });
 
   useEffect(() => {
     const windowElement = windowRef.current, sequence = sequenceRef.current;
     if (!windowElement || !sequence) return;
     // Each identical half must fill the viewport, even with one short CMS phrase.
-    const update = () => setRepeats(Math.max(1, Math.ceil(windowElement.clientWidth / Math.max(1, sequence.getBoundingClientRect().width))));
+    const update = () => {
+      const width = Math.max(1, sequence.getBoundingClientRect().width);
+      const repeats = Math.max(1, Math.ceil(windowElement.clientWidth / width));
+      const duration = width * repeats / 24;
+      setTrack(current => current.repeats === repeats && current.duration === duration ? current : { repeats, duration });
+    };
     const observer = new ResizeObserver(update);
     observer.observe(windowElement);
     observer.observe(sequence);
@@ -88,11 +93,17 @@ export function HeroTicker({ phrases, stopped }: { phrases: string[]; stopped: b
     return () => observer.disconnect();
   }, [phrases]);
 
-  return <div ref={windowRef} className={styles.ticker}>
+  return <div ref={windowRef} className={styles.ticker} data-static={reduced} tabIndex={reduced ? 0 : undefined} role="region" aria-label="Tapparo in Worten"
+    onKeyDown={event => {
+      if (!reduced || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      // WebKit can lose native arrow scrolling after the menu releases its body lock.
+      event.preventDefault();
+      event.currentTarget.scrollLeft += event.key === "ArrowRight" ? 64 : -64;
+    }}>
     <p className="sr-only">{phrases.join(", ")}</p>
-    <div className={styles.tickerTrack} aria-hidden="true" style={{ animationPlayState: stopped ? "paused" : "running" }}>
+    <div className={styles.tickerTrack} aria-hidden="true" style={{ animationPlayState: stopped ? "paused" : "running", animationDuration: `${track.duration}s` }}>
       {[0, 1].map(copy => <span className={styles.tickerCopy} key={copy}>
-        {Array.from({ length: repeats }, (_, repeat) => <span className={styles.tickerSequence} key={repeat} ref={copy === 0 && repeat === 0 ? sequenceRef : undefined}>
+        {Array.from({ length: track.repeats }, (_, repeat) => <span className={styles.tickerSequence} key={repeat} ref={copy === 0 && repeat === 0 ? sequenceRef : undefined}>
           {phrases.map((phrase, index) => <span className={styles.tickerItem} key={index}><span>{phrase}</span><span className={styles.tickerSeparator}>•</span></span>)}
         </span>)}
       </span>)}
