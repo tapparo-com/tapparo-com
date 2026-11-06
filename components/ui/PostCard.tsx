@@ -53,14 +53,14 @@ export function PostCard({ post }: { post: Post }) {
           <div className="flex flex-wrap items-center justify-between gap-y-4">
             <div className="flex items-center gap-4">
               {post.authorName && (
-                <span className="text-base uppercase text-foreground">
+                <span className="text-sm leading-normal text-foreground">
                   {post.authorName}
                 </span>
               )}
               {post.publishedAt && (
                 <time
                   dateTime={post.publishedAt}
-                  className="text-base uppercase text-muted"
+                  className="text-sm leading-normal text-muted"
                 >
                   {formatDate(post.publishedAt)}
                 </time>

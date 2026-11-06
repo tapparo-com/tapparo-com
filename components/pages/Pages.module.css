@@ -58,7 +58,7 @@
 .articleBody { grid-area: body; }
 .articleBody > .back { margin: 40px 0 0; }
 .back { display: flex; justify-content: flex-end; margin-bottom: clamp(28px, 4vw, 64px); }
-.metadata { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; font-size: 13px; line-height: 1.5; letter-spacing: .03em; text-transform: uppercase; }
+.metadata { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; font-size: 14px; line-height: 1.5; }
 .reading { max-width: 624px; margin-inline: auto; padding-bottom: clamp(64px, 6vw, 120px); }
 .reading > .back { margin-top: 48px; margin-bottom: 0; }
 .legalIntro { max-width: 624px; margin-inline: auto; padding-bottom: 32px; }

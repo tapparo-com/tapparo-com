@@ -70,14 +70,14 @@ export function Footer({ settings, footerNav }: FooterProps) {
             </nav>
           )}
         </div>
-        <div className={styles.bottom}>
-          <TransitionLink href="/" className={styles.logo} aria-label={`${name} Startseite`}>
-            {settings?.logoSvg
-              ? <SanityLogo svgHtml={settings.logoSvg} alt={name} />
-              : <span>{name}</span>}
-          </TransitionLink>
-          <ScrollToTop />
-        </div>
+      </div>
+      <div className={styles.bottom}>
+        <TransitionLink href="/" className={styles.logo} aria-label={`${name} Startseite`}>
+          {settings?.logoSvg
+            ? <SanityLogo svgHtml={settings.logoSvg} alt={name} />
+            : <span>{name}</span>}
+        </TransitionLink>
+        <ScrollToTop />
       </div>
     </footer>
   );
