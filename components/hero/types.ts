@@ -1,21 +1,10 @@
+import type { ContactSettings, NavigationSettings } from "@/lib/content";
 import type { HoursSettings } from "@/lib/opening-hours";
 
 export type SiteData = {
-  brand: { name: string; logo: string | null; tagline?: string };
-  intro?: { enabled?: boolean; artworkUrl?: string | null } | null;
-  contact: { address?: string; mapUrl?: string } | null;
+  brand: { name: string; logo: string | null; tagline?: string | null };
+  intro?: { enabled?: boolean | null; artworkUrl?: string | null } | null;
+  contact: ContactSettings | null;
   hours: HoursSettings | null;
-  navigation: {
-    pageLinks?: { _key: string; label: string; slug: string }[];
-    socialLinks?: { _id: string; label: string; url: string }[];
-    phone?: string | null;
-  } | null;
-};
-
-export type HeroImage = {
-  id: string;
-  src: string;
-  alt: string;
-  position?: string;
-  aspectRatio?: number;
+  navigation: NavigationSettings | null;
 };

@@ -50,14 +50,23 @@ export function TransitionLink({
     }
 
     // Next's normal link behavior owns same-page anchors, queries, and scrolling.
-    if (!navigateTo || destination.pathname === window.location.pathname) return;
+    if (!navigateTo || destination.pathname === window.location.pathname)
+      return;
 
     e.preventDefault();
-    navigateTo(`${destination.pathname}${destination.search}${destination.hash}`, { replace: props.replace, scroll: props.scroll });
+    navigateTo(
+      `${destination.pathname}${destination.search}${destination.hash}`,
+      { replace: props.replace, scroll: props.scroll },
+    );
   };
 
   return (
-    <Link href={href} onClick={handleClick} {...props} prefetch={isOrdering ? false : props.prefetch}>
+    <Link
+      href={href}
+      onClick={handleClick}
+      {...props}
+      prefetch={isOrdering ? false : props.prefetch}
+    >
       {children}
     </Link>
   );

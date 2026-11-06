@@ -7,7 +7,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        ...(canIndexSite() ? { allow: "/", disallow: ["/studio", "/api/", "/order", "/design-preview"] } : { disallow: "/" }),
+        ...(canIndexSite()
+          ? { allow: "/", disallow: ["/studio", "/api/", "/order"] }
+          : { disallow: "/" }),
       },
     ],
     sitemap: absoluteSiteUrl("/sitemap.xml"),

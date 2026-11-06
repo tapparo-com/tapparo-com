@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useReducedMotion } from "@/lib/useReducedMotion";
-import styles from "./Homepage.module.css";
 
 export function StatementAccent({ text }: { text: string }) {
   const ref = useRef<HTMLParagraphElement>(null);
@@ -20,10 +19,12 @@ export function StatementAccent({ text }: { text: string }) {
   return (
     <motion.p
       ref={ref}
-      className={styles.statementAccent}
-      style={{
-        "--statement-fill": !hydrated || reducedMotion ? "105%" : fill,
-      } as CSSProperties}
+      className="statement-accent"
+      style={
+        {
+          "--statement-fill": !hydrated || reducedMotion ? "105%" : fill,
+        } as CSSProperties
+      }
     >
       {text}
     </motion.p>

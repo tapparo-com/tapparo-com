@@ -1,11 +1,6 @@
 export { settingsHours } from "./opening-hours";
 import { defineType, defineField } from "sanity";
-import {
-  CogIcon,
-  EnvelopeIcon,
-  UsersIcon,
-  SearchIcon,
-} from "@sanity/icons";
+import { CogIcon, EnvelopeIcon, UsersIcon, SearchIcon } from "@sanity/icons";
 
 export const settingsBrand = defineType({
   name: "settingsBrand",
@@ -67,7 +62,8 @@ export const settingsContact = defineType({
       name: "email",
       title: "Email",
       type: "string",
-      description: "Public email link in the footer (when enabled there) and the contact form fallback. This does not change the enquiry form recipient or activate delivery; those are managed separately in server configuration.",
+      description:
+        "Public email link in the footer (when enabled there) and the contact form fallback. This does not change the enquiry form recipient or activate delivery; those are managed separately in server configuration.",
       validation: (rule) => rule.email(),
     }),
     defineField({
@@ -82,7 +78,8 @@ export const settingsContact = defineType({
       title: "Address",
       type: "text",
       rows: 3,
-      description: "Shared address in the hero, navigation overlay and footer, and optionally Coming Soon. Line breaks are preserved in the footer. Edit the map destination separately below.",
+      description:
+        "Shared address in the hero, navigation overlay and footer, and optionally Coming Soon. Line breaks are preserved in the footer. Edit the map destination separately below.",
     }),
     defineField({
       name: "mapUrl",
@@ -118,11 +115,13 @@ export const socialLink = defineType({
       type: "url",
       description: "Must be a valid https URL.",
       validation: (rule) =>
-        rule.required().custom((url) =>
-          !url || url.startsWith("https://")
-            ? true
-            : "URL must start with https://"
-        ),
+        rule
+          .required()
+          .custom((url) =>
+            !url || url.startsWith("https://")
+              ? true
+              : "URL must start with https://",
+          ),
     }),
   ],
   preview: {
@@ -157,7 +156,8 @@ export const settingsSeo = defineType({
       name: "comingSoonShowAddress",
       title: "Show Address",
       type: "boolean",
-      description: "Display the address from Site Settings > Contact on the Coming Soon page.",
+      description:
+        "Display the address from Site Settings > Contact on the Coming Soon page.",
       initialValue: false,
       hidden: ({ document }) => !document?.isComingSoon,
     }),

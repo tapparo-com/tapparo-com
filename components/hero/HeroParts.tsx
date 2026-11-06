@@ -5,16 +5,16 @@ import { motion } from "motion/react";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import type { OpeningStatus } from "@/lib/opening-hours";
 import { ORDER_PATH } from "@/lib/ordering";
-import { resolveHeroSecondaryLink, type HeroSecondaryLink } from "@/lib/hero-links";
+import {
+  resolveHeroSecondaryLink,
+  type HeroSecondaryLink,
+} from "@/lib/hero-links";
 import type { SiteData } from "./types";
 import { REVEAL_EASE, HERO_CROSSFADE } from "@/lib/animation";
-import { AnimatedUnderline } from "@/components/homepage/AnimatedUnderline";
-import shared from "@/components/homepage/Homepage.module.css";
-import styles from "./Hero.module.css";
+import { AnimatedUnderline } from "@/components/ui/AnimatedUnderline";
 
-export const ASSETS = "/design-preview/";
+export const ASSETS = "/brand/";
 export const EASE = REVEAL_EASE;
-export const IMAGE_SIZES = "(min-width: 1024px) 60vw, 100vw";
 export const CROSSFADE_SECONDS = HERO_CROSSFADE;
 
 // Original Figma strokes: translate/rotate these same lines into a handdrawn cross.
@@ -24,68 +24,171 @@ const MENU_STROKES = [
   "M4 24.3076C4.22497 24.3976 4.74581 24.6014 7.32786 24.9636C9.49336 25.2674 13.4419 25.4155 15.7288 25.5199C19.3104 25.6835 20.581 25.233 21.9922 25.0025C23.6529 24.9084 24.6312 24.9747 25.1411 25.0769C25.4036 25.1117 25.6735 25.1117 26.2244 25.2481",
 ];
 
-export function MenuIcon({ open, reduced }: { open: boolean; reduced: boolean }) {
-  return <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-    {MENU_STROKES.map((stroke, index) => <motion.g key={stroke} initial={false}
-      animate={{ y: open ? [8.6, 0, -9.2][index] : 0, opacity: open && index === 1 ? 0 : 1 }}
-      transition={{ duration: reduced ? 0 : 0.35, ease: EASE }}>
-      <motion.path d={stroke} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
-        style={{ transformOrigin: "50% 50%", transformBox: "fill-box" }} initial={false}
-        animate={{ rotate: open ? [45, 0, -45][index] : 0, scaleX: open && index === 1 ? 0.6 : 1 }}
-        transition={{ duration: reduced ? 0 : 0.35, ease: EASE }} />
-    </motion.g>)}
-  </svg>;
+export function MenuIcon({
+  open,
+  reduced,
+}: {
+  open: boolean;
+  reduced: boolean;
+}) {
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+    >
+      {MENU_STROKES.map((stroke, index) => (
+        <motion.g
+          key={stroke}
+          initial={false}
+          animate={{
+            y: open ? [8.6, 0, -9.2][index] : 0,
+            opacity: open && index === 1 ? 0 : 1,
+          }}
+          transition={{ duration: reduced ? 0 : 0.35, ease: EASE }}
+        >
+          <motion.path
+            d={stroke}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ transformOrigin: "50% 50%", transformBox: "fill-box" }}
+            initial={false}
+            animate={{
+              rotate: open ? [45, 0, -45][index] : 0,
+              scaleX: open && index === 1 ? 0.6 : 1,
+            }}
+            transition={{ duration: reduced ? 0 : 0.35, ease: EASE }}
+          />
+        </motion.g>
+      ))}
+    </svg>
+  );
 }
 
 export function BrandArtwork({ logo }: { logo?: string | null }) {
-  if (logo) return <span className={styles.artwork}><img src={logo} alt="" /></span>;
-  return <picture className={styles.artwork}>
-    <source media="(min-width: 1024px)" srcSet={`${ASSETS}logo-desktop.svg`} />
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img src={`${ASSETS}logo-mobile.svg`} alt="" width={180} height={66} />
-  </picture>;
+  if (logo)
+    return (
+      <span className="hero-artwork block h-full w-full [&_img]:block [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_img]:[object-position:left_center]">
+        {/* CMS SVG artwork keeps its intrinsic ratio inside the shared logo frame. */}
+        <img src={logo} alt="" />
+      </span>
+    );
+  return (
+    <picture className="hero-artwork block h-full w-full [&_img]:block [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_img]:[object-position:left_center]">
+      <source
+        media="(min-width: 1024px)"
+        srcSet={`${ASSETS}logo-desktop.svg`}
+      />
+      <img src={`${ASSETS}logo-mobile.svg`} alt="" width={180} height={66} />
+    </picture>
+  );
 }
 
 export function OrderingLink() {
-  return <TransitionLink href={ORDER_PATH} className={`${shared.animatedLink} ${styles.actionLink}`}>
-    <span>jetzt bestellen</span><AnimatedUnderline />
-  </TransitionLink>;
+  return (
+    <TransitionLink
+      href={ORDER_PATH}
+      className="animated-link hero-action-link relative inline-flex min-h-11 max-w-full items-center px-[2px] pt-2 pb-[14px] text-[17px] leading-[1.4] font-medium tracking-[0.06em] wrap-anywhere text-foreground [transition:color_0.2s_ease] focus-visible:[outline:2px_solid_var(--color-accent)] focus-visible:outline-offset-[6px] motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:absolute [&_svg]:bottom-0 [&_svg]:left-0 [&_svg]:h-3 [&_svg]:w-full [&:hover_svg]:text-accent"
+    >
+      <span>jetzt bestellen</span>
+      <AnimatedUnderline />
+    </TransitionLink>
+  );
 }
 
-export function HeroChoices({ secondaryLink }: { secondaryLink?: HeroSecondaryLink | null }) {
+export function HeroChoices({
+  secondaryLink,
+}: {
+  secondaryLink?: HeroSecondaryLink | null;
+}) {
   const link = resolveHeroSecondaryLink(secondaryLink);
-  return <div className={styles.heroChoices}>
-    <OrderingLink />
-    {link && <TransitionLink href={link.href} className={`${shared.animatedLink} ${styles.actionLink}`}>
-      <span>{link.label}</span><AnimatedUnderline />
-    </TransitionLink>}
-  </div>;
+  return (
+    <div className="hero-choices mt-6 flex flex-wrap items-start gap-x-7 gap-y-3 max-[1024px]:mt-[14px] max-[1024px]:gap-x-5 max-[1024px]:gap-y-2 [@media_(max-height:_600px)_and_(min-width:_1024px)]:mt-6">
+      <OrderingLink />
+      {link && (
+        <TransitionLink
+          href={link.href}
+          className="animated-link hero-action-link relative inline-flex min-h-11 max-w-full items-center px-[2px] pt-2 pb-[14px] text-[17px] leading-[1.4] font-medium tracking-[0.06em] wrap-anywhere text-foreground [transition:color_0.2s_ease] focus-visible:[outline:2px_solid_var(--color-accent)] focus-visible:outline-offset-[6px] motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:absolute [&_svg]:bottom-0 [&_svg]:left-0 [&_svg]:h-3 [&_svg]:w-full [&:hover_svg]:text-accent"
+        >
+          <span>{link.label}</span>
+          <AnimatedUnderline />
+        </TransitionLink>
+      )}
+    </div>
+  );
 }
 
-export function StatusDetails({ status, contact }: { status: OpeningStatus; contact: SiteData["contact"] }) {
+export function StatusDetails({
+  status,
+  contact,
+}: {
+  status: OpeningStatus;
+  contact: SiteData["contact"];
+}) {
   const address = contact?.address?.replace(/\s*\n\s*/g, ", ");
-  return <div className={styles.statusDetails}>
-    <p aria-live="polite"><span className={styles.statusDot} data-open={status === "open"} data-status={status} /><span>{status === "open" ? "Gerade offen" : status === "closed" ? "Gerade geschlossen" : "Öffnungszeiten prüfen"}</span></p>
-    {address && (contact?.mapUrl
-      ? <a href={contact.mapUrl} target="_blank" rel="noopener noreferrer" className={styles.address}>{address}</a>
-      : <p className={styles.address}>{address}</p>)}
-  </div>;
+  return (
+    <div className="hero-status-details text-center text-[15px] leading-[1.45] tracking-[-.08px] max-[1024px]:text-[14px] [&_>_p:first-child]:flex [&_>_p:first-child]:items-center [&_>_p:first-child]:justify-center [&_>_p:first-child]:gap-2 [&_a:hover]:underline [&_a:hover]:underline-offset-[4px]">
+      <p aria-live="polite">
+        <span
+          className="h-[9px] w-[9px] flex-[0_0_9px] rounded-full bg-[#6B4443] [&[data-open='true']]:bg-[#5ACF00] [&[data-status='unknown']]:bg-[#74716C]"
+          data-open={status === "open"}
+          data-status={status}
+        />
+        <span>
+          {status === "open"
+            ? "Gerade offen"
+            : status === "closed"
+              ? "Gerade geschlossen"
+              : "Öffnungszeiten prüfen"}
+        </span>
+      </p>
+      {address &&
+        (contact?.mapUrl ? (
+          <a
+            href={contact.mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-address"
+          >
+            {address}
+          </a>
+        ) : (
+          <p className="hero-address">{address}</p>
+        ))}
+    </div>
+  );
 }
 
-export function HeroTicker({ phrases, stopped, reduced = false }: { phrases: string[]; stopped: boolean; reduced?: boolean }) {
+export function HeroTicker({
+  phrases,
+  stopped,
+  reduced = false,
+}: {
+  phrases: string[];
+  stopped: boolean;
+  reduced?: boolean;
+}) {
   const windowRef = useRef<HTMLDivElement>(null);
   const sequenceRef = useRef<HTMLSpanElement>(null);
   const [track, setTrack] = useState({ repeats: 4, duration: 80 });
 
   useEffect(() => {
-    const windowElement = windowRef.current, sequence = sequenceRef.current;
+    const windowElement = windowRef.current,
+      sequence = sequenceRef.current;
     if (!windowElement || !sequence) return;
     // Each identical half must fill the viewport, even with one short CMS phrase.
     const update = () => {
       const width = Math.max(1, sequence.getBoundingClientRect().width);
       const repeats = Math.max(1, Math.ceil(windowElement.clientWidth / width));
-      const duration = width * repeats / 24;
-      setTrack(current => current.repeats === repeats && current.duration === duration ? current : { repeats, duration });
+      const duration = (width * repeats) / 24;
+      setTrack((current) =>
+        current.repeats === repeats && current.duration === duration
+          ? current
+          : { repeats, duration },
+      );
     };
     const observer = new ResizeObserver(update);
     observer.observe(windowElement);
@@ -94,15 +197,45 @@ export function HeroTicker({ phrases, stopped, reduced = false }: { phrases: str
     return () => observer.disconnect();
   }, [phrases]);
 
-  return <div ref={windowRef} className={styles.ticker} data-static={reduced} role="region" aria-label="Tapparo in Worten">
-    <p className="sr-only">{phrases.join(", ")}</p>
-    <div className={styles.tickerTrack} aria-hidden="true" style={{ animationPlayState: stopped ? "paused" : "running", animationDuration: `${track.duration}s` }}>
-      {[0, 1].map(copy => <span className={styles.tickerCopy} key={copy}>
-        {Array.from({ length: track.repeats }, (_, repeat) => <span className={styles.tickerSequence} key={repeat} ref={copy === 0 && repeat === 0 ? sequenceRef : undefined}>
-          {phrases.map((phrase, index) => <span className={styles.tickerItem} key={index}><span>{phrase}</span><span className={styles.tickerSeparator}>•</span></span>)}
-        </span>)}
-      </span>)}
+  return (
+    <div
+      ref={windowRef}
+      className="hero-ticker w-full flex-none overflow-hidden text-left text-[clamp(24px,_2.25vw,_30px)] leading-[1.4] tracking-[-.025em] text-accent max-[1024px]:text-[24px]"
+      data-static={reduced}
+      role="region"
+      aria-label="Tapparo in Worten"
+    >
+      <p className="sr-only">{phrases.join(", ")}</p>
+      <div
+        className="hero-ticker-track flex w-max [animation:ticker_80s_linear_infinite] motion-reduce:animate-none"
+        aria-hidden="true"
+        style={{
+          animationPlayState: stopped ? "paused" : "running",
+          animationDuration: `${track.duration}s`,
+        }}
+      >
+        {[0, 1].map((copy) => (
+          <span className="hero-ticker-copy flex flex-none" key={copy}>
+            {Array.from({ length: track.repeats }, (_, repeat) => (
+              <span
+                className="hero-ticker-sequence flex flex-none"
+                key={repeat}
+                ref={copy === 0 && repeat === 0 ? sequenceRef : undefined}
+              >
+                {phrases.map((phrase, index) => (
+                  <span
+                    className="hero-ticker-item flex flex-none items-center gap-2 pr-2 whitespace-nowrap"
+                    key={index}
+                  >
+                    <span>{phrase}</span>
+                    <span className="flex-none">•</span>
+                  </span>
+                ))}
+              </span>
+            ))}
+          </span>
+        ))}
+      </div>
     </div>
-  </div>;
+  );
 }
-

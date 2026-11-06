@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getOpeningStatus, type HoursSettings, type OpeningStatus } from "./index";
+import {
+  getOpeningStatus,
+  type HoursSettings,
+  type OpeningStatus,
+} from "./index";
 
-export function useOpeningStatus(settings: HoursSettings | null | undefined): OpeningStatus {
+export function useOpeningStatus(
+  settings: HoursSettings | null | undefined,
+): OpeningStatus {
   const [status, setStatus] = useState<OpeningStatus>("unknown");
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -11,7 +17,7 @@ export function useOpeningStatus(settings: HoursSettings | null | undefined): Op
       clearTimeout(timer);
       setStatus(getOpeningStatus(settings));
       // Align with minute boundaries; refresh immediately after sleep/backgrounding.
-      timer = setTimeout(update, 60_000 - Date.now() % 60_000 + 25);
+      timer = setTimeout(update, 60_000 - (Date.now() % 60_000) + 25);
     };
     update();
     window.addEventListener("focus", update);

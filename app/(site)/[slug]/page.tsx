@@ -1,18 +1,16 @@
+import { getContentBySlug } from "@/sanity/lib/content";
+import type { StorySummary } from "@/lib/content";
+import type { HoursSettings } from "@/lib/opening-hours";
 import { getHoursRows } from "@/lib/opening-hours";
 import { absoluteSiteUrl, pathForSlug, validateSlug } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
-  PAGE_BY_SLUG_QUERY,
-  BLOG_POST_QUERY,
   BLOG_LIST_QUERY,
   PAGES_SLUGS_QUERY,
-  BRAND_QUERY,
   HOURS_QUERY,
   RELATED_STORIES_QUERY,
-  LEGAL_PAGE_QUERY,
   LEGAL_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
-import { fetchLogoSvg } from "@/sanity/lib/fetchSvg";
 import { SectionRenderer } from "@/components/SectionRenderer";
 import { StoryArticle } from "@/components/pages/StoryArticle";
 import { LegalArticle } from "@/components/pages/LegalArticle";
@@ -51,123 +49,75 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   if (validateSlug(slug, "post") !== true) notFound();
 
-  // Try CMS page first
-  const page = await sanityFetch<any>({
-    query: PAGE_BY_SLUG_QUERY,
-    params: { slug },
-    tags: ["page"],
-  });
-
-  if (page) {
-    return {
-      alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
-      title: page.seo?.title || page.title,
-      description: page.seo?.description,
-    };
-  }
-
-  // Try blog post
-  const post = await sanityFetch<any>({
-    query: BLOG_POST_QUERY,
-    params: { slug },
-    tags: ["post"],
-  });
-
-  if (post) {
-    return {
-      alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
-      title: post.seo?.title || post.title,
-      description: post.seo?.description || post.excerpt,
-    };
-  }
-
-  // Try legal page
-  const legal = await sanityFetch<any>({
-    query: LEGAL_PAGE_QUERY,
-    params: { slug },
-    tags: ["legalPage"],
-  });
-
-  if (legal) {
-    return {
-      alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
-      title: legal.seo?.title || legal.title,
-      description: legal.seo?.description,
-    };
-  }
-
-  return {};
+  const content = await getContentBySlug(slug);
+  if (!content) return {};
+  const document = content.document;
+  return {
+    alternates: { canonical: absoluteSiteUrl(pathForSlug(slug)) },
+    title: document.seo?.title || document.title,
+    description:
+      content.kind === "post"
+        ? document.seo?.description || content.document.excerpt
+        : document.seo?.description,
+  };
 }
 
 export default async function SlugPage({ params }: Props) {
   const { slug } = await params;
   if (validateSlug(slug, "post") !== true) notFound();
 
-  // --- Try CMS page ---
-  const [page, brand, hours] = await Promise.all([
-    sanityFetch<any>({
-      query: PAGE_BY_SLUG_QUERY,
-      params: { slug },
-      tags: ["page"],
-    }),
-    sanityFetch<any>({ query: BRAND_QUERY, tags: ["settingsBrand"] }),
-    sanityFetch<any>({ query: HOURS_QUERY, tags: ["settingsHours"] }),
-  ]);
+  const content = await getContentBySlug(slug);
+  if (!content) notFound();
 
-  if (page) {
+  if (content.kind === "page") {
+    const page = content.document;
+    const hours = await sanityFetch<HoursSettings | null>({
+      query: HOURS_QUERY,
+      tags: ["settingsHours"],
+    });
     return (
       <>
-        {page.title && slug !== "menu" && (
-          <SectionPageIntro title={page.title} narrow={page.sections?.some((section: { _type: string }) => section._type === "sectionContactForm")} />
+        {page.title && (
+          <SectionPageIntro
+            title={page.title}
+            narrow={page.sections?.some(
+              (section) => section._type === "sectionContactForm",
+            )}
+          />
         )}
         <SectionRenderer
           documentId={page._id}
           sections={page.sections || []}
-          shared={{
-            restaurantName: brand?.restaurantName,
-            tagline: brand?.tagline,
-            logoSvg: await fetchLogoSvg(brand?.logo),
-            openingHours: getHoursRows(hours),
-          }}
+          openingHours={getHoursRows(hours)}
         />
       </>
     );
   }
 
-  // --- Try blog post ---
-  const post = await sanityFetch<any>({
-    query: BLOG_POST_QUERY,
-    params: { slug },
-    tags: ["post"],
-  });
-
-  // Fetch related stories when enabled (default: true)
-  let relatedPosts: any[] | null = null;
-  if (post && post.showRelatedStories !== false) {
-    relatedPosts = post.relatedStories?.filter((item: any) => item?.slug).length
-      ? post.relatedStories.filter((item: any) => item?.slug)
-      : await sanityFetch<any[]>({
-          query: RELATED_STORIES_QUERY,
-          params: { slug },
-          tags: ["post"],
-        });
+  if (content.kind === "post") {
+    const post = content.document;
+    let relatedPosts: StorySummary[] = [];
+    if (post.showRelatedStories !== false) {
+      const selected = (post.relatedStories || []).filter(
+        (item): item is StorySummary => !!item?.slug,
+      );
+      relatedPosts = selected.length
+        ? selected
+        : await sanityFetch<StorySummary[]>({
+            query: RELATED_STORIES_QUERY,
+            params: { slug },
+            tags: ["post"],
+          });
+    }
+    return (
+      <>
+        <StoryArticle post={post} showBackLink={!relatedPosts.length} />
+        {relatedPosts.length ? (
+          <SectionRelatedStories posts={relatedPosts} />
+        ) : null}
+      </>
+    );
   }
 
-  if (post) {
-    return <>
-      <StoryArticle post={post} showBackLink={!relatedPosts?.length} />
-      {relatedPosts?.length ? <SectionRelatedStories posts={relatedPosts} /> : null}
-    </>;
-  }
-
-  // --- Try legal page ---
-  const legal = await sanityFetch<any>({
-    query: LEGAL_PAGE_QUERY,
-    params: { slug },
-    tags: ["legalPage"],
-  });
-
-  if (legal) return <LegalArticle legal={legal} />;
-
-  notFound();
+  return <LegalArticle legal={content.document} />;
 }

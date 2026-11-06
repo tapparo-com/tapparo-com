@@ -20,12 +20,21 @@ export function AnimatedUnderline() {
   const animate = inView && !reducedMotion;
 
   return (
-    <svg ref={ref} viewBox="0 0 220 12" preserveAspectRatio="none" aria-hidden="true">
+    <svg
+      ref={ref}
+      viewBox="0 0 220 12"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
       <motion.path
         initial={false}
         d={underlines[0]}
         animate={{ d: animate ? underlines : underlines[0] }}
-        transition={animate ? { duration: 1.6, repeat: Infinity, ease: "linear" } : { duration: 0 }}
+        transition={
+          animate
+            ? { duration: 1.6, repeat: Infinity, ease: "linear" }
+            : { duration: 0 }
+        }
         fill="none"
         stroke="currentColor"
         strokeWidth="1.4"

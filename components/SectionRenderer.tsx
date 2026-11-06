@@ -10,48 +10,57 @@ import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
 import { SectionText } from "@/components/sections/SectionText";
 import { SectionContactForm } from "@/components/sections/SectionContactForm";
-import type { ContactSection } from "@/lib/contact";
+import type { PageSection, StorySummary } from "@/lib/content";
 
-type Section = {
-  _key: string;
-  _type: string;
-  [key: string]: any;
-};
-
-type SharedData = {
-  restaurantName?: string;
-  tagline?: string;
-  logoSvg?: string | null;
+type Props = {
+  sections: PageSection[];
+  documentId?: string;
   openingHours?: { _key: string; day: string; hours: string }[];
 };
 
-type Props = {
-  sections: Section[];
-  documentId?: string;
-  shared?: SharedData;
-};
-
-export async function SectionRenderer({ sections, shared, documentId }: Props) {
+export async function SectionRenderer({
+  sections,
+  openingHours,
+  documentId,
+}: Props) {
   if (!sections || sections.length === 0) return null;
 
   // Pre-fetch data needed by dynamic sections
   const needsStories = sections.some((s) => s._type === "sectionStories");
 
   const stories = needsStories
-    ? await sanityFetch<any[]>({
+    ? await sanityFetch<StorySummary[]>({
         query: STORIES_QUERY,
         tags: ["post"],
       })
     : null;
 
   return (
-    <div data-section-page data-has-leading-hero={sections[0]?._type === "sectionHero"}>
+    <div
+      data-section-page
+      data-has-leading-hero={sections[0]?._type === "sectionHero"}
+    >
       {sections.map((section) => {
         switch (section._type) {
           case "sectionContactForm":
-            return documentId ? <SectionContactForm key={section._key} documentId={documentId} section={section as ContactSection} /> : null;
+            return documentId ? (
+              <SectionContactForm
+                key={section._key}
+                documentId={documentId}
+                section={section}
+              />
+            ) : null;
           case "sectionHero":
-            return <SectionHero key={section._key} heroImages={section.heroImages} tickerPhrases={section.tickerPhrases} imageDuration={section.imageDuration} description={section.description} secondaryLink={section.secondaryLink} />;
+            return (
+              <SectionHero
+                key={section._key}
+                heroImages={section.heroImages}
+                tickerPhrases={section.tickerPhrases}
+                imageDuration={section.imageDuration}
+                description={section.description}
+                secondaryLink={section.secondaryLink}
+              />
+            );
           case "sectionSubhero":
             return (
               <SectionSubhero
@@ -62,7 +71,7 @@ export async function SectionRenderer({ sections, shared, documentId }: Props) {
                 secondaryImage={section.secondaryImage}
                 button={section.button}
                 showOpeningHours={section.showOpeningHours}
-                openingHours={shared?.openingHours}
+                openingHours={openingHours}
               />
             );
 
@@ -99,12 +108,7 @@ export async function SectionRenderer({ sections, shared, documentId }: Props) {
             );
 
           case "sectionLargeText":
-            return (
-              <SectionLargeText
-                key={section._key}
-                text={section.text}
-              />
-            );
+            return <SectionLargeText key={section._key} text={section.text} />;
 
           case "sectionGallery":
             return (

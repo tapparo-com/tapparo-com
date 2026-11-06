@@ -41,7 +41,6 @@ export const HOURS_QUERY = defineQuery(/* groq */ `
   }
 `);
 
-
 export const SEO_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsSeo"][0]{
     isComingSoon,

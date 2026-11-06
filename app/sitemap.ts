@@ -25,10 +25,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ]);
 
-  const entries: MetadataRoute.Sitemap = ["/", "/menu", "/stories"].map((path) => ({
-    url: absoluteSiteUrl(path),
-  }));
-  for (const entry of [...(pages ?? []), ...(posts ?? []), ...(legalPages ?? [])]) {
+  const entries: MetadataRoute.Sitemap = ["/", "/menu", "/stories"].map(
+    (path) => ({
+      url: absoluteSiteUrl(path),
+    }),
+  );
+  for (const entry of [
+    ...(pages ?? []),
+    ...(posts ?? []),
+    ...(legalPages ?? []),
+  ]) {
     if (validateSlug(entry.slug, "post") !== true) continue;
     entries.push({
       url: absoluteSiteUrl(pathForSlug(entry.slug)),

@@ -3,29 +3,55 @@ export const SLUG_MAX_LENGTH = 96;
 export const ROUTE_TYPES = ["page", "post", "legalPage"] as const;
 export const SLUG_TYPES = [...ROUTE_TYPES, "menuCategory"] as const;
 export const RESERVED_SLUGS = new Set([
-  "home", "menu", "stories", "order", "design-preview", "studio", "api", "_next", "_vercel",
-  "favicon.ico", "robots.txt", "sitemap.xml", "manifest.webmanifest",
-  "icon", "apple-icon", "opengraph-image", "twitter-image",
+  "home",
+  "menu",
+  "stories",
+  "order",
+  "studio",
+  "api",
+  "_next",
+  "_vercel",
+  "favicon.ico",
+  "robots.txt",
+  "sitemap.xml",
+  "manifest.webmanifest",
+  "icon",
+  "apple-icon",
+  "opengraph-image",
+  "twitter-image",
 ]);
 
 /** Only generate new slugs with this function; do not rewrite existing URLs with it. */
 export function slugifyTitle(title: string): string {
   return title
     .toLowerCase()
-    .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
-    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, SLUG_MAX_LENGTH).replace(/-+$/g, "");
+    .slice(0, SLUG_MAX_LENGTH)
+    .replace(/-+$/g, "");
 }
 
-export function validateSlug(slug: string | undefined, type: string): true | string {
+export function validateSlug(
+  slug: string | undefined,
+  type: string,
+): true | string {
   if (!slug) return "A slug is required.";
-  if (slug.length > SLUG_MAX_LENGTH) return `Use at most ${SLUG_MAX_LENGTH} characters.`;
+  if (slug.length > SLUG_MAX_LENGTH)
+    return `Use at most ${SLUG_MAX_LENGTH} characters.`;
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     return "Use lowercase letters a–z, numbers, and single hyphens only (no spaces or slashes).";
   }
-  if (type !== "menuCategory" && RESERVED_SLUGS.has(slug) && !(type === "page" && slug === "home")) {
+  if (
+    type !== "menuCategory" &&
+    RESERVED_SLUGS.has(slug) &&
+    !(type === "page" && slug === "home")
+  ) {
     return `“${slug}” is reserved for a built-in route. Choose another slug.`;
   }
   return true;
@@ -44,18 +70,26 @@ export function canonicalPublicPath(pathname: string): string {
     return pathname;
   }
   // Studio IDs, APIs, and asset filenames can be case-sensitive.
-  if (/^\/*(?:studio|api|_next|_vercel)(?:\/|$)/i.test(decoded) || decoded.includes(".")) {
+  if (
+    /^\/*(?:studio|api|_next|_vercel)(?:\/|$)/i.test(decoded) ||
+    decoded.includes(".")
+  ) {
     return pathname;
   }
   // Decode only URL-safe ASCII slug characters. Keep escaped separators escaped.
-  const path = pathname
-    .replace(/%([0-9a-f]{2})/gi, (encoded, hex: string) => {
-      const character = String.fromCharCode(parseInt(hex, 16));
-      return /^[a-z0-9_-]$/i.test(character) ? character : encoded.toUpperCase();
-    })
-    .replace(/%[0-9A-F]{2}|[^%]+|%/g, (part) => part.startsWith("%") ? part : part.toLowerCase())
-    .replace(/\/+/g, "/")
-    .replace(/\/+$/, "") || "/";
+  const path =
+    pathname
+      .replace(/%([0-9a-f]{2})/gi, (encoded, hex: string) => {
+        const character = String.fromCharCode(parseInt(hex, 16));
+        return /^[a-z0-9_-]$/i.test(character)
+          ? character
+          : encoded.toUpperCase();
+      })
+      .replace(/%[0-9A-F]{2}|[^%]+|%/g, (part) =>
+        part.startsWith("%") ? part : part.toLowerCase(),
+      )
+      .replace(/\/+/g, "/")
+      .replace(/\/+$/, "") || "/";
   return path === "/home" ? "/" : path;
 }
 
@@ -64,9 +98,17 @@ export function pathForSlug(slug: string): string {
 }
 
 export function siteOrigin(): string {
-  const url = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com");
-  if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) {
-    throw new Error("NEXT_PUBLIC_SITE_URL must be an HTTP(S) site URL without credentials.");
+  const url = new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com",
+  );
+  if (
+    !["http:", "https:"].includes(url.protocol) ||
+    url.username ||
+    url.password
+  ) {
+    throw new Error(
+      "NEXT_PUBLIC_SITE_URL must be an HTTP(S) site URL without credentials.",
+    );
   }
   return url.origin;
 }
@@ -83,7 +125,10 @@ export function normalizeInternalHref(href: string): string {
   if (href.startsWith("/") && !href.startsWith("//")) {
     const suffixIndex = href.search(/[?#]/);
     const path = suffixIndex < 0 ? href : href.slice(0, suffixIndex);
-    return canonicalPublicPath(path) + (suffixIndex < 0 ? "" : href.slice(suffixIndex));
+    return (
+      canonicalPublicPath(path) +
+      (suffixIndex < 0 ? "" : href.slice(suffixIndex))
+    );
   }
   if (/^https?:\/\//i.test(href)) {
     try {

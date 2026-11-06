@@ -1,134 +1,29 @@
-# Kontakt page implementation plan
+# Contact page: remaining setup
 
-Created: 4 November 2026  
-Status: Current development implementation locked in and committed on 4 November 2026 as `020362b` (CMS configuration), `f164b8f` (protected delivery/tests), and `f5023df` (guided form/catering entry). Live activation is pending the checklist below; this approval does not authorize production rollout.
+The guided form and CMS fields are implemented. Email delivery is not implemented and no provider has been selected. This is the only open implementation plan; repository conventions and manual production migration live in [AGENTS.md](../AGENTS.md).
 
-See the [implementation, CMS editing and setup guide](contact-page.md). Local review: [Kontakt](http://localhost:3000/kontakt). Preview submissions send no email.
+## Current behavior
 
-Create `/kontakt` as a short, welcoming enquiry flow that helps visitors ask about catering or contact Tapparo. The experience should feel like the existing website, with one question at a time and a clear route to sending a message. Completion means a qualified enquiry sent to `hello@tapparo.com`; this is not a booking confirmation or a newsletter subscription.
+The form asks for reason → name → email → message → review. Back/edit and recoverable errors preserve answers in page memory. Answers are not stored in Sanity or persistent browser storage.
 
-This is milestone **7.1**, after the approved secondary pages and before milestone 8. Continue setup and testing against development. The user authorized committing the current implementation; provider setup, controlled test delivery and public launch remain outstanding.
+- **Demo:** available with the development dataset outside Vercel production. Local `next dev` defaults to it; set `CONTACT_DELIVERY_MODE=demo` for optimized development builds. The confirmation explicitly says no email was sent.
+- **Disabled:** all other environments, including production. Visitors receive a direct-email link. There is no live mode or provider configuration yet.
+- `POST /api/contact` validates the origin, JSON shape, 32 KiB body limit, honeypot, current published CMS reasons and required fields. It returns a demo confirmation only; it cannot send mail.
+- Missing form/privacy configuration disables the form. Changed reasons are returned to the visitor without losing their other answers. Without JavaScript, direct email remains available.
 
-## Proposed visitor flow
+## Editing
 
-Start directly with the first question under a compact Kontakt introduction; avoid a separate welcome screen and extra start click.
+Open **Pages → Kontakt → Contact Form**. Edit introduction, prompts/help, reason labels/order and privacy-page reference. Keep 1–8 reasons with at least one enabled. Stable reason identifiers such as `catering` support `/kontakt?anliegen=catering`; unknown or disabled identifiers do not preselect anything.
 
-| Step | Suggested German copy | Input and behavior |
-| --- | --- | --- |
-| 1 | Worum geht’s? | One choice from the owner-managed reasons. Initial proposal: Catering anfragen, Frage zu Tapparo, Sonstiges. Catering comes first. |
-| 2 | Wie heißt du? | One full-name field with name autocomplete; no separate first/last-name fields. |
-| 3 | Wie können wir dich erreichen? | Email with email autocomplete and the mobile email keyboard. |
-| 4 | Was hast du vor? | Multiline message. For catering, suggest mentioning date, approximate guest count and location, if known. Other reasons receive suitable helper text. |
-| Review | Passt alles? | Compact summary, edit links, privacy information and “Anfrage senden”. |
-| Success | Danke für deine Anfrage! | Confirm successful submission and explain that Tapparo will reply by email. Avoid promising an unconfirmed response time. |
+The parent page controls the heading. Prompt changes do not change the required fields or step order. Confirmation fields are retained in the schema for future delivery; the demo uses fixed no-email copy.
 
-Reason, name, email and message are required. Keep dates, guest counts and budgets out of separate mandatory fields in the first version. The owner should receive useful context without visitors needing an event plan before getting in touch.
+The optional **Text + Images → Enquiry link** needs a published Kontakt page reference and may include a reason identifier. Navigation entries are separate. Public email comes from **Site Settings → Contact → Email**, currently falling back to `hello@tapparo.de` in code. Confirm the intended receiving address before implementing delivery.
 
-Show progress, “Zurück” and “Weiter”; keep primary actions on the right. Keep answers when moving backward, opening the site menu or retrying a failed submission. Selecting a reason should not unexpectedly advance focus. Enter advances single-line steps; Enter in the message field inserts a line break. The final send always requires an explicit action.
+## Remaining work
 
-## Design and interaction
-
-- Reuse the warm background, dark text, orange accent, Instrument Sans/Space Grotesk, viewport outline, transparent header, menu and compact footer.
-- Center the form in the shared site container with a readable width around 624 px. Use the compact secondary-page title scale. Let the layout scroll on small screens, with the keyboard open, or at increased text size.
-- Use quiet input underlines, clear labels, generous answer targets and the existing animated hand-drawn underline for actions. Reason options get an obvious selected state and keyboard focus.
-- Animate question changes with a short fade and small vertical movement using the existing Motion dependency. Respect reduced motion and avoid replaying the homepage welcome between questions.
-- Use native form controls, fieldsets/legends for choices, associated labels, focused step headings and announced errors/status. Inactive questions must not remain focusable.
-- Show helpful field errors immediately beside the relevant field. Preserve answers during network/provider/challenge errors and offer retry plus direct email. Without JavaScript or with the challenge unavailable, expose a usable email link rather than an unprotected submission path.
-
-## CMS editing model
-
-Use **Pages → Kontakt**, an ordinary `page` document with slug `kontakt` and a new reusable **Contact Form** section. This follows the existing sections-build-pages model and works with the current page references, SEO fields, canonical generation and sitemap. Check for an existing slug/document before adding it.
-
-The section exposes introductory copy, editable question/help text, submission/success copy and an ordered `reasons` array. Each reason has a stable identifier, label, optional message prompt/helper text and an enabled switch. Owners can add, edit, reorder and disable reasons without code. Validate unique identifiers and at least one enabled reason. Avoid building a general-purpose form builder or exposing validation/security controls to the owner.
-
-Validate submissions against the current published form and enabled reasons on the server; never trust a label or recipient supplied by the browser. If an owner changes options while someone fills the form, retain their answers and ask them to update the selection. Define predictable content refresh behavior for published changes.
-
-Add Kontakt through the existing Header/Footer navigation editors. Offer a contextual “Catering anfragen” link from suitable existing content, pointing to `/kontakt?anliegen=catering`; preselection must use a valid stable reason identifier and remain editable. Keep all ordering links on `/order`. No names, email addresses or messages belong in URLs.
-
-## Email delivery and reliability
-
-Recommended integration: a Next.js `POST /api/contact` route with **Resend** for transactional email. The page can keep its static rendering; only submission runs on the server. Next.js supports POST route handlers, and Resend documents this integration. [Next.js route handlers](https://nextjs.org/docs/app/api-reference/file-conventions/route), [Resend with Next.js](https://resend.com/docs/send-with-nextjs).
-
-Send to the fixed server-configured recipient `hello@tapparo.com`. Use a verified Tapparo sender, for example `website@notify.tapparo.com`, and put the visitor’s validated email in Reply-To so the owner can reply normally. Use a clear subject such as “Website-Anfrage · Catering anfragen”, with the reason, name, email, full message and a reference in the body. Include plain text and escaped HTML. Domain verification and provider DNS records are required; preserve the existing mailbox configuration. [Resend domains](https://resend.com/docs/dashboard/domains/introduction), [email API](https://resend.com/docs/api-reference/emails/send-email).
-
-Disable repeat clicks while sending and use a stable submission identifier for safe retries. Resend supports duplicate prevention with idempotency keys for 24 hours. Keep the same payload/key during a retry; editing a submitted payload creates a new attempt. Refresh the single-use spam token when needed. Show success only after the provider accepts the email; provider acceptance is not a guarantee of inbox delivery. [Resend idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys).
-
-Use provider delivery/bounce visibility and minimal request IDs/status logging to troubleshoot. Avoid logging message bodies or email addresses. Keep typed answers in page memory during errors. No lead database or visitor autoresponder is included initially; the owner inbox and provider delivery records are the initial workflow. Test actual inbox delivery and Reply-To before launch.
-
-## Spam protection
-
-Aim for strong spam resistance; no public form can be guaranteed spam-proof.
-
-- Use **Cloudflare Turnstile** in managed mode near final submission, validating every token on the server and checking the expected hostname/action. Tokens expire after five minutes and are single-use, so handle expiry and retries without clearing answers. Turnstile has a free plan for business use and does not require moving the website to Cloudflare. [Validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/), [plans](https://developers.cloudflare.com/turnstile/plans/).
-- Add a honeypot that is excluded from keyboard/screen-reader navigation and normal autofill. Treat unusual completion speed as a supporting signal, not the sole reason to reject a person using autocomplete.
-- Use shared server-side rate limits, proposed via **Upstash Redis**, per trusted client IP and with a global sending ceiling. An in-memory counter is insufficient across serverless instances. Tune conservative limits without locking out normal visitors on a shared connection; use short-lived hashed identifiers. [Upstash rate limiting](https://upstash.com/docs/redis/sdks/ratelimit-ts/overview).
-- Enforce field types/lengths, a small request-size limit, an enabled CMS reason, expected request origin and fixed recipients. Reject header injection, escape user text and accept no attachments in version one. Origin checking supplements the other protections; it does not replace them.
-- If verification or the rate-limit service is unavailable, retain the draft and offer retry/direct email. Do not silently disable protection or claim an unsent request succeeded.
-
-## Setup and data handling
-
-Confirm the destination mailbox, sender domain/DNS access, provider accounts, current quotas and expected costs before live integration. Store email, Turnstile and rate-limit secrets only in server environment variables. Use separate development/preview settings with mocked delivery or a designated test inbox; never let ordinary preview submissions email the owner.
-
-Use Sanity for public form configuration only. Do not store visitor submissions in the public content dataset or browser persistent storage. Add a brief processing explanation and link to the existing privacy text near submission. Review the actual email/challenge/rate-limit providers, retention settings and any necessary privacy-text additions before release. Keep enquiry processing separate from any later marketing opt-in; do not silently subscribe visitors.
-
-Hosting prerequisite: Vercel’s published Hobby terms limit that plan to personal/non-commercial use. Confirm an appropriate business hosting plan before releasing this restaurant enquiry feature. This does not prevent building/reviewing it locally; no plan changes are authorized here. [Vercel Hobby](https://vercel.com/docs/plans/hobby).
-
-## Implementation sequence and review points
-
-| Phase | Work | Reviewable result |
-| --- | --- | --- |
-| 7.1.1 Flow and design | Finalize German copy, reason-first flow and desktop/mobile states. Prototype with local fixture data and mocked sending. | Complete form, review, success/error and reduced-motion states, visually matched to Tapparo. |
-| 7.1.2 CMS integration | Add the reusable section and validation, development Kontakt page, projections and navigation references. Preserve unrelated documents/drafts. | Owner can manage reasons and copy; route, metadata and links work. |
-| 7.1.3 Submission and protection | Build server validation, Turnstile, shared limits, idempotent email delivery and recoverable errors. Configure test credentials only. | Tested endpoint and a readable sample email; no live visitor traffic. |
-| 7.1.4 Conversion and accessibility | Add the catering entry link/preselection, check progress/back/edit flows, focus, keyboard and mobile keyboard behavior. | A short usable journey from catering CTA to submission; no dead ends. |
-| 7.1.5 Verification and owner handover | Check content refresh, disabled/missing reasons, duplicate submits, slow/offline/error cases, malicious input, challenge expiry, rate limits, screen readers, reduced motion, mobile/desktop/ultrawide layouts and type/build/regression checks. Document editing and delivery troubleshooting. | Ready for user review, with evidence and remaining setup requirements recorded. |
-| 7.1.6 Lock-in and release preparation | Make sensible commits only after lock-in. Verify recipient/DNS, actual delivery, provider limits and privacy copy; prepare targeted production content changes and navigation updates. | Approved release package for milestone 8; no automatic production rollout. |
-
-Suggested commit boundaries after approval: CMS configuration; form interface/accessibility; protected delivery and tests; documentation and verification. Combine tightly coupled changes where a split would leave the application broken.
-
-### Implementation record — 4 November 2026
-
-- 7.1.1–7.1.2: Complete for review. Native German flow, review/edit/error/confirmation states, reusable section, development page and navigation additions are implemented.
-- 7.1.3: Code and mocked provider tests complete. Turnstile, Upstash and Resend account/credential setup, sender verification and real delivery remain pending. Development cannot email the owner.
-- 7.1.4: Implemented. The optional product CTA preselects catering; mobile/desktop journeys preserve answers through menu opening, editing and errors.
-- 7.1.5: Local type, schema, slug, optimized build, 32 automated tests and responsive browser checks pass. Owner/setup documentation is written. Physical-device, assistive-technology and real-provider checks remain release work.
-- 7.1.6: Current implementation locked in and committed on 4 November. Delivery setup and release preparation remain open below; production release remains separately authorized in milestone 8.
-
-Created one development page; added Kontakt to existing published navigation and its existing header draft, without publishing that draft; added only the optional product action on Home. All 141 unrelated content document/draft revisions are unchanged. Production is untouched.
-
-## Remaining activation checklist
-
-This is the authoritative list of open Kontakt tasks. Check items off only when their setup or verification has actually completed, and record evidence here. The existing interface, endpoint and mocked integration tests are implemented; **real email delivery has not been tested or enabled**. None of the provider credentials are configured in the local environment as of 4 November 2026.
-
-### A. Enable controlled testing in development
-
-- [ ] **Implement a separate test-delivery mode.** Current code permits real sending only on a Vercel production deployment using the production dataset. Add an explicitly enabled mode that uses the development dataset and a fixed server-configured test recipient. Ordinary previews must remain demo/disabled; never take the recipient from browser input or spoof a production environment to bypass the guard. Define the allowed test origin and trusted client-IP handling for the chosen test environment, namespace test rate-limit/idempotency records separately, and retain all live validation and spam checks. Add regression tests proving that test submissions cannot reach the owner's live inbox.
-- [ ] **Confirm setup access and the test inbox.** Obtain access to the intended Resend, Cloudflare and Upstash accounts, Tapparo's DNS and the relevant deployment settings. Confirm the controlled test recipient and that `hello@tapparo.com` is the live receiving mailbox. Keep credentials out of documents and commits.
-- [ ] **Configure Resend.** Add and verify a sending subdomain such as `notify.tapparo.com` using Resend's supplied DNS records, preserve existing mailbox records, create a suitably scoped API key and configure a verified `CONTACT_FROM` sender.
-- [ ] **Configure Turnstile.** Create a managed widget and appropriate test/live hostname configuration; obtain the public site key and private secret. Verify the server's expected hostname and `contact` action match the actual environment.
-- [ ] **Configure Upstash.** Create Redis, choose the service region, obtain its REST URL/token and generate the HMAC rate-limit secret. Review the existing eight-attempts/ten-minutes and 80-attempts/day limits against expected traffic and service quotas.
-- [ ] **Install environment configuration.** Use `.env.contact.example` for the existing variables; add/document the test-mode recipient and origin settings when implemented. Configure secrets in the appropriate environment and rebuild/redeploy that test environment for public site-key/rendering changes. Keep production and ordinary previews unchanged.
-
-### B. Verify with the real services
-
-- [ ] **Verify email delivery end to end.** Send a controlled test with the development dataset to the agreed test inbox. Check inbox/spam placement, sender identity, subject, full message, reason, reference and Reply-To. Record the date, environment and provider delivery status without logging personal enquiry content.
-- [ ] **Verify protection and recovery end to end.** Exercise a real challenge, expiration/retry, invalid submissions, throttling, unavailable providers and an uncertain delivery outcome. Confirm the same unchanged retry does not send a second message, answers remain available on failure, and failures never produce a success confirmation.
-- [ ] **Complete device/accessibility review.** Check a physical mobile keyboard, screen-reader announcements/focus, keyboard-only navigation, reduced motion and the complete owner editing workflow. Prior automated viewport/semantics checks remain valid but do not replace these checks.
-
-### C. Prepare and approve public launch
-
-- [ ] **Finish service and privacy review.** Review actual provider retention/processing settings, costs/quotas, the appropriate business hosting arrangement already identified in the plan, and update the privacy notice for the chosen services. Confirm who will monitor enquiries and delivery failures.
-- [ ] **Prepare targeted production content changes and rollback.** Take fresh backups, compare current owner edits/drafts, and prepare the Kontakt page/privacy reference, navigation additions and optional product link using production references. Do not replace production with development wholesale.
-- [ ] **Obtain release approval and enable live delivery.** Commit any subsequent approved test/setup changes, deploy compatible code/schema and the approved content changes, configure the live credentials and canonical origin, and set `CONTACT_DELIVERY_MODE=live` only in the intended production environment. Rebuild and run a controlled live inbox/Reply-To and form smoke test; record the deployment reference and outcome. Keep a documented route to disable sending if necessary.
-
-**Next implementation task:** the controlled test-delivery mode in A. Provider account/DNS preparation can proceed alongside it. Public launch is not a prerequisite for testing with the development dataset once that mode exists.
-
-## Acceptance criteria
-
-- A visitor can submit the four requested inputs without unnecessary fields or losing answers on back/error.
-- The owner can change enquiry options and copy through Sanity and reply directly from the received email.
-- Catering is easy to find and prompts useful details without making them prerequisites.
-- Submission errors, retries and duplicate prevention are truthful and recoverable; spam defenses run on the server.
-- The page fits the existing visual system and remains usable with keyboard, screen reader, reduced motion and small viewports.
-- All existing content, routes, menu prices, stories, legal wording and ordering behavior are preserved except explicitly reviewed additions.
-- No production mutations or implementation commits occur before the corresponding approval.
+- [ ] Confirm the receiving mailbox and choose a delivery service with the owner. No provider is assumed.
+- [ ] Implement server-side delivery, sender/Reply-To handling and appropriate spam protection for that choice. Keep validation and preserve answers on failures; only show success after confirmed acceptance. Handle retries without duplicate messages.
+- [ ] Add the chosen service's configuration instructions when it is implemented. Keep credentials on the server and development testing separate from the live inbox.
+- [ ] Test real delivery with an agreed test inbox: complete message, sender, Reply-To, failures and retries. Add meaningful tests for the implemented behavior.
+- [ ] Check mobile input, keyboard/focus, reduced motion and the owner's editing workflow. Review privacy wording for the services actually selected.
+- [ ] Prepare production Kontakt/privacy/navigation references using the manual release notes in AGENTS.md. The user activates delivery only after setup and testing are complete.

@@ -13,5 +13,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // Also guard these in canonicalPublicPath, including case/encoded variants.
-  matcher: ["/((?!studio(?:/|$)|api(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|.*\\.).*)"],
+  matcher: [
+    "/((?!studio(?:/|$)|api(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|.*\\.).*)",
+  ],
 };

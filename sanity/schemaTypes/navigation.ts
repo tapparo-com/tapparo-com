@@ -103,7 +103,8 @@ export const navigationFooter = defineType({
       name: "pageLinks",
       title: "Pages",
       type: "array",
-      description: "Links in the footer's 'Entdecken' group. Drag to reorder. Opening hours and contact details come from Site Settings; group headings, column layout, wordmark and 'nach oben' action are fixed by the site.",
+      description:
+        "Links in the footer's 'Entdecken' group. Drag to reorder. Opening hours and contact details come from Site Settings; group headings, column layout, wordmark and 'nach oben' action are fixed by the site.",
       of: [navPageLink],
     }),
     defineField({

@@ -4,9 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { REVEAL_EASE } from "@/lib/animation";
 import { useReducedMotion } from "@/lib/useReducedMotion";
-import styles from "./Homepage.module.css";
 
-export function QuoteStatement({ quote, author }: { quote: string; author?: string | null }) {
+export function QuoteStatement({
+  quote,
+  author,
+}: {
+  quote: string;
+  author?: string | null;
+}) {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true });
   const reducedMotion = useReducedMotion();
@@ -19,18 +24,25 @@ export function QuoteStatement({ quote, author }: { quote: string; author?: stri
   const target = { opacity: shown ? 1 : 0, y: shown ? 0 : 24 };
 
   return (
-    <figure ref={ref} className={styles.quoteCopy}>
+    <figure ref={ref} className="self-start">
       <motion.blockquote
         initial={false}
         animate={target}
         transition={{ duration: immediate ? 0 : 0.85, ease: REVEAL_EASE }}
       >
-        <span className={styles.quoteMark} aria-hidden="true">“</span>
-        <p className={styles.quoteText}>{quote}</p>
+        <span
+          className="mb-6 block w-fit text-[clamp(96px,_8vw,_160px)] leading-[0.65] text-accent max-[768px]:mb-5 max-[768px]:text-[80px]"
+          aria-hidden="true"
+        >
+          “
+        </span>
+        <p className="text-[clamp(28px,_3.3vw,_64px)] leading-[1.18] font-normal tracking-[-0.035em] text-pretty wrap-anywhere whitespace-pre-line max-[768px]:text-[clamp(24px,_4.4vw,_28px)] max-[768px]:leading-[1.35] max-[768px]:tracking-[-0.02em]">
+          {quote}
+        </p>
       </motion.blockquote>
       {author && (
         <motion.figcaption
-          className={styles.attribution}
+          className="mt-[clamp(28px,_3vw,_56px)] text-[clamp(14px,_1.1vw,_18px)] leading-[1.5] wrap-anywhere"
           initial={false}
           animate={target}
           transition={{

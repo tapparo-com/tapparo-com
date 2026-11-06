@@ -12,10 +12,13 @@ export const menuCategory = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      description: "Name shown in the category dropdown and above this category's items. Changing it does not change the URL anchor.",
+      description:
+        "Name shown in the category dropdown and above this category's items. Changing it does not change the URL anchor.",
       validation: (rule) => rule.required(),
     }),
-    slugField("Lowercase anchor used in menu navigation, e.g. 'focaccia'. Must be unique among menu categories."),
+    slugField(
+      "Lowercase anchor used in menu navigation, e.g. 'focaccia'. Must be unique among menu categories.",
+    ),
     defineField({
       name: "description",
       title: "Description",
@@ -28,7 +31,8 @@ export const menuCategory = defineType({
       name: "items",
       title: "Items",
       type: "array",
-      description: "Select published menu items and drag to order them. Items marked unavailable are hidden everywhere they are referenced. Edit names, prices, variants and allergens in the linked item documents.",
+      description:
+        "Select published menu items and drag to order them. Items marked unavailable are hidden everywhere they are referenced. Edit names, prices, variants and allergens in the linked item documents.",
       of: [
         defineArrayMember({
           type: "reference",
@@ -57,7 +61,8 @@ export const menuCategory = defineType({
               name: "price",
               title: "Price",
               type: "string",
-              description: "Display text for the extra charge, for example '0,50 €'. The website adds '+' automatically; do not enter another plus sign. Unlike item prices, this text is not reformatted.",
+              description:
+                "Display text for the extra charge, for example '0,50 €'. The website adds '+' automatically; do not enter another plus sign. Unlike item prices, this text is not reformatted.",
               validation: (rule) => rule.required(),
             }),
           ],
@@ -80,9 +85,17 @@ export const menuCategory = defineType({
           validation: (rule) =>
             rule
               .assetRequired()
-              .error("Upload an image — items without an image are not shown on the website."),
+              .error(
+                "Upload an image — items without an image are not shown on the website.",
+              ),
           fields: [
-            defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption." }),
+            defineField({
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+              description:
+                "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption.",
+            }),
           ],
         }),
       ],

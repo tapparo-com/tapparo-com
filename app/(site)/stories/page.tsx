@@ -1,3 +1,4 @@
+import type { ListingPage, StorySummary } from "@/lib/content";
 import { absoluteSiteUrl } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { STORIES_QUERY, STORIES_PAGE_QUERY } from "@/sanity/lib/queries";
@@ -6,7 +7,7 @@ import { SectionListStories } from "@/components/sections/SectionListStories";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await sanityFetch<any>({
+  const data = await sanityFetch<ListingPage | null>({
     query: STORIES_PAGE_QUERY,
     tags: ["storiesPage"],
   });
@@ -19,11 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function StoriesPage() {
   const [pageData, posts] = await Promise.all([
-    sanityFetch<any>({
+    sanityFetch<ListingPage | null>({
       query: STORIES_PAGE_QUERY,
       tags: ["storiesPage"],
     }),
-    sanityFetch<any[]>({
+    sanityFetch<StorySummary[]>({
       query: STORIES_QUERY,
       tags: ["post"],
     }),
