@@ -12,7 +12,7 @@ export const post = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      description: "Blog post headline. Also used in the Stories carousel cards.",
+      description: "Headline on the article and its cards on Home, Stories and related-story lists. A Story Highlight section can override its own displayed title without changing this post.",
       validation: (rule) => rule.required(),
     }),
     slugField("Lowercase URL slug, e.g. 'focaccia-di-recco'. Must be unique across pages, posts, and legal pages. Keep published URLs stable; renaming requires a redirect."),
@@ -62,14 +62,14 @@ export const post = defineType({
       name: "publishedAt",
       title: "Published At",
       type: "datetime",
-      description: "Publication date shown on the post and used for sorting. Posts display newest first.",
+      description: "Date shown on the article and cards, and used for newest-first sorting. It does not schedule publication or hide future-dated posts; use Studio publishing controls to manage visibility.",
       initialValue: () => new Date().toISOString(),
     }),
     defineField({
       name: "author",
       title: "Author",
       type: "reference",
-      description: "Shown on the post page. Select from the Authors list under Stories.",
+      description: "Author name shown on the article and story cards. Select an Author document; its portrait and biography are not currently displayed.",
       to: [{ type: "author" }],
     }),
     defineField({
@@ -77,7 +77,7 @@ export const post = defineType({
       title: "Show Related Stories",
       type: "boolean",
       description:
-        "Show an 'Other Stories' section at the bottom of this post.",
+        "Show the 'Weitere Stories' section after the article. Turning this off hides it regardless of the selection below.",
       initialValue: true,
     }),
     defineField({
@@ -85,7 +85,7 @@ export const post = defineType({
       title: "Related Stories",
       type: "array",
       description:
-        "Pick up to 2 posts. If left empty, the 2 most recent posts are shown.",
+        "Select up to two published posts with URL slugs and drag to order them. If no valid selection remains, the two latest other posts are used. A single valid selection displays one card; it is not filled automatically.",
       of: [
         {
           type: "reference",
@@ -99,12 +99,13 @@ export const post = defineType({
       name: "seo",
       title: "SEO",
       type: "object",
+      description: "Browser/search metadata for this page. These fields do not change the visible page heading or body.",
       fields: [
         defineField({
           name: "title",
           title: "Meta Title",
           type: "string",
-          description: "Custom browser tab title. If empty, uses the post title. Appears as: 'Post Title — Tapparo'.",
+          description: "Custom browser tab title. If empty, uses the post title. The suffix comes from Site Settings > SEO > Title Template.",
         }),
         defineField({
           name: "description",

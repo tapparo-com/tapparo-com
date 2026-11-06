@@ -18,7 +18,7 @@ export const settingsBrand = defineType({
       title: "Restaurant Name",
       type: "string",
       description:
-        "Displayed in the hero, header, footer, and browser tab. Used in structured data for Google.",
+        "Brand text used in accessible labels, logo fallbacks and restaurant search data. It does not rewrite uploaded logo artwork. Browser tab titles are controlled under SEO and individual pages.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -26,14 +26,14 @@ export const settingsBrand = defineType({
       title: "Tagline",
       type: "string",
       description:
-        "Read with the restaurant name in the homepage's screen-reader heading. The page intro does not display a separate tagline. Also used on the Coming Soon page.",
+        "Read with the restaurant name in the hero's screen-reader heading and used in restaurant search data. It is not the hero's visible Short introduction. The welcome and Coming Soon logo use uploaded artwork, not this text.",
     }),
     defineField({
       name: "logo",
       title: "Logo",
       type: "image",
       description:
-        "Used in the hero, menu, header and footer. Upload a dark, single-color SVG with a transparent background. The floating header renders it black. The welcome's iconmark + wordmark artwork is managed under Site Settings → Page Intro.",
+        "Shared hero, header/menu and footer wordmark. Use a dark, single-color SVG on a transparent background; the footer requires SVG artwork. The header may invert it over photographs. Intro artwork is separate under Site Settings > Page Intro.",
     }),
     defineField({
       name: "supportingLogo",
@@ -67,7 +67,7 @@ export const settingsContact = defineType({
       name: "email",
       title: "Email",
       type: "string",
-      description: "Shown in the footer as a clickable mailto: link.",
+      description: "Public email link in the footer (when enabled there) and the contact form fallback. This does not change the enquiry form recipient or activate delivery; those are managed separately in server configuration.",
       validation: (rule) => rule.email(),
     }),
     defineField({
@@ -75,21 +75,21 @@ export const settingsContact = defineType({
       title: "Phone",
       type: "string",
       description:
-        "Shown in the footer and menu overlay as a clickable tel: link. Include country code, e.g. +49 89 27279100.",
+        "Phone link shown when enabled separately in Navigation > Header and Navigation > Footer. Include the country code, e.g. +49 89 27279100.",
     }),
     defineField({
       name: "address",
       title: "Address",
       type: "text",
       rows: 3,
-      description: "Shown in the footer. Use line breaks for formatting.",
+      description: "Shared address in the hero, navigation overlay and footer, and optionally Coming Soon. Line breaks are preserved in the footer. Edit the map destination separately below.",
     }),
     defineField({
       name: "mapUrl",
       title: "Map URL",
       type: "url",
       description:
-        "Google Maps link shown as 'Maps' in the footer. Opens in a new tab.",
+        "Destination for the hero/navigation address link and the footer's 'Route planen' link. Opens in a new tab. Leave empty to keep the address as plain text and hide the footer map link.",
     }),
   ],
   preview: {
@@ -141,7 +141,7 @@ export const settingsSeo = defineType({
       title: "Coming Soon Mode",
       type: "boolean",
       description:
-        "When ON, the entire public site is replaced with a Coming Soon page. Only the Studio remains accessible.",
+        "Replace regular site pages with the Coming Soon screen. This does not disable the Studio or online-order redirect. The Coming Soon layout and label are fixed; edit its body, address visibility and social selection below.",
       initialValue: false,
     }),
     defineField({
@@ -183,7 +183,7 @@ export const settingsSeo = defineType({
       title: "Default Meta Title",
       type: "string",
       description:
-        "Default browser tab title. Used when a page doesn't set its own.",
+        "Fallback title for Home when Home has no SEO title. Other page types normally supply their own title. Changing the restaurant name does not change this field.",
     }),
     defineField({
       name: "metaDescription",
@@ -191,7 +191,7 @@ export const settingsSeo = defineType({
       type: "text",
       rows: 3,
       description:
-        "Default meta description for search engines. Keep under 160 characters.",
+        "Fallback search summary for Home when Home has no SEO description. Other page types should have their own descriptions. Aim for fewer than 160 characters.",
     }),
   ],
   preview: {

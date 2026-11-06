@@ -74,15 +74,16 @@ export const sectionHero = defineArrayMember({
   type: "object",
   name: "sectionHero",
   title: "Hero",
+  description: "Homepage opening section: carousel, introduction, two links, opening status and ticker. Place it first on Home. Edit images and copy here; logo, contact details, hours and welcome artwork come from Site Settings. Layout, link destinations and animation style are fixed by the site.",
   icon: ImageIcon,
   fields: [
-    defineField({ name: "description", title: "Short introduction", type: "string", description: "Optional short description in the desktop hero. Hidden on compact screens to keep the order link and opening status in view.", validation: rule => rule.max(90) }),
-    defineField({ name: "menuLinkLabel", title: "Menu link label", type: "string", description: "Optional link to the Speisekarte below the desktop introduction. Leave empty to hide.", validation: rule => rule.max(40) }),
+    defineField({ name: "description", title: "Short introduction", type: "string", description: "Short text below the hero wordmark on desktop and mobile. Leave empty to hide this text; links and opening status remain visible.", validation: rule => rule.max(90) }),
+    defineField({ name: "menuLinkLabel", title: "Menu link label", type: "string", description: "Text for the always-visible menu link on desktop and mobile. Leave empty, or enter 'Speisekarte', to use 'speisekarte ansehen'. Other wording is displayed as entered. The destination stays /menu; this field cannot hide the link or change the separate 'jetzt bestellen' action.", validation: rule => rule.max(40) }),
     defineField({
       name: "tickerPhrases",
       title: "Ticker phrases",
       type: "array",
-      description: "Add one word or phrase per entry and drag to reorder. Bullet separators and spacing are added automatically. Leave empty to hide the ticker.",
+      description: "Moving text at the bottom of the hero information area. Add one word or phrase per entry and drag to reorder. Bullets are automatic. Leave empty to hide the ticker. Size, speed and placement are fixed; reduced-motion visitors see a static wrapping list.",
       of: [defineArrayMember({
         type: "string",
         validation: (rule) => rule.required().custom((value) => {
@@ -131,6 +132,7 @@ export const sectionSubhero = defineArrayMember({
   type: "object",
   name: "sectionSubhero",
   title: "SubHero",
+  description: "Introduction/About section with up to two images, rich text, one optional page link and optional shared opening hours. Image arrangement, text size and underline style are fixed by the site.",
   icon: DocumentTextIcon,
   fields: [
     defineField({
@@ -143,17 +145,17 @@ export const sectionSubhero = defineArrayMember({
       name: "heading",
       title: "Heading",
       type: "array",
-      description: "Large intro text. Use **bold** to highlight words in the accent color (red).",
+      description: "Large introduction text. Use the editor's Bold formatting to highlight words in the orange accent color. Supports paragraphs, headings, lists and links; font sizes and colors follow the site design.",
       of: [defineArrayMember({ type: "block" })],
     }),
     defineField({
       name: "image",
       title: "First image",
       type: "image",
-      description: "The first image above the introduction. Its proportions and chosen crop are preserved, so menu artwork stays fully visible. If a menu button is selected, this image also links to that page.",
+      description: "The first image above the introduction. Its proportions and chosen crop are preserved, so menu artwork stays fully visible. If the optional Button has a label and destination, this image also links to that page.",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+        defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption." }),
       ],
     }),
     defineField({
@@ -178,7 +180,7 @@ export const sectionSubhero = defineArrayMember({
       name: "showOpeningHours",
       title: "Show Opening Hours",
       type: "boolean",
-      description: "Toggle to display opening hours from Site Settings below the content.",
+      description: "Show the shared hours table below the introduction. Edit its values under Site Settings > Opening Hours. Turning this off affects this section only, not the hero status or footer hours.",
       initialValue: false,
     }),
   ],
@@ -194,6 +196,7 @@ export const sectionMoodImages = defineArrayMember({
   type: "object",
   name: "sectionMoodImages",
   title: "Image Grid",
+  description: "An offset composition of up to three images with an optional heading. Edit images, order, crops and alternative text. Positions, sizes and mobile arrangement are set by the design; this is not a slideshow.",
   icon: ImageIcon,
   fields: [
     defineField({
@@ -220,6 +223,7 @@ export const sectionMoodImages = defineArrayMember({
               name: "alt",
               title: "Alt Text",
               type: "string",
+              description: "Describe this image for visitors who cannot see it. This text is not shown as a caption.",
               validation: (rule) => rule.required(),
             }),
           ],
@@ -240,20 +244,21 @@ export const sectionQuote = defineArrayMember({
   type: "object",
   name: "sectionQuote",
   title: "Quote",
+  description: "A large plain-text quote with attribution and up to two images. It can also show text only or images only. Image placement, quotation styling and animation are fixed by the site.",
   icon: BlockquoteIcon,
   fields: [
     defineField({
       name: "author",
       title: "Author",
       type: "string",
-      description: "Attribution shown below the quote.",
+      description: "Attribution below the quote, or below the images when there is no quote. Leave empty to hide the attribution. An author alone does not display the section.",
     }),
     defineField({
       name: "quote",
       title: "Quote",
       type: "text",
       rows: 4,
-      description: "Large editorial text displayed next to the image.",
+      description: "Plain text beside the images on desktop and above them on smaller screens. Leave empty for an image-only section. Rich-text formatting is not supported.",
     }),
     defineField({
       name: "image",
@@ -262,7 +267,7 @@ export const sectionQuote = defineArrayMember({
       description: "Optional image alongside the quote. Its proportions and chosen crop are preserved.",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+        defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption." }),
       ],
     }),
     defineField({
@@ -272,7 +277,7 @@ export const sectionQuote = defineArrayMember({
       description: "Optional photograph that slightly overlaps the first image. Leave empty to keep the single-image layout. Set the crop and describe the photograph below.",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", title: "Alt Text", type: "string", validation: rule => rule.required().warning("Describe the photograph for screen readers, or leave empty if decorative.") }),
+        defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is not a visible caption.", validation: rule => rule.required().warning("Describe the photograph for screen readers, or leave empty if decorative.") }),
       ],
     }),
   ],
@@ -288,6 +293,7 @@ export const sectionLargeText = defineArrayMember({
   type: "object",
   name: "sectionLargeText",
   title: "Large Text",
+  description: "A large plain-text brand statement. The site determines its type size, two-part composition and accent animation. Leave the text empty to hide the section.",
   icon: BlockContentIcon,
   fields: [
     defineField({
@@ -295,7 +301,7 @@ export const sectionLargeText = defineArrayMember({
       title: "Display Text",
       type: "text",
       rows: 4,
-      description: "A prominent brand statement, with no attribution. Your complete text is displayed and wraps naturally on smaller screens.",
+      description: "Your complete statement is displayed. The first line break determines the split into two parts; otherwise the site chooses a sentence or balanced word break. Text wraps naturally on smaller screens. Rich-text formatting and custom colors are not available.",
     }),
   ],
   preview: {
@@ -313,6 +319,7 @@ export const sectionGallery = defineArrayMember({
   type: "object",
   name: "sectionGallery",
   title: "Gallery",
+  description: "A sequence of image compositions, with an optional caption below the complete gallery. Edit images, order and crops; grouping, overlaps and scroll animation are set by the design. Images do not open a lightbox and do not autoplay.",
   icon: PlayIcon,
   fields: [
     defineField({
@@ -329,7 +336,7 @@ export const sectionGallery = defineArrayMember({
               .assetRequired()
               .error("Upload an image — items without an image are not shown on the website."),
           fields: [
-            defineField({ name: "alt", title: "Alt Text", type: "string" }),
+            defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption." }),
           ],
         }),
       ],
@@ -353,19 +360,20 @@ export const sectionStories = defineArrayMember({
   type: "object",
   name: "sectionStories",
   title: "Stories",
+  description: "Automatically lists published posts with URLs, newest first, with an optional pinned post first. Shows four cards initially and loads two more per click. Cards, button labels and the /stories destination are fixed. Edit individual cards under Stories > Posts.",
   icon: StarIcon,
   fields: [
     defineField({
       name: "heading",
       title: "Section Label",
       type: "string",
-      description: "Heading above the homepage story selection, e.g. Stories.",
+      description: "Heading above this story collection. Leave empty to use 'Stories'; clearing it does not hide the heading.",
     }),
     defineField({
       name: "pinnedStory",
       title: "Pinned Story",
       type: "reference",
-      description: "Optional. Pick a story to always show first in the homepage selection. Leave empty to sort by date only.",
+      description: "Optional published post to place first in this collection. It must have a URL slug. Remaining posts stay newest first. Leave empty for date order only. This does not change the order on the separate Stories page.",
       to: [{ type: "post" }],
     }),
   ],
@@ -417,6 +425,7 @@ export const sectionStoryHighlight = defineArrayMember({
   type: "object",
   name: "sectionStoryHighlight",
   title: "Story Highlight",
+  description: "One selected published story with its cover image and link. Override the title and excerpt for this section only. Edit cover framing in the source post; layout and link style are fixed. The section is hidden when the story cannot be resolved.",
   icon: StarIcon,
   fields: [
     defineField({
@@ -450,7 +459,7 @@ export const sectionStoryHighlight = defineArrayMember({
       name: "buttonLabel",
       title: "Button Label",
       type: "string",
-      description: "Text shown on the button, e.g. 'Learn more'. Links to the selected story.",
+      description: "Text for the accent-colored link beneath the excerpt. Its destination is always the selected story. The story image and title also link there; link style is fixed by the site.",
       validation: (rule) => rule.required(),
     }),
   ],
@@ -469,15 +478,16 @@ export const sectionText = defineArrayMember({
   type: "object",
   name: "sectionText",
   title: "Text + Images",
+  description: "Product/editorial section with a heading, rich text, up to two images and an optional enquiry link. You can choose images-first or text-first order. Image proportions are preserved; placement, overlap, typography and borders follow the site design. Needs body text or an image to appear.",
   icon: DocumentTextIcon,
   fields: [
     defineField({
       name: "contactAction", title: "Enquiry link (optional)", type: "object",
-      description: "Add a link to a contact page, optionally preselecting one of its enquiry reasons.",
+      description: "Optional underlined link after the body text. Requires body text, a label and a published contact page. Optionally preselect an enabled enquiry reason. Remove this object to hide the link; it does not affect online ordering.",
       fields: [
-        defineField({ name: "label", type: "string", initialValue: "catering anfragen", validation: rule => rule.required().max(80) }),
-        defineField({ name: "page", type: "reference", to: [{ type: "page" }], options: { filter: 'count(sections[_type == "sectionContactForm"]) > 0' }, validation: rule => rule.required() }),
-        defineField({ name: "reason", title: "Reason identifier (optional)", type: "string", description: "Copy the reason’s link identifier, e.g. catering. Leave empty for no preselection.", validation: rule => rule.max(64).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/) }),
+        defineField({ name: "label", type: "string", description: "Text shown on the enquiry link, for example 'catering anfragen'. Its underline style is fixed.", initialValue: "catering anfragen", validation: rule => rule.required().max(80) }),
+        defineField({ name: "page", type: "reference", to: [{ type: "page" }], description: "Choose a page containing a Contact Form section. Publish the destination page and give it a URL slug so the link can appear.", options: { filter: 'count(sections[_type == "sectionContactForm"]) > 0' }, validation: rule => rule.required() }),
+        defineField({ name: "reason", title: "Reason identifier (optional)", type: "string", description: "Copy an enabled reason's Link identifier from that page's Contact Form, e.g. catering. Leave empty for no preselection. Unknown or disabled identifiers do not preselect anything; visitors can still choose a reason.", validation: rule => rule.max(64).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/) }),
       ],
     }),
     defineField({
@@ -491,7 +501,7 @@ export const sectionText = defineArrayMember({
       name: "body",
       title: "Body",
       type: "array",
-      description: "Rich text content. Supports headings, bold, italic, and links.",
+      description: "Rich text with headings, paragraphs, lists, italic and links. Bold formatting highlights text in the orange accent color. Images are selected separately below. The enquiry link appears only when this body has content.",
       of: [defineArrayMember({ type: "block" })],
     }),
     defineField({
@@ -501,7 +511,7 @@ export const sectionText = defineArrayMember({
       description: "The larger leading image. Its proportions and crop are preserved; landscape photography works well.",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+        defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption." }),
       ],
     }),
     defineField({
@@ -511,7 +521,7 @@ export const sectionText = defineArrayMember({
       description: "Optional smaller companion that overlaps the first image on desktop and mobile. Portrait or detail photography works well. Leave empty for one image and text.",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", title: "Alt Text", type: "string" }),
+        defineField({ name: "alt", title: "Alt Text", type: "string", description: "Describe the image for visitors who cannot see it. This is alternative text, not a visible caption." }),
       ],
     }),
     defineField({

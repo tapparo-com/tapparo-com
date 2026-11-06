@@ -25,6 +25,7 @@ export const menuItem = defineType({
       name: "pricingType",
       title: "Pricing Type",
       type: "string",
+      description: "Choose one euro price or a list of labelled variants. This selects which price fields appear on the menu; it does not create ordering options in Degaso.",
       options: {
         list: [
           { title: "Single Price", value: "single" },
@@ -39,7 +40,7 @@ export const menuItem = defineType({
       name: "price",
       title: "Price",
       type: "number",
-      description: "Price in euros.",
+      description: "Numeric price in euros, for example 4.5. The website formats it as '4,50 €'. Leave empty for an item without a displayed price; zero displays as '0,00 €'.",
       hidden: ({ parent }) => parent?.pricingType !== "single",
     }),
     defineField({
@@ -56,12 +57,14 @@ export const menuItem = defineType({
               name: "label",
               title: "Label",
               type: "string",
+              description: "Variant name shown beside its price, for example 'small' or '0.2 l'. Drag variants to set their order.",
               validation: (rule) => rule.required(),
             }),
             defineField({
               name: "price",
               title: "Price",
               type: "number",
+              description: "Numeric euro amount for this variant. Currency and decimal formatting are added by the website.",
               validation: (rule) => rule.required(),
             }),
           ],

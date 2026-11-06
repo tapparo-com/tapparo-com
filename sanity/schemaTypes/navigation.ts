@@ -61,7 +61,7 @@ export const navigationHeader = defineType({
       title: "Pages",
       type: "array",
       description:
-        'Seitenlinks im Menü. Zum Sortieren verschieben. „Jetzt bestellen“ wird auf der Website automatisch direkt nach Home eingefügt und führt über /order zum externen Bestellsystem Degaso. Dieser feste Link wird nicht in dieser Liste bearbeitet. Ohne Home erscheint er an erster Stelle.',
+        "Page links in the navigation overlay. Drag to reorder. The site inserts 'Jetzt bestellen' immediately after Home (or first if Home is absent), linking via /order to Degaso. Its label and destination are fixed and are not edited in this list.",
       of: [navPageLink],
     }),
     defineField({
@@ -69,7 +69,7 @@ export const navigationHeader = defineType({
       title: "Social Links",
       type: "array",
       description:
-        "Social Links aus Site Settings > Social Links auswählen. Sie erscheinen nach den Seitenlinks und werden im Menü genauso groß dargestellt.",
+        "Select shared Social Link documents and drag to order them. They follow the page links with the same visual weight and open in new tabs. Creating a Social Link alone does not add it to navigation.",
       of: [
         defineArrayMember({
           type: "reference",
@@ -103,7 +103,7 @@ export const navigationFooter = defineType({
       name: "pageLinks",
       title: "Pages",
       type: "array",
-      description: "Page links shown in the first footer column.",
+      description: "Links in the footer's 'Entdecken' group. Drag to reorder. Opening hours and contact details come from Site Settings; group headings, column layout, wordmark and 'nach oben' action are fixed by the site.",
       of: [navPageLink],
     }),
     defineField({
@@ -111,7 +111,7 @@ export const navigationFooter = defineType({
       title: "Social Links",
       type: "array",
       description:
-        "Select which social links to show in the footer. Pick from Site Settings > Social Links.",
+        "Links in the footer's 'Im Netz' group. Select shared Social Link documents and drag to order them. These are independent of the header and Coming Soon selections.",
       of: [
         defineArrayMember({
           type: "reference",

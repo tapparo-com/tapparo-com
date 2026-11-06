@@ -11,21 +11,21 @@ export const menuPage = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      description: "Page heading shown above the menu, e.g. Menu",
+      description: "Heading above the menu. Leave empty to use 'Speisekarte'. The page always lives at /menu.",
     }),
     defineField({
       name: "description",
       title: "Description",
       type: "text",
       rows: 3,
-      description: "Optional introductory text below the title",
+      description: "Optional text below the heading. Leave empty to hide this introduction.",
     }),
     defineField({
       name: "categories",
       title: "Categories",
       type: "array",
       description:
-        "Menu categories shown on the menu page. Drag to reorder — this determines the tab order.",
+        "Select published categories with URL slugs and drag to order them. This sets both the category dropdown order and the sections below it. The dropdown, layout and allergen legend are added automatically.",
       of: [
         defineArrayMember({
           type: "reference",
@@ -37,19 +37,20 @@ export const menuPage = defineType({
       name: "seo",
       title: "SEO",
       type: "object",
+      description: "Browser/search metadata for this page. These fields do not change the visible page heading or body.",
       fields: [
         defineField({
           name: "title",
           title: "Meta Title",
           type: "string",
-          description: "Custom browser tab title. If empty, uses 'Menu'.",
+          description: "Custom browser tab title. Leave empty to use 'Speisekarte', with the shared title template. The visible page heading is a separate field.",
         }),
         defineField({
           name: "description",
           title: "Meta Description",
           type: "text",
           rows: 3,
-          description: "Custom meta description for search engines.",
+          description: "Search-engine summary for /menu. Set it explicitly; an empty value does not currently inherit the site-wide description.",
         }),
       ],
     }),

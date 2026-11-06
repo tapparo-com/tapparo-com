@@ -1,14 +1,14 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { ClockIcon } from "@sanity/icons";
 import {
-  DAY_LABELS, WEEKDAYS, validateDay, validateWeeklySchedule, validateExceptions, validateClosures,
+  WEEKDAYS, validateDay, validateWeeklySchedule, validateExceptions, validateClosures,
 } from "../../lib/opening-hours";
 
 const period = defineArrayMember({
   name: "openingPeriod", type: "object", title: "Opening period", icon: ClockIcon,
   fields: [
-    defineField({ name: "start", title: "Opens at", type: "string", placeholder: "10:00" }),
-    defineField({ name: "end", title: "Closes at", type: "string", placeholder: "21:00" }),
+    defineField({ name: "start", title: "Opens at", type: "string", placeholder: "10:00", description: "Opening time in Europe/Berlin, using 24-hour HH:mm format." }),
+    defineField({ name: "end", title: "Closes at", type: "string", placeholder: "21:00", description: "Closing time in Europe/Berlin. For midnight or an overnight closing, also enable Closes next day." }),
     defineField({ name: "nextDay", title: "Closes next day", type: "boolean", initialValue: false, description: "Enable for overnight service, e.g. 18:00–02:00. Use 00:00 and enable this for midnight." }),
   ],
   preview: {
@@ -32,8 +32,9 @@ export const settingsHours = defineType({
       name: "weeklySchedule", title: "Weekly opening hours", type: "object",
       description: "The regular week, always in Europe/Berlin time. Used by the website's hours and live open/closed indicator. Date exceptions and temporary closures below take priority.",
       options: { collapsible: false }, initialValue: emptyWeek,
-      fields: WEEKDAYS.map((day, index) => defineField({
-        name: day, title: DAY_LABELS[index], type: "object", options: { collapsible: true, collapsed: true },
+      fields: WEEKDAYS.map(day => defineField({
+        name: day, title: day.charAt(0).toUpperCase() + day.slice(1), type: "object", options: { collapsible: true, collapsed: true },
+        description: "Regular hours for this weekday. Special dates, holiday rules and temporary closures can override them. Public weekday labels are displayed in German.",
         fields: dayFields(), initialValue: { closed: true },
       })),
       validation: rule => rule.custom(validateWeeklySchedule).error(),
@@ -48,7 +49,7 @@ export const settingsHours = defineType({
       validation: rule => rule.custom(validateExceptions).error(),
       of: [defineArrayMember({ name: "dateException", type: "object", title: "Special date", icon: ClockIcon,
         fields: [
-          defineField({ name: "date", type: "date", options: { dateFormat: "DD.MM.YYYY" }, validation: rule => rule.required() }),
+          defineField({ name: "date", type: "date", description: "The Berlin calendar date whose regular hours or holiday closure should be replaced.", options: { dateFormat: "DD.MM.YYYY" }, validation: rule => rule.required() }),
           ...dayFields(),
           defineField({ name: "note", title: "Internal note", type: "string", description: "Optional reminder for the team, e.g. Christmas Eve. Not displayed on the website." }),
         ],
@@ -62,8 +63,8 @@ export const settingsHours = defineType({
       validation: rule => rule.custom(validateClosures).error(),
       of: [defineArrayMember({ name: "temporaryClosure", type: "object", title: "Closure", icon: ClockIcon,
         fields: [
-          defineField({ name: "startDate", title: "First closed day", type: "date", options: { dateFormat: "DD.MM.YYYY" }, validation: rule => rule.required() }),
-          defineField({ name: "endDate", title: "Last closed day", type: "date", options: { dateFormat: "DD.MM.YYYY" } }),
+          defineField({ name: "startDate", title: "First closed day", type: "date", description: "Closure starts at the beginning of this Berlin calendar date.", options: { dateFormat: "DD.MM.YYYY" }, validation: rule => rule.required() }),
+          defineField({ name: "endDate", title: "Last closed day", type: "date", description: "This whole date is closed too. Leave empty for an indefinite closure.", options: { dateFormat: "DD.MM.YYYY" } }),
           defineField({ name: "note", title: "Internal note", type: "string", description: "Optional reminder for the team. Not displayed on the website." }),
         ],
         preview: { select: { start: "startDate", end: "endDate", note: "note" }, prepare: ({ start, end, note }) => ({ title: `${start || "Choose date"} – ${end || "until further notice"}`, subtitle: note || "Closed" }) },
@@ -75,8 +76,8 @@ export const settingsHours = defineType({
       readOnly: ({ document }) => Boolean(document?.weeklySchedule),
       hidden: ({ value }) => value === undefined,
       of: [defineArrayMember({ type: "object", fields: [
-        defineField({ name: "day", type: "string", validation: rule => rule.required() }),
-        defineField({ name: "hours", type: "string", validation: rule => rule.required() }),
+        defineField({ name: "day", type: "string", description: "Original display label, retained for history. Superseded when a weekly schedule exists.", validation: rule => rule.required() }),
+        defineField({ name: "hours", type: "string", description: "Original hours text. It does not drive the live open/closed indicator.", validation: rule => rule.required() }),
       ], preview: { select: { title: "day", subtitle: "hours" } } })],
     }),
   ],

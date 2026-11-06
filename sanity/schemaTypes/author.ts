@@ -11,7 +11,7 @@ export const author = defineType({
       name: "name",
       title: "Name",
       type: "string",
-      description: "Author name shown on blog posts.",
+      description: "Name shown on articles and story cards that reference this Author. Changing it updates all those bylines.",
       validation: (rule) => rule.required(),
     }),
     defineField({

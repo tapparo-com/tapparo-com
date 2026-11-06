@@ -20,15 +20,17 @@ Open **Pages → Kontakt → Contact Form** in the local `/studio` (development 
 
 | Field | Behavior |
 | --- | --- |
-| Introduction | Short text above the first question. |
+| Introduction | Text above the questions; on mobile it appears only at step 1. Blank restores the default German text. The parent page Title controls the page heading. |
 | Enquiry reasons | Add, reorder, rename or disable reasons. Keep at least one enabled. |
 | Reason → Link identifier | Unique lowercase identifier, such as `catering`. Keep it stable after sharing links that use it. |
 | Reason → Message question/help | Optional question and guidance specific to that reason. Otherwise the general message copy is used. |
-| Questions and help text | Name/email/message prompts and supporting text. Blank optional copy falls back to the German defaults. |
+| Questions and help text | Step 1 reason, step 2 name, step 3 email and step 4 message prompts, plus email/message guidance. Blank copy restores German defaults; it does not hide a step or make an answer optional. |
 | Submission and confirmation | Send label and the real-delivery success heading/message. Preview confirmation is intentionally fixed and clearly marked. |
 | Privacy information | Reference to the legal page containing the privacy notice; required for an active form. |
 
 The recipient, spam controls and input limits stay in code/server configuration. This is a reusable enquiry section, not a general form builder. Use one Contact Form section per enquiry page.
+
+The [6 November CMS audit](cms-section-audit.md#contact-form--kontakt) adds English field-by-field help in Studio, including reason overrides, privacy requirements, fixed review/navigation copy and preview-versus-live confirmation behavior. It does not change the form or activate delivery.
 
 Edit navigation under **Navigation → Header / Footer**. The product entry link lives under **Pages → Home → Das Produkt (Text + Images) → Enquiry link (optional)**: label, Kontakt page reference and optional reason identifier. Removing this optional object removes the product link. Ordering artwork still leads to `/order`.
 
