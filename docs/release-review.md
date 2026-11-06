@@ -176,3 +176,16 @@ Ignored directory: `.sanity-backups/step8/`. Keep exports, logs and screenshots 
 ## Audit work committed — 6 November 2026
 
 The user authorized committing the prior audit refinements before the next hero/menu revision. Commits: `b891ad1` (legal/404/footer), `f2046b9` (Stories), `1bac920` (homepage sections), `ae14093` (hero/navigation/Speisekarte), and `714d982` (Kontakt). The historical “uncommitted” notes above describe their original review state. All 40 tests, TypeScript and diff checks passed immediately before this commit series. No push, deployment, email or production changes. The newly approved hero/menu composition work is separate and remains subject to review.
+
+## Hero/menu Taste implementation — 6 November 2026
+
+The backed-up hero/menu revision is committed at the user’s request as `64b8021` and `b523589`, preserving the current iteration before a further design plan. This does not represent final visual or release approval. Previous audit work and documentation are committed through `36c8955`; the baseline is tagged `backup/hero-menu-before-taste-2026-11-06`. Full details, measurements and scanner triage are in the [hero/menu review](hero-menu-taste-review.md#implementation--6-november-2026).
+
+- Desktop information is grouped beside the food photograph; the overlay retains a paused photograph. Mobile uses matching logo/action/status anchors and consistent gutters. Large-screen content remains centered while the photo/ticker bleed to the viewport edge.
+- The ticker uses large orange text on cream at 24px/s; reduced motion gives one manually scrollable phrase sequence. The CMS-branded intro is shortened, retaining its accessible restaurant identity and interruption behavior.
+- Forty existing tests, TypeScript, diff checks and an isolated optimized build pass. Thirty-two main and twelve edge checks pass across Chromium/WebKit, including nine viewport sizes from 320–5092px, scrolling/resizing, focus/Escape, normal/reduced motion, no-JavaScript access, long labels, image failures and route changes.
+- Two discovered edge defects were fixed: WebKit's static-ticker arrow scrolling after closing the menu, and short-landscape navigation passing beneath the close control.
+- Ten relevant raw development documents match their backup exactly. The existing CMS fields remain the source for imagery, phrases, identity and navigation. There are no content/schema/dependency migrations for this revision.
+- Evidence is local and ignored under `.sanity-backups/hero-menu-taste-2026-11-06/`. The desktop Taste inspector still reports seven failures/five warnings; its brand conflicts, repeated-ticker/heading misclassification and unrelated Home findings are explicitly documented. This is not a claim of a clean full-site scanner or accessibility audit.
+
+The previously listed physical-device/spoken screen-reader checks, measured mobile LCP follow-up, no-JavaScript CMS-slug 404 limitation, no-pause-control limitation and Kontakt activation are still open. No new Lighthouse score is claimed for this revision. No release, push, emails or production changes were performed; the user retains production-release ownership.

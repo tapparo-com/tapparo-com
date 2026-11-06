@@ -1,6 +1,6 @@
 # Hero and menu overlay: Taste review
 
-5 November 2026. Review only; recommendations below have not been implemented.
+Initial review: 5 November 2026. Implementation: 6 November 2026, now committed as a preserved iteration at the user’s request (`64b8021`, `b523589`). A more substantial design direction is being planned for separate approval. The original findings below are retained; see the [implementation record](#implementation--6-november-2026) for the current result.
 
 Used the requested `design-taste-frontend` skill from the cached [Taste Skill source](https://github.com/Leonxlnx/taste-skill/blob/12af471f627f866411b4bd785b19646d3672784c/skills/taste-skill/SKILL.md), including its screenshot critique and browser inspector. Existing brand, content, Figma intent and explicit user requirements take precedence over generic skill preferences.
 
@@ -88,4 +88,74 @@ Existing routes, CMS control, opening-hours logic, brand assets, the orange view
 - Other inspector findings concern whole-page paragraph sizing, a gradient text treatment and dividers outside this review's two surfaces. They are recorded, not treated as instructions to alter unrelated approved sections. The missing-video warning is expected because preparation footage has been deferred.
 - Scoped source lint reports three failures and three warnings. The flagged divider belongs to a preview review panel; the shadows provide floating-header contrast; the viewport outline is intentional. These findings do not explain the hero/menu spacing problem. [Lint report](../.sanity-backups/hero-overlay-review-2026-11-05/source-lint.json).
 
-The review artifacts and raw measurements are local, ignored files under `.sanity-backups/hero-overlay-review-2026-11-05/`. The recommendations in this document are the review deliverable; implementation remains a separate step.
+The original review artifacts and raw measurements are local, ignored files under `.sanity-backups/hero-overlay-review-2026-11-05/`.
+
+## Implementation — 6 November 2026
+
+The user authorized committing the previous work, backing up the hero/menu, then implementing this review. Prior work is committed in `b891ad1`, `f2046b9`, `1bac920`, `ae14093`, `714d982` and `36c8955`. The implementation below was subsequently committed at the user’s request as `64b8021` (layout/menu/ticker) and `b523589` (intro timing).
+
+### Backup
+
+- Annotated tag: `backup/hero-menu-before-taste-2026-11-06`, pointing to `36c895597552f25db4178a96702e0ab6614f20e3`.
+- Local folder: `.sanity-backups/hero-menu-before-taste-2026-11-06/`; [manifest](../.sanity-backups/hero-menu-before-taste-2026-11-06/manifest.json) includes file hashes.
+- Contains a complete tracked-source archive, the ten relevant raw development documents and baseline hero/menu screenshots at 390, 1440 and 2560px. Asset references are preserved; asset binaries are not included. No assets or CMS documents were modified in this pass.
+- The tag is the source recovery point. Do not reset the working branch or restore CMS records wholesale: compare/recover the relevant files or fields deliberately if needed.
+
+### Result
+
+Desktop now has one shared 65/35 frame. The descriptor and menu link sit directly above the ordering/status/address group on the right. The wordmark stays at the lower-left anchor. The toggle follows the same centered content frame on large screens. The image remains flush-left, including beyond 2100px.
+
+Opening the menu keeps the current photograph paused and exchanges the descriptor for right-aligned navigation. On secondary pages it reuses the first image from Home's existing CMS carousel; no separate image collection needs maintaining. The menu's smaller desktop wordmark shares the hero's lower-left anchor. The artwork and links still enter individually. A missing or failed photograph shows the brand fallback and leaves all actions available.
+
+Mobile uses an 84px header and 20px content gutters. Hero and menu wordmarks now have identical size and placement. The menu replaces the photo region, with links anchored above the order/status block; those actions retain identical viewport-relative rectangles. Scrolling the page before opening does not shift the menu's anchors or hide the logo. Long lists scroll within a bounded region; the close button remains clear even in short landscape.
+
+The full-width ticker is orange display text directly on cream, 40–48px on desktop and 26px on mobile, moving at 24 CSS pixels per second. CMS phrase order and automatic 8px bullet spacing remain. Reduced motion stops playback and exposes one static phrase sequence with manual horizontal scrolling and keyboard access. The menu ticker is paused. The carousel retains its CMS timing, 1.2-second default and 100ms crossfade.
+
+The dedicated CMS-branded intro is retained: the photo handoff completes at 1.35 seconds and the entrance lifecycle at about 1.8 seconds, with a 0.95-second return entrance. These are animation timings, not network-loading guarantees. The iconmark/wordmark artwork, persistent restaurant-name/tagline heading and interruption/failure behavior remain.
+
+| Measurement | Before | After |
+| --- | --- | --- |
+| Desktop status/order relationship, 1440px | Status near y=19; order near y=770 | Order y≈688; status follows with a 16px gap |
+| Desktop menu photograph | Removed | Same image and frame as hero, paused |
+| Desktop wordmark on menu opening | Changes corners | Same lower-left anchor; smaller menu size |
+| Mobile wordmark x / width, 390px | Hero x=10 / ~163px; menu x=24 / ~132px | Both x=20 / ~168px |
+| Mobile header | 118px | 84px |
+| Mobile order/status right edge | Different insets | Both 20px from edge, identical in both states |
+| Ticker | 16px black type on an orange band | 40–48px / 26px orange type, transparent background |
+| First-visit photo handoff | 2.35 seconds | 1.35 seconds |
+
+### ROUND 2
+
+Seen in one second: a large focaccia photograph, with the restaurant identity and practical information forming a grounded composition; opening the menu preserves that balance.
+
+Idea (one sentence): Tapparo's food, hand-drawn identity and practical visiting/ordering information form one restaurant front window.
+
+Live thing: the CMS-selected food carousel, opening status and working navigation/order links.
+
+Layout words by section: hero=photograph with grouped information / overlay=photograph with anchored navigation.
+
+Scores: design 7.5 · usability 8 · creativity 7 · content 8 → overall 6.0 after the raw inspector cap (7.6 before cap). This is a subjective section critique, not an external award rating.
+
+Caps applied: the full-page inspector still reports failures, so its strict overall cap remains 6.0. Brand-orange, the viewport outline, SVG identity, dedicated intro and flush-left image are explicit requirements. Existing content below these two surfaces is outside this pass.
+
+Top three problems (most visible first), each with the screenshot it shows in and the fix:
+
+1. **The original competing desktop anchors:** compare the [new 1440px hero](../.sanity-backups/hero-menu-taste-2026-11-06/chromium-hero-1440.png) and [menu](../.sanity-backups/hero-menu-taste-2026-11-06/chromium-overlay-1440.png). Fixed with a shared frame, adjacent ordering/visiting information and retained photography. The descriptor now occupies two lines at this width.
+2. **The original dense ticker band:** the [new mobile hero](../.sanity-backups/hero-menu-taste-2026-11-06/chromium-hero-390.png) uses larger unfilled type and measured slower movement. Whether the enlarged moving type feels quiet enough beside the deliberately fast carousel remains a visual preference for the owner to review; a static line is still the documented fallback.
+3. **The original mobile alignment changes:** the [new mobile menu](../.sanity-backups/hero-menu-taste-2026-11-06/chromium-overlay-390.png) uses the same logo/action/status anchors. Short landscape necessarily uses internal navigation scrolling; the [844px menu](../.sanity-backups/hero-menu-taste-2026-11-06/webkit-overlay-844.png) keeps that scroll region below the toggle. Physical-device and spoken screen-reader review remain outstanding release checks.
+
+### Verification and inspector interpretation
+
+- Forty existing regression tests, TypeScript, diff checks and an isolated optimized development build pass. The user's existing development server was preserved.
+- Thirty-two primary browser checks pass in Chromium and WebKit: both states at 320×568, 390×844, 768×1024, 844×390, 1024×768, 1440×900, 1920×1080, 2560×1440 and 5092×1300; partial/deep scrolling, resizing while open, scroll restoration, keyboard focus/Escape, menu access from Stories/Speisekarte/Impressum/Kontakt, normal motion, pause-in-menu, reduced-motion switching and stationary orange hover.
+- Twelve edge checks pass across both browsers: long labels/eight extra links at three widths, keyboard access to the static ticker after menu closure, no-JavaScript navigation/content, menu image failure and internal route changes. WebKit needed explicit horizontal arrow handling after the menu releases the body scroll lock. Short-landscape links now scroll beneath a fixed top clearance rather than beneath the close control.
+- The existing `/design-preview` also compiles and passes mobile/desktop action-position and overflow smoke checks after adapting its shared layout and updating its displayed timing values.
+- The ten raw development documents in the backup match the final read-only query exactly. No schema/dependency/content changes, emails, push, deployment or production operations occurred.
+- The full-page desktop Taste inspector completes with **seven FAIL and five WARN**, zero horizontal overflow and no broken images. The relevant original three-line hero descriptor is fixed. Its new `eyebrow` and `hero-words` findings mistake the address and repeated ticker for a heading hierarchy; they are not instructions to delete the address or CMS phrases. `late-title`/`no-title` concern the persistent visually hidden h1 and visible SVG identity; the dedicated intro is retained intentionally. `palette-terracotta`, `outlined-box` and `off-centre` conflict with explicit brand/layout requirements. Remaining long-heading, gradient, divider and size-count findings concern the rest of Home; missing footage remains deferred.
+- Scoped source lint retains the same three failures/three warnings as the baseline: the preview-panel divider, floating-header contrast shadows and explicit viewport/preview outlines. These are recorded in `source-lint.json`; no blanket suppressions or unrelated design changes were introduced.
+
+Evidence: `.sanity-backups/hero-menu-taste-2026-11-06/`, including `verification.json`, `edge-checks.json`, `preservation.json`, `build-final.log`, screenshots/geometry and `inspector/report.json`. Generic scanner flags are recorded rather than hidden; they do not override the approved brand or expand this task into another whole-site redesign.
+
+## Subsequent design decision — 6 November 2026
+
+The user found this revision improved but too close to the prior composition. It is preserved in the commits above, not treated as final design approval. The next plan will retain the intro/carousel animation, use a full-height desktop image at the left, a separate top-left header logo and top-right toggle, centered overlay content and paired underlined ordering/menu actions. The user confirmed there should be no separate large hero wordmark after the intro. Planning only until explicit approval; design review precedes extensive testing.
