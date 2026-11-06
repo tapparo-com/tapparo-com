@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useReducedMotion, useInView } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "motion/react";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 import { REVEAL_DURATION, REVEAL_EASE, REVEAL_OFFSET } from "@/lib/animation";
 
 type RevealProps = {
@@ -10,6 +11,7 @@ type RevealProps = {
   delay?: number;
   duration?: number;
   className?: string;
+  mask?: boolean;
 };
 
 const offsets = {
@@ -25,23 +27,42 @@ export function Reveal({
   delay = 0,
   duration = REVEAL_DURATION,
   className,
+  mask = false,
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
+  const [hydrated, setHydrated] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
 
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
+  useEffect(() => setHydrated(true), []);
 
   const { x, y } = offsets[direction];
+  const shown = !hydrated || prefersReducedMotion || isInView;
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, x, y }}
-      animate={isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x, y }}
-      transition={{ duration, ease: REVEAL_EASE, delay }}
+      initial={false}
+      animate={
+        shown
+          ? {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              ...(mask ? { clipPath: "inset(0 0 0% 0)" } : {}),
+            }
+          : {
+              opacity: 0,
+              x: mask ? 0 : x,
+              y: mask ? 0 : y,
+              ...(mask ? { clipPath: "inset(0 0 18% 0)" } : {}),
+            }
+      }
+      transition={{
+        duration: prefersReducedMotion ? 0 : duration,
+        ease: REVEAL_EASE,
+        delay: prefersReducedMotion ? 0 : delay,
+      }}
       className={className}
     >
       {children}

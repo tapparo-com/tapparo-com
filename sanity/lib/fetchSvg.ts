@@ -1,7 +1,8 @@
+import type { ContentImage } from "@/lib/content";
 import { urlFor } from "@/sanity/lib/image";
 
 export async function fetchLogoSvg(
-  logo: { asset?: { _id: string; url: string } } | null | undefined
+  logo: ContentImage | null | undefined,
 ): Promise<string | null> {
   if (!logo?.asset) return null;
   try {

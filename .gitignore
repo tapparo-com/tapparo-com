@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# Local content snapshots and migration backups (never publish or commit)
+/.sanity-backups/
+
 # next.js
 /.next/
 /out/
@@ -25,8 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
-.env
+.env*
 
 # vercel
 .vercel

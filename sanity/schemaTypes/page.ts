@@ -1,3 +1,4 @@
+import { slugField } from "./slug-field";
 import { defineType, defineField } from "sanity";
 import { DocumentIcon } from "@sanity/icons";
 import { allSectionTypes } from "./sections";
@@ -12,44 +13,42 @@ export const page = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      description: "Internal name for this page. Also shown as a heading on non-menu pages.",
+      description:
+        "Editor name and visible heading on ordinary pages, including Kontakt. Home does not display this title; its hero supplies the main heading. Renaming a page does not change its URL or navigation labels.",
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      description: "URL path for this page, e.g. 'menu' becomes tapparo.com/menu. The slug 'home' is reserved for the homepage (served at tapparo.com/).",
-      options: {
-        source: "title",
-        maxLength: 96,
-      },
-      validation: (rule) => rule.required(),
-    }),
+    slugField(
+      "URL slug in lowercase, e.g. 'about'. 'home' identifies the homepage at /. Menu, stories, order, and system routes are reserved. Unique across pages, posts, and legal pages.",
+    ),
     defineField({
       name: "sections",
       title: "Sections",
       type: "array",
-      description: "Drag to reorder. The footer is added automatically — no need to include it here.",
+      description:
+        "Add, remove and drag sections to set page order. Each section has a fixed design and documents its editable content. Use Hero first on Home and one Contact Form per enquiry page. Header, footer and first-visit welcome are added automatically from shared settings.",
       of: allSectionTypes,
     }),
     defineField({
       name: "seo",
       title: "SEO",
       type: "object",
+      description:
+        "Browser/search metadata for this page. These fields do not change the visible page heading or body.",
       fields: [
         defineField({
           name: "title",
           title: "Meta Title",
           type: "string",
-          description: "Custom browser tab title. If empty, falls back to the page title. Appears as: 'Your Title — Tapparo'.",
+          description:
+            "Custom browser tab title, formatted with Site Settings > SEO > Title Template. If empty, ordinary pages use their page title; Home uses the site-wide Default Meta Title.",
         }),
         defineField({
           name: "description",
           title: "Meta Description",
           type: "text",
           rows: 3,
-          description: "Custom meta description for search engines. Keep under 160 characters. If empty, uses the site-wide default from Site Settings.",
+          description:
+            "Search-engine summary, ideally under 160 characters. Home uses the site-wide default when empty. Other pages should have their own description; an empty field does not currently inherit that default.",
         }),
       ],
     }),

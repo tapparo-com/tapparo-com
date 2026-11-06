@@ -1,76 +1,47 @@
-"use client";
-
-import Image from "next/image";
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { urlFor } from "@/sanity/lib/image";
+import type { Allergen, MenuItem } from "@/lib/content";
 import { Reveal } from "@/components/ui/Reveal";
+import { CategoryImages } from "@/components/menu/CategoryImages";
+import type { ContentImage } from "@/lib/content";
 
-type Allergen = {
-  _id: string;
-  code: string;
-  label: string;
-};
-
-type MenuItem = {
-  _id: string;
-  title: string;
-  description?: string | null;
-  pricingType: string;
-  price?: number | null;
-  priceVariants?: Array<{ _key: string; label: string; price: number }> | null;
-  allergens?: Allergen[] | null;
-};
-
-type Extra = {
-  _key: string;
-  name: string;
-  price: string;
-};
-
-type CategoryImage = {
-  _key: string;
-  asset?: { _id: string; url: string };
-  alt?: string;
-};
-
-type SectionMenuCategoryProps = {
+type Props = {
   title: string;
   slug: string;
   description?: string | null;
   items: MenuItem[];
-  extras?: Extra[] | null;
-  images?: CategoryImage[] | null;
+  extras?: { _key: string; name: string; price: string }[] | null;
+  images?: ContentImage[] | null;
 };
-
-function PriceVariants({ item }: { item: MenuItem }) {
-  if (item.pricingType === "variants" && item.priceVariants?.length) {
+const euros = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "EUR",
+});
+function Price({ item }: { item: MenuItem }) {
+  if (item.pricingType === "variants" && item.priceVariants?.length)
     return (
-      <div className="flex items-center gap-6">
-        {item.priceVariants.map((v) => (
+      <div className="ml-auto flex max-w-full flex-wrap justify-end gap-x-5 gap-y-2 text-[16px] leading-[1.5]">
+        {item.priceVariants.map((variant) => (
           <span
-            key={v._key}
-            className="flex items-center gap-3 text-base uppercase leading-7 text-foreground"
+            key={variant._key}
+            className="flex max-w-full items-baseline gap-3"
+            data-price={variant.price}
           >
-            <span>{v.label}</span>
-            <span>&euro;{v.price.toFixed(2)}</span>
+            <span className="wrap-anywhere">{variant.label}</span>
+            <span className="whitespace-nowrap tabular-nums">
+              {euros.format(variant.price)}
+            </span>
           </span>
         ))}
       </div>
     );
-  }
-
-  if (item.price != null) {
-    return (
-      <span className="text-base uppercase leading-7 text-foreground">
-        &euro;{item.price.toFixed(2)}
-      </span>
-    );
-  }
-
-  return null;
+  return item.price != null ? (
+    <span
+      className="ml-auto flex max-w-full flex-wrap justify-end gap-x-5 gap-y-2 text-[16px] leading-[1.5] whitespace-nowrap tabular-nums"
+      data-price={item.price}
+    >
+      {euros.format(item.price)}
+    </span>
+  ) : null;
 }
-
 export function SectionMenuCategory({
   title,
   slug,
@@ -78,174 +49,90 @@ export function SectionMenuCategory({
   items,
   extras,
   images,
-}: SectionMenuCategoryProps) {
-  const [imageIndex, setImageIndex] = useState(0);
-  const validImages = (images ?? []).filter((img) => img.asset);
-  const hasImages = validImages.length > 0;
-  const hasMultipleImages = validImages.length > 1;
-
+}: Props) {
+  const validImages = (images || []).filter((image) => image?.asset);
   return (
-    <Reveal>
-      <section
-        id={slug}
-        aria-labelledby={`${slug}-heading`}
-        className="scroll-mt-[140px] overflow-clip bg-background px-3 py-20 md:px-8"
-      >
-        <div className="mx-auto max-w-[1856px]">
-          <div className="md:grid grid-cols-sidebar md:gap-10">
-            {/* Col-1: category title + description */}
-            <div className="mb-8 md:mb-0 md:col-start-1">
-              <h2
-                id={`${slug}-heading`}
-                className="text-base uppercase leading-7 text-foreground"
-              >
-                {title}
-              </h2>
-              {description && (
-                <p className="mt-7 text-base leading-7 text-muted">
-                  {description}
-                </p>
-              )}
-            </div>
-
-            {/* Col-2: items + image side by side */}
-            <div className="md:col-start-2">
-              <div className="flex flex-col gap-[60px] xl:flex-row xl:gap-10">
-                {/* Items list */}
-                <div className="flex max-w-gutter flex-col gap-[60px] xl:basis-1/2">
-                  <div className="flex flex-col gap-5">
-                    {items.filter(Boolean).map((item) => (
-                      <div key={item._id} className="flex flex-col">
-                        <div className="flex items-start justify-between gap-3">
-                          <span className="text-base font-medium uppercase leading-7 text-foreground">
-                            {item.title}
-                          </span>
-                          <PriceVariants item={item} />
-                        </div>
-                        {item.description && (
-                          <p className="text-base text-balance pr-20 leading-7 text-[#404040]">
-                            {item.description}
-                          </p>
-                        )}
-                        {item.allergens && item.allergens.length > 0 && (
-                          <div className="flex gap-1 pt-2">
-                            {item.allergens.map((a) => (
-                              <abbr
-                                key={a._id}
-                                title={a.label}
-                                className="flex size-5 items-center justify-center bg-foreground/[0.08] text-xs text-foreground no-underline"
+    <section
+      id={slug}
+      aria-labelledby={`${slug}-heading`}
+      className="menu-category scroll-mt-[var(--menu-anchor-clearance,_110px)] py-[clamp(40px,_4vw,_80px)] [&_:is(a,button):focus-visible]:[outline:2px_solid_var(--color-accent)] [&_:is(a,button):focus-visible]:outline-offset-[3px]"
+      data-menu-category
+    >
+      <div className="mx-auto w-full max-w-[var(--content-max-width)] px-[clamp(20px,_3.4vw,_72px)] max-[768px]:px-5 [&_*]:min-w-0">
+        <div
+          className="mx-auto max-w-156 [&[data-has-images='true']]:max-w-328 max-[1024px]:[&[data-has-images='true']]:max-w-156"
+          data-has-images={validImages.length > 0}
+        >
+          <Reveal className="mb-6 [&_h2]:text-[28px] [&_h2]:leading-[1.15] [&_h2]:font-medium [&_h2]:tracking-[-.025em] [&_h2]:wrap-anywhere [&_p]:mt-4 [&_p]:max-w-[60ch] [&_p]:text-[16px] [&_p]:leading-[1.75] [&_p]:whitespace-pre-line max-[768px]:[&_p]:text-[16px]">
+            <h2 id={`${slug}-heading`}>{title}</h2>
+            {description && <p>{description}</p>}
+          </Reveal>
+          <div
+            className="grid gap-[clamp(32px,_5vw,_96px)] [&[data-has-images='true']]:grid-cols-2 [&[data-has-images='true']]:items-start max-[1024px]:[&[data-has-images='true']]:grid-cols-1 max-[1024px]:[&[data-has-images='true']_>_figure]:w-[min(100%,_640px)] max-[1024px]:[&[data-has-images='true']_>_figure]:justify-self-end"
+            data-has-images={validImages.length > 0}
+          >
+            <div>
+              <ul className="grid grid-cols-1">
+                {items.filter(Boolean).map((item) => (
+                  <li
+                    key={item._id}
+                    className="border-t border-solid border-t-border py-4"
+                    data-menu-item={item._id}
+                  >
+                    <div className="flex flex-wrap items-baseline gap-x-5 gap-y-3 [&_h3]:flex-[1_1_160px] [&_h3]:text-[18px] [&_h3]:leading-[1.5] [&_h3]:font-medium [&_h3]:tracking-[-.015em] [&_h3]:wrap-anywhere">
+                      <h3>{item.title}</h3>
+                      <Price item={item} />
+                    </div>
+                    {item.description && (
+                      <p className="mt-2 text-[16px] leading-[1.75] wrap-anywhere whitespace-pre-line">
+                        {item.description}
+                      </p>
+                    )}
+                    {!!item.allergens?.filter(Boolean).length && (
+                      <ul
+                        className="mt-2 flex flex-wrap justify-end gap-1 [&_a]:flex [&_a]:min-h-11 [&_a]:min-w-11 [&_a]:items-center [&_a]:justify-center [&_a]:text-[13px] [&_a:hover]:underline [&_a:hover]:decoration-accent [&_span]:border-b [&_span]:border-solid [&_span]:border-b-border"
+                        aria-label={`Allergene: ${item.title}`}
+                      >
+                        {item.allergens
+                          .filter((a): a is Allergen => !!a)
+                          .map((allergen) => (
+                            <li key={allergen._id}>
+                              <a
+                                href={`#allergen-${allergen._id}`}
+                                aria-label={`${allergen.code}: ${allergen.label}`}
                               >
-                                {a.code}
-                              </abbr>
-                            ))}
-                          </div>
-                        )}
+                                <span>{allergen.code}</span>
+                              </a>
+                            </li>
+                          ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {!!extras?.length && (
+                <section
+                  className="mt-8 border-t border-solid border-t-border pt-6 [&_dd]:text-right [&_dl]:grid [&_dl]:max-w-160 [&_dl]:gap-3 [&_dl_>_div]:flex [&_dl_>_div]:justify-between [&_dl_>_div]:gap-6 [&_dl_>_div]:text-[16px] [&_dl_>_div]:leading-[1.5] [&_dl_>_div]:wrap-anywhere [&_h3]:mb-4 [&_h3]:text-[20px] [&_h3]:font-medium"
+                  aria-label={`Extras: ${title}`}
+                >
+                  <h3>Extras</h3>
+                  <dl>
+                    {extras.map((extra) => (
+                      <div key={extra._key}>
+                        <dt>{extra.name}</dt>
+                        <dd>+{extra.price}</dd>
                       </div>
                     ))}
-                  </div>
-
-                  {extras && extras.length > 0 && (
-                    <div className="flex flex-col">
-                      <span className="text-base font-medium uppercase leading-7 text-foreground">
-                        Extras
-                      </span>
-                      <div className="flex flex-wrap items-center">
-                        {extras.map((extra, i) => (
-                          <span key={extra._key} className="flex items-center">
-                            {i > 0 && (
-                              <span className="px-3 text-base leading-7 text-muted">
-                                |
-                              </span>
-                            )}
-                            <span className="flex items-center gap-3 text-base uppercase leading-7 text-foreground">
-                              <span>{extra.name}</span>
-                              <span>+{extra.price}</span>
-                            </span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Image with carousel arrows */}
-                {hasImages && (
-                  <div className="relative max-w-gutter xl:flex-1">
-                    <div className="relative aspect-square overflow-hidden">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={imageIndex}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.5 }}
-                          className="absolute inset-0"
-                        >
-                          <Image
-                            src={urlFor(validImages[imageIndex]).width(624).height(624).url()}
-                            alt={validImages[imageIndex]?.alt || title}
-                            fill
-                            sizes="(max-width: 1280px) 100vw, 624px"
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                    {hasMultipleImages && (
-                      <div className="absolute -bottom-12 right-0 flex gap-0.5">
-                        <button
-                          onClick={() =>
-                            setImageIndex((prev) =>
-                              prev === 0 ? validImages.length - 1 : prev - 1
-                            )
-                          }
-                          aria-label="Previous image"
-                          className="flex size-12 items-center justify-center bg-background/75 text-accent backdrop-blur-sm"
-                        >
-                          <svg
-                            width="32"
-                            height="32"
-                            viewBox="0 0 32 32"
-                            fill="none"
-                          >
-                            <path
-                              d="M6 16H26M6 16L16 6M6 16L16 26"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() =>
-                            setImageIndex((prev) =>
-                              prev === validImages.length - 1 ? 0 : prev + 1
-                            )
-                          }
-                          aria-label="Next image"
-                          className="flex size-12 items-center justify-center bg-background/75 text-accent backdrop-blur-sm"
-                        >
-                          <svg
-                            width="32"
-                            height="32"
-                            viewBox="0 0 32 32"
-                            fill="none"
-                          >
-                            <path
-                              d="M26 16H6M26 16L16 26M26 16L16 6"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                  </dl>
+                </section>
+              )}
             </div>
+            {!!validImages.length && (
+              <CategoryImages images={validImages} title={title} />
+            )}
           </div>
         </div>
-      </section>
-    </Reveal>
+      </div>
+    </section>
   );
 }

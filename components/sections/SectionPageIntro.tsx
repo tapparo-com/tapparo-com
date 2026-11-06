@@ -1,31 +1,30 @@
 import { Reveal } from "@/components/ui/Reveal";
 
-type SectionPageIntroProps = {
+export function SectionPageIntro({
+  title,
+  description,
+  narrow = false,
+}: {
   title: string;
   description?: string | null;
-};
-
-export function SectionPageIntro({ title, description }: SectionPageIntroProps) {
+  narrow?: boolean;
+}) {
   return (
-    <Reveal>
-    <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
-      <div className="mx-auto max-w-[1856px]">
-        <div className="md:grid grid-cols-sidebar md:gap-10">
-          <div className="md:col-start-2">
-            <div className="flex max-w-gutter flex-col gap-[60px]">
-              <h1 className="text-[30px] font-medium leading-[1.1] tracking-[-0.6px] text-foreground md:text-[42px] md:tracking-[-0.84px]">
-                {title}
-              </h1>
-              {description && (
-                <p className="text-base leading-7 text-foreground">
-                  {description}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+    <header className="mx-auto w-full max-w-[var(--content-max-width)] px-[clamp(20px,_3.4vw,_72px)] py-[clamp(32px,_4vw,_64px)] max-[768px]:px-5 [&_*]:min-w-0">
+      <div className={narrow ? "mx-auto max-w-156" : undefined}>
+        <Reveal>
+          <h1 className="text-[30px] leading-[1.1] font-medium tracking-[-.02em] text-pretty wrap-anywhere min-[768px]:text-[38px] min-[1280px]:text-[42px]">
+            {title}
+          </h1>
+        </Reveal>
+        {description && (
+          <Reveal delay={0.12}>
+            <p className="mt-6 max-w-[64ch] text-[16px] leading-[1.75] whitespace-pre-line">
+              {description}
+            </p>
+          </Reveal>
+        )}
       </div>
-    </section>
-    </Reveal>
+    </header>
   );
 }

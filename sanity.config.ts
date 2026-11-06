@@ -1,6 +1,5 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
-import { visionTool } from "@sanity/vision";
 import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./sanity/schemaTypes";
 import {
@@ -11,25 +10,6 @@ import {
   ComposeIcon,
 } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
-
-const HIDDEN_TYPES = [
-  "settingsBrand",
-  "settingsContact",
-  "settingsHours",
-  "socialLink",
-  "settingsSeo",
-  "navigationHeader",
-  "navigationFooter",
-  "page",
-  "menuPage",
-  "menuCategory",
-  "menuItem",
-  "allergen",
-  "post",
-  "author",
-  "legalPage",
-  "storiesPage",
-];
 
 const structure: StructureResolver = (S) =>
   S.list()
@@ -50,7 +30,15 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("settingsBrand")
                     .documentId("settingsBrand")
-                    .title("Brand")
+                    .title("Brand"),
+                ),
+              S.listItem()
+                .title("Page Intro")
+                .child(
+                  S.document()
+                    .schemaType("settingsPageIntro")
+                    .documentId("settingsPageIntro")
+                    .title("Page Intro"),
                 ),
               S.listItem()
                 .title("Contact")
@@ -58,7 +46,7 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("settingsContact")
                     .documentId("settingsContact")
-                    .title("Contact")
+                    .title("Contact"),
                 ),
               S.listItem()
                 .title("Opening Hours")
@@ -66,7 +54,7 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("settingsHours")
                     .documentId("settingsHours")
-                    .title("Opening Hours")
+                    .title("Opening Hours"),
                 ),
               S.documentTypeListItem("socialLink").title("Social Links"),
               S.listItem()
@@ -75,9 +63,9 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("settingsSeo")
                     .documentId("settingsSeo")
-                    .title("SEO")
+                    .title("SEO"),
                 ),
-            ])
+            ]),
         ),
 
       // Navigation group
@@ -95,7 +83,7 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("navigationHeader")
                     .documentId("navigationHeader")
-                    .title("Header Navigation")
+                    .title("Header Navigation"),
                 ),
               S.listItem()
                 .title("Footer")
@@ -104,9 +92,9 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("navigationFooter")
                     .documentId("navigationFooter")
-                    .title("Footer")
+                    .title("Footer"),
                 ),
-            ])
+            ]),
         ),
       S.divider(),
 
@@ -129,12 +117,12 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("menuPage")
                     .documentId("menuPage")
-                    .title("Menu Page")
+                    .title("Menu Page"),
                 ),
               S.documentTypeListItem("menuCategory").title("Categories"),
               S.documentTypeListItem("menuItem").title("Items"),
               S.documentTypeListItem("allergen").title("Allergens"),
-            ])
+            ]),
         ),
 
       // Stories group
@@ -152,11 +140,11 @@ const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType("storiesPage")
                     .documentId("storiesPage")
-                    .title("Stories Page")
+                    .title("Stories Page"),
                 ),
               S.documentTypeListItem("post").title("Posts"),
               S.documentTypeListItem("author").title("Authors"),
-            ])
+            ]),
         ),
 
       // Legal group
@@ -169,8 +157,18 @@ export default defineConfig({
   basePath: "/studio",
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  plugins: [structureTool({ structure }), media(), visionTool()],
+  plugins: [structureTool({ structure }), media()],
   schema: {
     types: schemaTypes,
+    templates: (templates) =>
+      templates.filter(
+        (template) => template.schemaType !== "settingsPageIntro",
+      ),
+  },
+  document: {
+    actions: (actions, context) =>
+      context.schemaType === "settingsPageIntro"
+        ? actions.filter(({ action }) => action !== "duplicate")
+        : actions,
   },
 });

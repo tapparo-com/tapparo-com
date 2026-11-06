@@ -1,9 +1,17 @@
 import { defineQuery } from "next-sanity";
+import { contactFormFields } from "./contactQuery";
 
 // --- Shared image fragment ---
-const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt`;
+const imageFields = /* groq */ `asset->{_id, url, metadata{lqip, dimensions}}, alt, crop, hotspot`;
 
-// --- Site Settings (split across 5 documents) ---
+// --- Site Settings ---
+export const PAGE_INTRO_QUERY = defineQuery(/* groq */ `
+  *[_id == "settingsPageIntro"][0]{
+    enabled,
+    "artworkUrl": artwork.asset->url
+  }
+`);
+
 export const BRAND_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsBrand"][0]{
     restaurantName,
@@ -25,10 +33,13 @@ export const CONTACT_QUERY = defineQuery(/* groq */ `
 
 export const HOURS_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsHours"][0]{
-    openingHours[]{ _key, day, hours }
+    openingHours[]{ _key, day, hours },
+    weeklySchedule,
+    closedOnPublicHolidays,
+    dateExceptions[]{ _key, date, closed, periods[]{ _key, start, end, nextDay } },
+    temporaryClosures[]{ _key, startDate, endDate }
   }
 `);
-
 
 export const SEO_QUERY = defineQuery(/* groq */ `
   *[_type == "settingsSeo"][0]{
@@ -51,7 +62,7 @@ export const HEADER_NAV_QUERY = defineQuery(/* groq */ `
       "slug": select(
         page->_type == "menuPage" => "menu",
         page->_type == "storiesPage" => "stories",
-        page->slug.current
+        lower(page->slug.current)
       )
     },
     socialLinks[]->{ _id, label, url },
@@ -71,7 +82,7 @@ export const FOOTER_NAV_QUERY = defineQuery(/* groq */ `
       "slug": select(
         page->_type == "menuPage" => "menu",
         page->_type == "storiesPage" => "stories",
-        page->slug.current
+        lower(page->slug.current)
       )
     },
     socialLinks[]->{ _id, label, url },
@@ -82,25 +93,40 @@ export const FOOTER_NAV_QUERY = defineQuery(/* groq */ `
 
 // --- Page by slug (page builder) ---
 export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
-  *[_type == "page" && slug.current == $slug][0]{
+  *[_type == "page" && lower(slug.current) == $slug][0]{
     _id,
     title,
     sections[]{
       _key,
       _type,
+      _type == "sectionContactForm" => { ${contactFormFields} },
       _type == "sectionHero" => {
+        tickerPhrases,
+        imageDuration,
+        description,
+        secondaryLink{
+          enabled,
+          label,
+          "slug": select(
+            page->_type == "menuPage" => "menu",
+            page->_type == "storiesPage" => "stories",
+            page->_type in ["page", "post", "legalPage"] => lower(page->slug.current),
+            null
+          )
+        },
         heroImages[defined(asset)]{ _key, ${imageFields} }
       },
       _type == "sectionSubhero" => {
         label,
         heading,
         image{ ${imageFields} },
+        secondaryImage{ ${imageFields} },
         "button": button[0]{
           label,
           "slug": select(
             page->_type == "menuPage" => "menu",
             page->_type == "storiesPage" => "stories",
-            page->slug.current
+            lower(page->slug.current)
           ),
           variant
         },
@@ -113,8 +139,8 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
         "story": story->{
           title,
           excerpt,
-          coverImage{ ${imageFields} },
-          "slug": slug.current
+          coverImage{ ${imageFields}, fit },
+          "slug": lower(slug.current)
         },
         buttonLabel
       },
@@ -125,7 +151,8 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionQuote" => {
         author,
         quote,
-        image{ ${imageFields} }
+        image{ ${imageFields} },
+        secondaryImage{ ${imageFields} }
       },
       _type == "sectionLargeText" => {
         text
@@ -141,7 +168,9 @@ export const PAGE_BY_SLUG_QUERY = defineQuery(/* groq */ `
       _type == "sectionText" => {
         label,
         body,
+        contactAction{ label, reason, "slug": lower(page->slug.current) },
         image{ ${imageFields} },
+        secondaryImage{ ${imageFields} },
         imageFirst
       },
     },
@@ -155,9 +184,9 @@ export const STORIES_QUERY = defineQuery(/* groq */ `
     _id,
     title,
     excerpt,
-    coverImage,
+    coverImage{ ${imageFields}, fit },
     publishedAt,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     "authorName": author->name
   }
 `);
@@ -175,7 +204,7 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
     categories[]->{
       _id,
       title,
-      "slug": slug.current,
+      "slug": lower(slug.current),
       description,
       "items": items[@->available != false]->{
         _id,
@@ -187,7 +216,7 @@ export const MENU_PAGE_QUERY = defineQuery(/* groq */ `
         "allergens": allergens[]->{ _id, code, label }
       },
       extras[]{ _key, name, price },
-      images[defined(asset)]{ _key, asset->{_id, url}, alt }
+      images[defined(asset)]{ _key, ${imageFields} }
     }
   }
 `);
@@ -203,44 +232,45 @@ export const STORIES_PAGE_QUERY = defineQuery(/* groq */ `
 
 // --- Related stories (excludes current post) ---
 export const RELATED_STORIES_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current != $slug && defined(slug.current)] | order(publishedAt desc)[0...2]{
+  *[_type == "post" && lower(slug.current) != $slug && defined(slug.current)] | order(publishedAt desc)[0...2]{
     _id,
     title,
     excerpt,
-    coverImage,
+    coverImage{ ${imageFields}, fit },
     publishedAt,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     "authorName": author->name
   }
 `);
 
 // --- Legal pages ---
 export const LEGAL_PAGE_QUERY = defineQuery(/* groq */ `
-  *[_type == "legalPage" && slug.current == $slug][0]{
+  *[_type == "legalPage" && lower(slug.current) == $slug][0]{
     _id,
     title,
-    "slug": slug.current,
-    body,
+    "slug": lower(slug.current),
+    body[]{ ..., _type == "image" => { ${imageFields} } },
     updatedAt,
     seo{ title, description }
   }
 `);
 
 export const LEGAL_SLUGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "legalPage" && defined(slug.current)]{ "slug": slug.current }
+  *[_type == "legalPage" && defined(slug.current)]{ _updatedAt, "slug": lower(slug.current) }
 `);
 
 // --- Page slugs (for static params + sitemap) ---
 export const PAGES_SLUGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "page" && slug.current != "home"]{ "slug": slug.current }
+  *[_type == "page" && defined(slug.current) && lower(slug.current) != "home"]{ _updatedAt, "slug": lower(slug.current) }
 `);
 
 // --- Blog ---
 export const BLOG_LIST_QUERY = defineQuery(/* groq */ `
   *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
     _id,
+    _updatedAt,
     title,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     excerpt,
     coverImage,
     publishedAt
@@ -248,13 +278,14 @@ export const BLOG_LIST_QUERY = defineQuery(/* groq */ `
 `);
 
 export const BLOG_POST_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current == $slug][0]{
+  *[_type == "post" && lower(slug.current) == $slug][0]{
     _id,
+    _updatedAt,
     title,
-    "slug": slug.current,
+    "slug": lower(slug.current),
     excerpt,
-    body,
-    coverImage,
+    body[]{ ..., _type == "image" => { ${imageFields} } },
+    coverImage{ ${imageFields}, fit },
     publishedAt,
     author->{name, image},
     showRelatedStories,
@@ -262,9 +293,9 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
       _id,
       title,
       excerpt,
-      coverImage,
+      coverImage{ ${imageFields}, fit },
       publishedAt,
-      "slug": slug.current,
+      "slug": lower(slug.current),
       "authorName": author->name
     },
     seo{ title, description }

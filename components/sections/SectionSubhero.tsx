@@ -1,181 +1,112 @@
-import Image from "next/image";
-import Link from "next/link";
+import type { ContentImage } from "@/lib/content";
 import { PortableText } from "@portabletext/react";
-import { urlFor } from "@/sanity/lib/image";
-import { ButtonLink } from "@/components/ui/ButtonLink";
-import { Reveal } from "@/components/ui/Reveal";
 import type { PortableTextBlock } from "@portabletext/types";
+import { PortableTextLink } from "@/components/ui/PortableTextLink";
+import { TransitionLink } from "@/components/ui/TransitionLink";
+import { Reveal } from "@/components/ui/Reveal";
+import { AboutIntroduction } from "@/components/homepage/AboutIntroduction";
+import { SectionMedia } from "@/components/ui/SectionMedia";
+import { pathForSlug } from "@/lib/urls";
 
-type ImageAsset = {
-  asset?: { _id: string; url: string; metadata?: { lqip?: string } };
-  alt?: string;
-};
-
-function ImageBlock({
-  image,
-  href,
-  className,
-}: {
-  image: ImageAsset;
-  href?: string;
-  className?: string;
-}) {
-  const inner = (
-    <div className="group relative aspect-[730/1015] overflow-hidden">
-      <Image
-        src={urlFor(image).width(730).height(1015).url()}
-        alt={image.alt || ""}
-        fill
-        sizes="(max-width: 1280px) 100vw, 624px"
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
-        placeholder={image.asset?.metadata?.lqip ? "blur" : undefined}
-        blurDataURL={image.asset?.metadata?.lqip || undefined}
-      />
-    </div>
-  );
-
-  if (href) {
-    return (
-      <Link href={href} className={className}>
-        {inner}
-      </Link>
-    );
-  }
-
-  return <div className={className}>{inner}</div>;
-}
-
-type OpeningHour = {
-  _key: string;
-  day: string;
-  hours: string;
-};
-
-type SectionSubheroProps = {
+type Props = {
   label?: string | null;
   heading?: PortableTextBlock[] | null;
-  image?: {
-    asset?: { _id: string; url: string; metadata?: { lqip?: string } };
-    alt?: string;
-  } | null;
+  image?: ContentImage | null;
+  secondaryImage?: ContentImage | null;
   button?: {
     label: string;
     slug?: string | null;
     variant?: "filled" | "outline" | null;
   } | null;
-  showOpeningHours?: boolean;
-  openingHours?: OpeningHour[] | null;
-};
-
-const headingComponents = {
-  block: {
-    normal: ({ children }: { children?: React.ReactNode }) => (
-      <span>{children}</span>
-    ),
-  },
-  marks: {
-    strong: ({ children }: { children?: React.ReactNode }) => (
-      <span className="text-accent">{children}</span>
-    ),
-  },
+  showOpeningHours?: boolean | null;
+  openingHours?: { _key: string; day: string; hours: string }[] | null;
 };
 
 export function SectionSubhero({
   label,
   heading,
   image,
+  secondaryImage,
   button,
   showOpeningHours,
   openingHours,
-}: SectionSubheroProps) {
-  const buttonHref = button?.slug
-    ? button.slug === "home"
-      ? "/"
-      : `/${button.slug}`
-    : undefined;
+}: Props) {
+  const href = button?.slug ? pathForSlug(button.slug) : undefined;
+  const hasButton = Boolean(href && button?.label);
+  const hasHours = showOpeningHours && Boolean(openingHours?.length);
+  const primary = image?.asset ? image : null;
+  const secondary = secondaryImage?.asset ? secondaryImage : null;
+  const imageCount = Number(!!primary) + Number(!!secondary);
+  if (!heading?.length && !imageCount && !hasButton && !hasHours) return null;
 
   return (
-    <Reveal>
-    <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
-      <div className="mx-auto max-w-[1856px]">
-        {/* Desktop/Tablet: grid with label sidebar. Mobile: stacked. */}
-        <div className="flex flex-col gap-16 md:grid grid-cols-sidebar md:gap-10">
-          {/* Left column: section label */}
-          {label && (
-            <div className="shrink-0 md:row-start-1 md:col-start-1">
-              <span className="text-base uppercase text-foreground">
-                {label}
-              </span>
-            </div>
-          )}
-
-          {/* Right column: content */}
-          <div className="md:row-start-1 md:col-start-2">
-            {/* Desktop: text + image side by side. Tablet/Mobile: stacked. */}
-            <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
-              {/* Text column */}
-              <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
-                {/* Heading */}
-                {heading && (
-                  <h2 className="text-section-heading font-sans font-medium text-foreground">
-                    <PortableText
-                      value={heading}
-                      components={headingComponents as any}
+    <section
+      className="mx-auto w-full max-w-[var(--content-max-width)] px-[clamp(20px,_3.4vw,_72px)] pt-[clamp(48px,_5vw,_96px)] pb-[clamp(64px,_8vw,_160px)] max-[768px]:px-5 [&_*]:min-w-0 [&_button:focus-visible]:[outline:2px_solid_var(--color-accent)] [&_button:focus-visible]:outline-offset-[6px]"
+      data-home-section="about"
+      aria-label={label || "Über uns"}
+    >
+      {imageCount > 0 && (
+        <div
+          className="mb-[clamp(40px,_5vw,_96px)] grid grid-cols-[minmax(0,_0.9fr)_minmax(0,_1.1fr)] items-start gap-[clamp(24px,_4vw,_80px)] max-[768px]:mb-10 max-[768px]:grid-cols-1 max-[768px]:gap-7 [&[data-image-count='1']]:grid-cols-1 [&[data-image-count='1']_>_figure]:mt-0 [&[data-image-count='1']_>_figure]:justify-self-center max-[768px]:[&[data-image-count='1']_>_figure]:w-full max-[768px]:[&[data-image-count='1']_>_figure]:max-w-140"
+          data-image-count={imageCount}
+        >
+          {primary && (
+            <figure className="mt-[clamp(48px,_7vw,_140px)] w-full max-w-140 max-[768px]:mt-0 max-[768px]:w-[78%] max-[768px]:max-w-110">
+              <Reveal mask duration={0.9}>
+                {hasButton ? (
+                  <TransitionLink
+                    href={href!}
+                    className="block focus-visible:[outline:2px_solid_var(--color-accent)] focus-visible:outline-offset-[6px]"
+                    aria-label={button!.label}
+                  >
+                    <SectionMedia
+                      image={primary}
+                      natural
+                      sizes={
+                        imageCount === 1
+                          ? "(max-width: 767px) calc(100vw - 40px), 560px"
+                          : "(max-width: 767px) 78vw, (max-width: 1200px) 42vw, 560px"
+                      }
                     />
-                  </h2>
-                )}
-
-                {/* Image — shown on md/sm only (stacked in content flow) */}
-                {image?.asset && (
-                  <ImageBlock
-                    image={image}
-                    href={buttonHref}
-                    className="max-w-gutter xl:hidden"
+                  </TransitionLink>
+                ) : (
+                  <SectionMedia
+                    image={primary}
+                    natural
+                    sizes={
+                      imageCount === 1
+                        ? "(max-width: 767px) calc(100vw - 40px), 560px"
+                        : "(max-width: 767px) 78vw, (max-width: 1200px) 42vw, 560px"
+                    }
                   />
                 )}
-
-                {/* CTA button */}
-                {button?.label && buttonHref && (
-                  <div>
-                    <ButtonLink
-                      href={buttonHref}
-                      label={button.label}
-                      variant={button.variant || "filled"}
-                    />
-                  </div>
-                )}
-
-                {/* Opening hours */}
-                {showOpeningHours &&
-                  openingHours &&
-                  openingHours.length > 0 && (
-                    <dl>
-                      {openingHours.map((row) => (
-                        <div
-                          key={row._key}
-                          className="flex gap-2 font-sans text-2xl font-medium leading-8 text-foreground"
-                        >
-                          <dt className="w-[152px]">{row.day}</dt>
-                          <dd className="whitespace-nowrap">{row.hours}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  )}
-              </div>
-
-              {/* Image column — visible on desktop only */}
-              {image?.asset && (
-                <ImageBlock
-                  image={image}
-                  href={buttonHref}
-                  className="hidden max-w-gutter xl:block xl:flex-1"
+              </Reveal>
+            </figure>
+          )}
+          {secondary && (
+            <figure className="w-full max-w-250 justify-self-end max-[768px]:w-full max-[768px]:max-w-140 max-[768px]:justify-self-end">
+              <Reveal mask duration={0.9} delay={0.1}>
+                <SectionMedia
+                  image={secondary}
+                  ratio={4 / 3}
+                  sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 2100px) 52vw, 1000px"
                 />
-              )}
-            </div>
-          </div>
+              </Reveal>
+            </figure>
+          )}
         </div>
-      </div>
+      )}
+      <AboutIntroduction
+        button={hasButton ? { href: href!, label: button!.label } : undefined}
+        openingHours={hasHours ? openingHours! : undefined}
+      >
+        {heading?.length ? (
+          <PortableText
+            value={heading}
+            components={{ marks: { link: PortableTextLink } }}
+          />
+        ) : null}
+      </AboutIntroduction>
     </section>
-    </Reveal>
   );
 }
