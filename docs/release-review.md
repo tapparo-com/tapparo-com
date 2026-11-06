@@ -189,3 +189,54 @@ The backed-up hero/menu revision is committed at the user’s request as `64b802
 - Evidence is local and ignored under `.sanity-backups/hero-menu-taste-2026-11-06/`. The desktop Taste inspector still reports seven failures/five warnings; its brand conflicts, repeated-ticker/heading misclassification and unrelated Home findings are explicitly documented. This is not a claim of a clean full-site scanner or accessibility audit.
 
 The previously listed physical-device/spoken screen-reader checks, measured mobile LCP follow-up, no-JavaScript CMS-slug 404 limitation, no-pause-control limitation and Kontakt activation are still open. No new Lighthouse score is claimed for this revision. No release, push, emails or production changes were performed; the user retains production-release ownership.
+
+
+## Pending hero/navigation visual revision — 6 November 2026
+
+The new composition and follow-up refinements are committed at the user’s explicit request and remain under visual review; earlier full build/browser evidence does not validate this newer implementation. See the [current plan](hero-navigation-redesign-plan.md). Basic TypeScript/diff checks and three representative Chromium layouts pass, with no recorded runtime errors or horizontal overflow. The initial visual pass did not include a full regression suite, production build or browser/device matrix. Subsequent code checks are recorded below; fresh browser and optimized-build checks remain pending.
+
+Before release:
+
+- Obtain visual lock-in for the revised hero branding, mobile image balance, full-width ticker and centered menu.
+- Visually verify the subsequent hero entrance fixes described below, including the first-visit photo handoff and returning to Home under the page cover.
+- Complete focused responsive, CMS-variation, keyboard, reduced-motion, intro/route-transition and browser checks against the locked-in design, then run the appropriate build/regression checks.
+- Include the local Header Navigation field-description changes in the eventual Studio release. The ordering link is inserted after Home in application code; this is explained to editors and is not a new editable navigation field.
+
+Production release remains user-owned. No CMS document mutations, schema deployment, live emails, push or release actions occurred in this refinement.
+
+## Typography, Home entrance and section-border fixes — 6 November 2026
+
+Implemented after explicit approval of the three-part bug-fix plan:
+
+- Story authors/dates use the existing 14px caption treatment, without forced capitals or expanded tracking. Footer headings use 16px Instrument Sans at medium weight. CMS spellings and dates remain intact.
+- A hero mounted beneath the page-transition cover consumes its entrance immediately, preventing a second wipe after the cover leaves. Entrance state is owned by the hero instead of also being mirrored onto the site shell. The first-visit animated photograph reveals the underlying photo at animation completion rather than through an independent CSS timer. Slow/erroring first-image loading now removes both listeners when settling, and explicit interruptions consume a pending entrance, preventing late events from restarting it. Direct fresh-load and returning-load entrances remain available.
+- Menu navigation, category boundaries, the allergen section, Home product-section boundaries and related-story boundaries use full-width outer sections with the existing centered inner containers. Item/card dividers and reading widths retain their existing layout. The recent menu-header offset fix remains in place. No broad layout refactor was required.
+
+Validation: TypeScript, diff checks and all 40 existing regression tests pass. Ten additional React StrictMode/DOM-simulation lifecycle checks exercise covered entry with and without prior visits, uncovering, fresh/repeat loads, late image callbacks, scroll restoration, reduced motion and interruptions. The pre-fix hook fails the covered-entry regression. These temporary checks use existing local dependencies and are saved in `.sanity-backups/bug-fixes-2026-11-06/`; no dependencies were added. Home, Menu, Stories, an article and the design preview return HTTP 200, with rendered-HTML/compiled-CSS checks for container boundaries, author casing and a single entrance owner.
+
+**Verification limit:** native Chrome automation rejected navigation again, and the in-app browser is unavailable. Fresh mobile/desktop/ultrawide screenshots, frame-by-frame motion playback, browser back/forward, actual keyboard/anchor interaction and production-build verification remain pending. DOM simulation does not establish visual timing or browser layout. These fixes are included in the commit checkpoint below; no push, deployment or CMS changes occurred.
+
+## Direct-entry welcome, category dropdown and footer alignment — 6 November 2026
+
+- Direct visits to non-Home pages now show the existing CMS-branded welcome once per tab, using the same session key as Home. The shared artwork/fade is extracted without changing Home's photo handoff. The secondary-page welcome stays tied to the initial route, skips repeat visits, and settles on navigation, interaction, reduced motion or delayed hydration. Without JavaScript the page stays visible. The Studio field description now reflects this site-wide behavior; no content documents were edited.
+- The category dropdown's darker background and bottom border span the viewport. Its links sit in a centered 624px inner column aligned with the menu content, with matching page gutters, two columns on desktop and one below 768px. This follows the user's clarification that only the contents should be constrained. Bounded scrolling, category order, native anchors and the header offset remain intact.
+- Footer information is left-aligned across four desktop columns within the same capped container/gutters as Home's quote. The bottom wordmark and “nach oben” row sit outside that cap and use the header's viewport insets. Tablet/mobile grouping remains responsive.
+
+Validation: TypeScript and all 40 existing tests pass. The temporary React StrictMode/DOM lifecycle checks now total 18, including direct non-Home welcome, shared Home/non-Home session state, repeat loads, disabled/reduced/expired entrances and pointer interruption. Local Home, Menu, Stories and Kontakt return HTTP 200 with the expected intro ownership; all 12 category links and compiled dropdown styles are present. Evidence is in `.sanity-backups/bug-fixes-2026-11-06/`.
+
+Fresh browser visual/motion verification is still pending: Chrome input again returned a changed-app rejection and no browser automation surface is available. The checks above do not establish browser layout or frame timing. These changes are committed locally as recorded below.
+
+## Design refinement commit checkpoint — 6 November 2026
+
+The user explicitly requested sensible commits for the complete current work:
+
+| Commit | Scope |
+| --- | --- |
+| `c7f46ce` | Full-height hero, bottom ticker, stationary header, centered navigation, shared preview and stable hero/photo entrances. |
+| `398e1cc` | Once-per-tab branded welcome on direct visits to secondary pages, sharing Home’s state and CMS settings. |
+| `98e041f` | Header-safe sticky categories, viewport-wide dropdown with bounded content, and full-width structural section borders. |
+| `5525c86` | Normal-case story metadata/footer headings, left-aligned footer information and header-aligned bottom row. |
+
+The accompanying documentation commit saves this plan and verification record. Source checksums match the pre-commit working tree, and the staged hero snapshot passes an isolated TypeScript check. Existing TypeScript/diff, 40 regression-test, 18 entrance-lifecycle, five welcome-bootstrap and local route-rendering checks remain valid. This commit-only step introduces no runtime changes or new dependencies.
+
+Fresh responsive screenshots, browser motion/interaction checks and an optimized build remain pending. The commit request preserves the current iteration; it does not imply final visual acceptance or release approval. No push, deployment, CMS mutation or email sending occurred.

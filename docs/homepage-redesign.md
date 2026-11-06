@@ -224,3 +224,27 @@ The ticker now has a transparent background with orange display type (40–48px 
 **Site Settings → Page Intro** still controls the dedicated intro's enablement and iconmark/wordmark artwork. The photo handoff now completes at 1.35 seconds and the entrance lifecycle at about 1.8 seconds; returning visits use 0.95 seconds. These durations are code-controlled. Brand name/tagline remain in the permanent accessible heading. Existing sticky-header travel/retreat, menu entrances, reduced-motion behavior and interruption/failure handling remain.
 
 Forty regression tests, TypeScript, isolated optimized build and 44 Chromium/WebKit checks pass, spanning 320–5092px, partial/deep scrolling, resizing, keyboard focus, motion, no JavaScript, image failure and long navigation. All ten backed-up development documents match exactly. No content, schema, dependencies or production changes. The owner requested a more substantial new composition; the current iteration is preserved while the next plan awaits approval.
+
+## New hero/navigation visual pass — 6 November 2026
+
+The user approved a more substantial [composition plan](hero-navigation-redesign-plan.md), with two refinements: menu browsing must be clearly distinct from external ordering, and a continuous ticker is preferred. The first visual pass is ready locally and uncommitted. Desktop uses a full-height left photograph at 60% width and centered information on cream; mobile stacks the photo and compact information group. A single persistent header wordmark replaces the separate hero wordmark and its travel. The centered menu keeps that header in place and removes its photograph/ticker.
+
+Hero actions read “speisekarte ansehen” (on this website) and “online bestellen” (external via Degaso). `/menu` and `/order` remain distinct destinations; custom CMS menu labels remain supported. The ticker uses the existing phrases/bullets within the text area, with a static wrapping version for reduced motion. Intro artwork/enablement, carousel timing, images, description, contact and navigation still use the existing CMS fields. No content/schema edits were made.
+
+Only TypeScript, diff checks and representative Chromium visual/runtime checks were performed. Desktop/mobile motion previews and 390/1440/2560px screenshots are in `.sanity-backups/hero-navigation-visual-2026-11-06/`. This is the design-review checkpoint requested by the user; extensive tests and final implementation commits await approval.
+
+
+## Hero/navigation follow-up refinement — 6 November 2026
+
+The first visual pass above is superseded by the user's latest confirmed direction: larger hero wordmark above a left-aligned introduction, with the compact top-left header logo appearing after the hero or while the menu is open. No logo travel. The underlined hero actions now read “speisekarte ansehen” and “jetzt bestellen”, without descriptions. The ticker fills the cream column on desktop and the mobile viewport; removing the mobile header strip increases the phone image height from approximately 436px to 513px at 390×844.
+
+The overlay remains centered. “Jetzt bestellen” follows Home and shares the page/social link typography. Selected socials remain sourced from the CMS. Header Navigation's local schema explains the fixed ordering insertion and social treatment; no data changes or schema deployment were needed. The isolated design preview shares the implementation.
+
+TypeScript, diff checks and three representative Chromium visual checks pass. Full verification and commits await design lock-in. The reported intro/Home-transition carousel flash remains deliberately open for the subsequent motion fix. See the [current composition plan and evidence](hero-navigation-redesign-plan.md#follow-up-visual-refinement--6-november-2026).
+
+
+## Current committed refinement — 6 November 2026
+
+The earlier checkpoints above are historical. The user subsequently approved the entrance, typography and section-border fixes, then explicitly requested committing the complete current work. Desktop hero copy now sits 32px from the image, with the ticker below the information group. Home’s covered entrance settles without a second wipe, and direct visits to secondary pages share the once-per-tab branded welcome. Footer information is left-aligned across the section width, while its bottom row matches the header insets. Story metadata uses the existing normal-case caption treatment.
+
+Implementation is saved in `c7f46ce`, `398e1cc`, `98e041f` and `5525c86`. See the [commit and validation record](release-review.md#design-refinement-commit-checkpoint--6-november-2026). Code checks pass; fresh visual/motion checks and an optimized build remain pending. Nothing has been pushed or deployed.

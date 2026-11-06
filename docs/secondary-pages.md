@@ -67,6 +67,16 @@ The clipped horizontal category strip is replaced by a native **Kategorie wähle
 
 Development's page title and header/footer menu links now say **Speisekarte**. Six allergen labels were translated: Sellerie, Milchprodukte, Eier, Fisch, Nüsse and Soja; Gluten was already German. Codes, item references and underlying allergen information are unchanged. All menu categories, items, prices, variants, extras, availability, images and ordering are preserved, as are the centered 624px reading column and allergen block. These narrow content changes require separate production review; no production edits were made.
 
+## Fixed header and category chooser — 6 November 2026
+
+The new persistent site header overlapped the Speisekarte's category chooser, which still used `top: 0`. The chooser now sticks beneath the shared responsive header height (84px on mobile, 108px on desktop). On `/menu` only, the site header has a cream background to keep scrolling content from showing through its controls. The chooser no longer needs extra mobile right padding for the global menu toggle.
+
+Category and allergen fragment offsets account for both bars. A ResizeObserver measures the category bar so wrapped labels retain sufficient clearance; the dropdown's maximum height accounts for the remaining viewport space. Native links, category order and CMS content remain unchanged.
+
+TypeScript and diff checks pass. `/menu` returns HTTP 200 with the expected page marker, category navigation and compiled offset/background/dropdown styles. Fresh visual and interaction verification remains pending: the in-app browser is unavailable, and native Chrome automation rejected the navigation attempt. Changes are committed locally in the [current checkpoint](release-review.md#design-refinement-commit-checkpoint--6-november-2026).
+
+The category dropdown now has a viewport-wide darker background and border, with its links confined to the centered 624px content column (two desktop columns, one on mobile). The subsequently approved typography/border pass removes forced capitals from story metadata and footer headings. Menu, allergen and related-story section boundaries now span the available viewport width around unchanged centered content containers; the menu's sticky offset remains intact. See the [current implementation and verification record](release-review.md#typography-home-entrance-and-section-border-fixes--6-november-2026).
+
 
 ## Audit work committed — 6 November 2026
 
