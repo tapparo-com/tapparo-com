@@ -1,3 +1,5 @@
+import type { ListingPage, StorySummary } from "@/lib/content";
+import { absoluteSiteUrl } from "@/lib/urls";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { STORIES_QUERY, STORIES_PAGE_QUERY } from "@/sanity/lib/queries";
 import { SectionPageIntro } from "@/components/sections/SectionPageIntro";
@@ -5,11 +7,12 @@ import { SectionListStories } from "@/components/sections/SectionListStories";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await sanityFetch<any>({
+  const data = await sanityFetch<ListingPage | null>({
     query: STORIES_PAGE_QUERY,
     tags: ["storiesPage"],
   });
   return {
+    alternates: { canonical: absoluteSiteUrl("/stories") },
     title: data?.seo?.title || "Stories",
     description: data?.seo?.description,
   };
@@ -17,11 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function StoriesPage() {
   const [pageData, posts] = await Promise.all([
-    sanityFetch<any>({
+    sanityFetch<ListingPage | null>({
       query: STORIES_PAGE_QUERY,
       tags: ["storiesPage"],
     }),
-    sanityFetch<any[]>({
+    sanityFetch<StorySummary[]>({
       query: STORIES_QUERY,
       tags: ["post"],
     }),
@@ -32,7 +35,7 @@ export default async function StoriesPage() {
   return (
     <div className="relative z-10 bg-background">
       <SectionPageIntro title={title} description={pageData?.description} />
-      {posts && posts.length > 0 && <SectionListStories posts={posts} />}
+      <SectionListStories posts={posts || []} />
     </div>
   );
 }

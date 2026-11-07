@@ -1,16 +1,17 @@
+import { absoluteSiteUrl } from "@/lib/urls";
+import { canIndexSite } from "@/lib/seo";
 import type { MetadataRoute } from "next";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/studio", "/studio/"],
+        ...(canIndexSite()
+          ? { allow: "/", disallow: ["/studio", "/api/", "/order"] }
+          : { disallow: "/" }),
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: absoluteSiteUrl("/sitemap.xml"),
   };
 }

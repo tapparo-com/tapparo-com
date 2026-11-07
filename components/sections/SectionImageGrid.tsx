@@ -1,57 +1,46 @@
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
+import type { ContentImage } from "@/lib/content";
+import type { CSSProperties } from "react";
 import { Reveal } from "@/components/ui/Reveal";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 
-type GridImage = {
-  _key: string;
-  asset?: { _id: string; url: string; metadata?: { lqip?: string } } | null;
-  alt?: string;
-};
-
-type SectionImageGridProps = {
+type Props = {
   title?: string | null;
-  images?: GridImage[] | null;
+  images?: (ContentImage & { _key: string })[] | null;
 };
-
-export function SectionImageGrid({ title, images }: SectionImageGridProps) {
-  const validImages = (images ?? []).filter((img) => img.asset);
-  const hasImages = validImages.length > 0;
-
+export function SectionImageGrid({ title, images }: Props) {
+  const selected = (images || []).filter((image) => image.asset);
+  if (!title && !selected.length) return null;
   return (
-    <Reveal>
-    <section className="bg-background">
-      <div className="mx-auto max-w-[1856px] px-3 py-24 md:px-8 md:py-24 xl:py-[180px]">
-        <div className="grid gap-8 md:grid-cols-[1fr_3fr]">
-          {title && (
-            <h2 className="font-sans text-base text-foreground">{title}</h2>
-          )}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {hasImages
-              ? validImages.map((img) => (
-                  <div key={img._key} className="aspect-[4/5] overflow-hidden">
-                    <Image
-                      src={urlFor(img).width(624).height(780).url()}
-                      alt={img.alt || ""}
-                      width={624}
-                      height={780}
-                      className="h-full w-full object-cover"
-                      placeholder={
-                        img.asset?.metadata?.lqip ? "blur" : undefined
-                      }
-                      blurDataURL={img.asset?.metadata?.lqip || undefined}
-                    />
-                  </div>
-                ))
-              : Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="aspect-[4/5] bg-[#A0A0A0]"
-                  />
-                ))}
-          </div>
-        </div>
+    <section
+      className="mx-auto w-full max-w-[var(--content-max-width)] px-[clamp(20px,_3.4vw,_72px)] py-[clamp(64px,_8vw,_160px)] max-[768px]:px-5 [&_*]:min-w-0 [&_button:focus-visible]:[outline:2px_solid_var(--color-accent)] [&_button:focus-visible]:outline-offset-[6px]"
+      data-home-section="mood-images"
+    >
+      {title && (
+        <Reveal className="section-header mb-[clamp(36px,_5vw,_90px)] flex flex-wrap items-baseline justify-between gap-6">
+          <h2 className="text-[clamp(48px,_7vw,_140px)] leading-[0.98] font-medium tracking-[-0.055em] wrap-anywhere">
+            {title}
+          </h2>
+        </Reveal>
+      )}
+      <div>
+        {selected.map((image, index) => {
+          const width = image.asset?.metadata?.dimensions?.width;
+          return (
+            <figure
+              className="section-gallery-figure w-full only:justify-self-center max-[768px]:col-[1] max-[768px]:row-[auto] max-[768px]:mt-0 max-[768px]:w-[78%] max-[768px]:[outline:none] max-[768px]:only:w-full min-[768px]:only:col-[2_/_12] min-[768px]:only:row-[auto] min-[768px]:only:w-[min(100%,_900px)] min-[768px]:[&:nth-child(1):not(:only-child)]:col-[1_/_7] min-[768px]:[&:nth-child(1):not(:only-child)]:row-[1] [&:nth-child(2)]:z-[1] max-[768px]:[&:nth-child(2)]:w-full max-[768px]:[&:nth-child(2)]:justify-self-end min-[768px]:[&:nth-child(2)]:col-[6_/_-1] min-[768px]:[&:nth-child(2)]:row-[1] min-[768px]:[&:nth-child(2)]:mt-[clamp(120px,_18vw,_360px)] [&:nth-child(3)]:z-[2] [&:nth-child(3)]:justify-self-center max-[768px]:[&:nth-child(3)]:w-[64%] max-[768px]:[&:nth-child(3)]:justify-self-center min-[768px]:[&:nth-child(3)]:col-[2_/_5] min-[768px]:[&:nth-child(3)]:row-[2] min-[768px]:[&:nth-child(3)]:-mt-16 min-[768px]:[&:nth-child(3)]:w-[min(100%,_320px)] min-[768px]:[&:nth-child(3)]:[outline:8px_solid_var(--color-background)] [&[data-small='true']]:max-w-[var(--source-width)]"
+              key={image._key}
+              data-small={!!width && width < 480}
+              style={
+                { "--source-width": `${width || 1600}px` } as CSSProperties
+              }
+            >
+              <Reveal mask delay={(index % 3) * 0.08}>
+                <SectionMedia image={image} natural />
+              </Reveal>
+            </figure>
+          );
+        })}
       </div>
     </section>
-    </Reveal>
   );
 }

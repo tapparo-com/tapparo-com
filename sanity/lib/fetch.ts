@@ -15,8 +15,6 @@ export async function sanityFetch<T>({
   tags?: string[];
 }): Promise<T> {
   return client.fetch<T>(query, params, {
-    next: isDev
-      ? { revalidate: 0 }
-      : { revalidate, tags },
+    next: isDev ? { revalidate: 0 } : { revalidate, tags },
   });
 }

@@ -9,58 +9,58 @@ import { SectionLargeText } from "@/components/sections/SectionLargeText";
 import { SectionGallery } from "@/components/sections/SectionGallery";
 import { SectionStories } from "@/components/sections/SectionStories";
 import { SectionText } from "@/components/sections/SectionText";
+import { SectionContactForm } from "@/components/sections/SectionContactForm";
+import type { PageSection, StorySummary } from "@/lib/content";
 
-type Section = {
-  _key: string;
-  _type: string;
-  [key: string]: any;
-};
-
-type SharedData = {
-  restaurantName?: string;
-  tagline?: string;
-  logoSvg?: string | null;
+type Props = {
+  sections: PageSection[];
+  documentId?: string;
   openingHours?: { _key: string; day: string; hours: string }[];
 };
 
-type Props = {
-  sections: Section[];
-  shared?: SharedData;
-};
-
-export async function SectionRenderer({ sections, shared }: Props) {
+export async function SectionRenderer({
+  sections,
+  openingHours,
+  documentId,
+}: Props) {
   if (!sections || sections.length === 0) return null;
 
   // Pre-fetch data needed by dynamic sections
   const needsStories = sections.some((s) => s._type === "sectionStories");
 
   const stories = needsStories
-    ? await sanityFetch<any[]>({
+    ? await sanityFetch<StorySummary[]>({
         query: STORIES_QUERY,
         tags: ["post"],
       })
     : null;
 
-  const heroIndex = sections.findIndex((s) => s._type === "sectionHero");
-  const heroSection = heroIndex !== -1 ? sections[heroIndex] : null;
-  const restSections = heroSection
-    ? sections.filter((_, i) => i !== heroIndex)
-    : sections;
-
   return (
-    <>
-      {heroSection && (
-        <SectionHero
-          key={heroSection._key}
-          restaurantName={shared?.restaurantName || "Tapparo"}
-          tagline={shared?.tagline}
-          logoSvg={shared?.logoSvg}
-          heroImages={heroSection.heroImages}
-        />
-      )}
-      <div className="relative z-10 bg-background">
-      {restSections.map((section) => {
+    <div
+      data-section-page
+      data-has-leading-hero={sections[0]?._type === "sectionHero"}
+    >
+      {sections.map((section) => {
         switch (section._type) {
+          case "sectionContactForm":
+            return documentId ? (
+              <SectionContactForm
+                key={section._key}
+                documentId={documentId}
+                section={section}
+              />
+            ) : null;
+          case "sectionHero":
+            return (
+              <SectionHero
+                key={section._key}
+                heroImages={section.heroImages}
+                tickerPhrases={section.tickerPhrases}
+                imageDuration={section.imageDuration}
+                description={section.description}
+                secondaryLink={section.secondaryLink}
+              />
+            );
           case "sectionSubhero":
             return (
               <SectionSubhero
@@ -68,9 +68,10 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 label={section.label}
                 heading={section.heading}
                 image={section.image}
+                secondaryImage={section.secondaryImage}
                 button={section.button}
                 showOpeningHours={section.showOpeningHours}
-                openingHours={shared?.openingHours}
+                openingHours={openingHours}
               />
             );
 
@@ -102,16 +103,12 @@ export async function SectionRenderer({ sections, shared }: Props) {
                 author={section.author}
                 quote={section.quote}
                 image={section.image}
+                secondaryImage={section.secondaryImage}
               />
             );
 
           case "sectionLargeText":
-            return (
-              <SectionLargeText
-                key={section._key}
-                text={section.text}
-              />
-            );
+            return <SectionLargeText key={section._key} text={section.text} />;
 
           case "sectionGallery":
             return (
@@ -136,9 +133,11 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return (
               <SectionText
                 key={section._key}
+                contactAction={section.contactAction}
                 label={section.label}
                 body={section.body}
                 image={section.image}
+                secondaryImage={section.secondaryImage}
                 imageFirst={section.imageFirst}
               />
             );
@@ -147,7 +146,6 @@ export async function SectionRenderer({ sections, shared }: Props) {
             return null;
         }
       })}
-      </div>
-    </>
+    </div>
   );
 }

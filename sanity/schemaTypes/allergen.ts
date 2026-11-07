@@ -11,14 +11,16 @@ export const allergen = defineType({
       name: "code",
       title: "Code",
       type: "string",
-      description: "1–3 letter code shown in the badge on the menu, e.g. 'G'. Also shown in the allergen legend.",
+      description:
+        "Short code shown as a link beside menu items, e.g. 'G'. It also identifies this entry in the automatic allergen legend. Keep codes consistent when reusing allergens across items.",
       validation: (rule) => rule.required().max(3),
     }),
     defineField({
       name: "label",
       title: "Label",
       type: "string",
-      description: "Full allergen name shown in the legend and on hover, e.g. 'Gluten'.",
+      description:
+        "Full name in the allergen legend and the item link's accessible label, e.g. 'Gluten'. There is no hover tooltip. The legend lists all published allergens, sorted by code.",
       validation: (rule) => rule.required(),
     }),
   ],

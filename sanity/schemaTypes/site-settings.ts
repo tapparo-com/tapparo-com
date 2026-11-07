@@ -1,11 +1,6 @@
-import { defineType, defineField, defineArrayMember } from "sanity";
-import {
-  CogIcon,
-  EnvelopeIcon,
-  ClockIcon,
-  UsersIcon,
-  SearchIcon,
-} from "@sanity/icons";
+export { settingsHours } from "./opening-hours";
+import { defineType, defineField } from "sanity";
+import { CogIcon, EnvelopeIcon, UsersIcon, SearchIcon } from "@sanity/icons";
 
 export const settingsBrand = defineType({
   name: "settingsBrand",
@@ -18,7 +13,7 @@ export const settingsBrand = defineType({
       title: "Restaurant Name",
       type: "string",
       description:
-        "Displayed in the hero, header, footer, and browser tab. Used in structured data for Google.",
+        "Brand text used in accessible labels, logo fallbacks and restaurant search data. It does not rewrite uploaded logo artwork. Browser tab titles are controlled under SEO and individual pages.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -26,14 +21,14 @@ export const settingsBrand = defineType({
       title: "Tagline",
       type: "string",
       description:
-        "Shown below the logo in the hero section and on the Coming Soon page.",
+        "Read with the restaurant name in the hero's screen-reader heading and used in restaurant search data. It is not the hero's visible Short introduction. The welcome and Coming Soon logo use uploaded artwork, not this text.",
     }),
     defineField({
       name: "logo",
       title: "Logo",
       type: "image",
       description:
-        "SVG file used in the hero (light) and header/footer (dark). Upload a single-color SVG — the site applies colors automatically.",
+        "Shared hero, header/menu and footer wordmark. Use a dark, single-color SVG on a transparent background; the footer requires SVG artwork. The header may invert it over photographs. Intro artwork is separate under Site Settings > Page Intro.",
     }),
     defineField({
       name: "supportingLogo",
@@ -67,7 +62,8 @@ export const settingsContact = defineType({
       name: "email",
       title: "Email",
       type: "string",
-      description: "Shown in the footer as a clickable mailto: link.",
+      description:
+        "Public email link in the footer (when enabled there) and the contact form fallback. This does not change the enquiry form recipient or activate delivery; those are managed separately in server configuration.",
       validation: (rule) => rule.email(),
     }),
     defineField({
@@ -75,69 +71,27 @@ export const settingsContact = defineType({
       title: "Phone",
       type: "string",
       description:
-        "Shown in the footer and menu overlay as a clickable tel: link. Include country code, e.g. +49 89 27279100.",
+        "Phone link shown when enabled separately in Navigation > Header and Navigation > Footer. Include the country code, e.g. +49 89 27279100.",
     }),
     defineField({
       name: "address",
       title: "Address",
       type: "text",
       rows: 3,
-      description: "Shown in the footer. Use line breaks for formatting.",
+      description:
+        "Shared address in the hero, navigation overlay and footer, and optionally Coming Soon. Line breaks are preserved in the footer. Edit the map destination separately below.",
     }),
     defineField({
       name: "mapUrl",
       title: "Map URL",
       type: "url",
       description:
-        "Google Maps link shown as 'Maps' in the footer. Opens in a new tab.",
+        "Destination for the hero/navigation address link and the footer's 'Route planen' link. Opens in a new tab. Leave empty to keep the address as plain text and hide the footer map link.",
     }),
   ],
   preview: {
     prepare() {
       return { title: "Contact" };
-    },
-  },
-});
-
-export const settingsHours = defineType({
-  name: "settingsHours",
-  title: "Opening Hours",
-  type: "document",
-  icon: ClockIcon,
-  fields: [
-    defineField({
-      name: "openingHours",
-      title: "Opening Hours",
-      type: "array",
-      description:
-        "Shown in the SubHero section and the footer. Single source of truth — edit here, updates everywhere.",
-      of: [
-        defineArrayMember({
-          type: "object",
-          fields: [
-            defineField({
-              name: "day",
-              title: "Day",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "hours",
-              title: "Hours",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-          ],
-          preview: {
-            select: { title: "day", subtitle: "hours" },
-          },
-        }),
-      ],
-    }),
-  ],
-  preview: {
-    prepare() {
-      return { title: "Opening Hours" };
     },
   },
 });
@@ -161,11 +115,13 @@ export const socialLink = defineType({
       type: "url",
       description: "Must be a valid https URL.",
       validation: (rule) =>
-        rule.required().custom((url) =>
-          !url || url.startsWith("https://")
-            ? true
-            : "URL must start with https://"
-        ),
+        rule
+          .required()
+          .custom((url) =>
+            !url || url.startsWith("https://")
+              ? true
+              : "URL must start with https://",
+          ),
     }),
   ],
   preview: {
@@ -184,7 +140,7 @@ export const settingsSeo = defineType({
       title: "Coming Soon Mode",
       type: "boolean",
       description:
-        "When ON, the entire public site is replaced with a Coming Soon page. Only the Studio remains accessible.",
+        "Replace regular site pages with the Coming Soon screen. This does not disable the Studio or online-order redirect. The Coming Soon layout and label are fixed; edit its body, address visibility and social selection below.",
       initialValue: false,
     }),
     defineField({
@@ -200,7 +156,8 @@ export const settingsSeo = defineType({
       name: "comingSoonShowAddress",
       title: "Show Address",
       type: "boolean",
-      description: "Display the address from Site Settings > Contact on the Coming Soon page.",
+      description:
+        "Display the address from Site Settings > Contact on the Coming Soon page.",
       initialValue: false,
       hidden: ({ document }) => !document?.isComingSoon,
     }),
@@ -226,7 +183,7 @@ export const settingsSeo = defineType({
       title: "Default Meta Title",
       type: "string",
       description:
-        "Default browser tab title. Used when a page doesn't set its own.",
+        "Fallback title for Home when Home has no SEO title. Other page types normally supply their own title. Changing the restaurant name does not change this field.",
     }),
     defineField({
       name: "metaDescription",
@@ -234,7 +191,7 @@ export const settingsSeo = defineType({
       type: "text",
       rows: 3,
       description:
-        "Default meta description for search engines. Keep under 160 characters.",
+        "Fallback search summary for Home when Home has no SEO description. Other page types should have their own descriptions. Aim for fewer than 160 characters.",
     }),
   ],
   preview: {

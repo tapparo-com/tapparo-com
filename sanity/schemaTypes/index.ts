@@ -15,9 +15,11 @@ import { post } from "./post";
 import { author } from "./author";
 import { legalPage } from "./legal-page";
 import { storiesPage } from "./stories-page";
+import { settingsPageIntro } from "./page-intro";
 
 export const schemaTypes = [
   settingsBrand,
+  settingsPageIntro,
   settingsContact,
   settingsHours,
   socialLink,

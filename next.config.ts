@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Middleware combines case and trailing-slash normalization in one redirect.
+  skipTrailingSlashRedirect: true,
   images: {
     remotePatterns: [
       {

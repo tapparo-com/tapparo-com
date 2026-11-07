@@ -1,138 +1,74 @@
-import Image from "next/image";
+import type { ContentImage } from "@/lib/content";
+import { pathForSlug } from "@/lib/urls";
 import { TransitionLink } from "@/components/ui/TransitionLink";
-import { urlFor } from "@/sanity/lib/image";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Reveal } from "@/components/ui/Reveal";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 
-type Story = {
-  title: string;
-  excerpt?: string;
-  coverImage?: {
-    asset?: { _id: string; url: string; metadata?: { lqip?: string } };
-    alt?: string;
-  };
-  slug: string;
-};
-
-type SectionStoryHighlightProps = {
+type Props = {
   label?: string | null;
-  story?: Story | null;
+  story?: {
+    title: string;
+    excerpt?: string | null;
+    coverImage?: ContentImage | null;
+    slug: string;
+  } | null;
   titleOverride?: string | null;
   excerptOverride?: string | null;
   buttonLabel?: string | null;
 };
-
 export function SectionStoryHighlight({
   label,
   story,
   titleOverride,
   excerptOverride,
   buttonLabel,
-}: SectionStoryHighlightProps) {
+}: Props) {
   if (!story) return null;
-
-  const title = titleOverride || story.title;
-  const excerpt = excerptOverride || story.excerpt;
-  const storyHref = `/${story.slug}`;
-  const coverImage = story.coverImage;
-
+  const title = titleOverride || story.title,
+    excerpt = excerptOverride || story.excerpt,
+    href = pathForSlug(story.slug);
   return (
-    <Reveal>
-    <section className="overflow-clip bg-background px-3 py-14 md:px-8 md:py-20 xl:pb-20 xl:pt-40">
-      <div className="mx-auto max-w-[1856px]">
-        <div className="flex flex-col gap-10 pb-20 md:grid grid-cols-sidebar md:gap-10">
-          {/* Left column: section label */}
-          {label && (
-            <div className="shrink-0 md:row-start-1 md:col-start-1">
-              <span className="text-base uppercase text-foreground">
-                {label}
-              </span>
-            </div>
+    <section
+      className="mx-auto w-full max-w-[var(--content-max-width)] px-[clamp(20px,_3.4vw,_72px)] py-[clamp(64px,_8vw,_160px)] max-[768px]:px-5 [&_*]:min-w-0 [&_button:focus-visible]:[outline:2px_solid_var(--color-accent)] [&_button:focus-visible]:outline-offset-[6px]"
+      data-home-section="story-highlight"
+    >
+      {label && (
+        <Reveal className="section-header mb-[clamp(36px,_5vw,_90px)] flex flex-wrap items-baseline justify-between gap-6">
+          <p className="[font-family:var(--font-space-grotesk),_sans-serif] text-[13px] leading-[1.4] font-medium tracking-[0.06em] uppercase">
+            {label}
+          </p>
+        </Reveal>
+      )}
+      <div
+        className="grid grid-cols-[minmax(0,_1.4fr)_minmax(0,_1fr)] items-center gap-[clamp(32px,_6vw,_120px)] max-[768px]:grid-cols-1 max-[768px]:gap-10 [&[data-has-image='false']]:max-w-250 [&[data-has-image='false']]:grid-cols-[1fr]"
+        data-has-image={!!story.coverImage?.asset}
+      >
+        {story.coverImage?.asset && (
+          <Reveal mask>
+            <TransitionLink href={href} aria-label={title}>
+              <SectionMedia image={story.coverImage} ratio={4 / 5} />
+            </TransitionLink>
+          </Reveal>
+        )}
+        <Reveal className="grid gap-6 [&_h2]:text-[clamp(32px,_4vw,_72px)] [&_h2]:leading-[1.08] [&_h2]:tracking-[-0.04em]">
+          <h2>
+            <TransitionLink href={href}>{title}</TransitionLink>
+          </h2>
+          {excerpt && (
+            <p className="mt-[18px] max-w-[65ch] text-[16px] leading-[1.55]">
+              {excerpt}
+            </p>
           )}
-
-          {/* Right column: content */}
-          <div className="md:row-start-1 md:col-start-2">
-            <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:gap-10">
-              {/* Text column */}
-              <div className="flex max-w-gutter flex-col gap-[60px] xl:flex-1">
-                {/* Title + inline image for md/sm */}
-                <div className="flex flex-col gap-7">
-                  {title && (
-                    <h2 className="text-section-heading font-sans font-medium text-foreground">
-                      {title}
-                    </h2>
-                  )}
-
-                  {/* Image — shown on md/sm only */}
-                  {coverImage?.asset && (
-                    <TransitionLink href={storyHref} className="group xl:hidden">
-                      <div className="relative aspect-square overflow-hidden">
-                        <Image
-                          src={urlFor(coverImage).width(624).height(624).url()}
-                          alt={coverImage.alt || title || ""}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 624px"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          placeholder={
-                            coverImage.asset.metadata?.lqip ? "blur" : undefined
-                          }
-                          blurDataURL={
-                            coverImage.asset.metadata?.lqip || undefined
-                          }
-                        />
-                      </div>
-                    </TransitionLink>
-                  )}
-                </div>
-
-                {/* Excerpt + button */}
-                <div className="flex flex-col gap-5">
-                  {excerpt && (
-                    <p className="text-base leading-7 text-foreground">
-                      {excerpt}
-                    </p>
-                  )}
-
-                  {buttonLabel && (
-                    <div className="pt-10">
-                      <ButtonLink
-                        href={storyHref}
-                        label={buttonLabel}
-                        variant="outline"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Image column — visible on desktop only */}
-              {coverImage?.asset && (
-                <TransitionLink
-                  href={storyHref}
-                  className="group hidden max-w-gutter xl:block xl:flex-1"
-                >
-                  <div className="relative aspect-square overflow-hidden">
-                    <Image
-                      src={urlFor(coverImage).width(624).height(624).url()}
-                      alt={coverImage.alt || title || ""}
-                      fill
-                      sizes="624px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      placeholder={
-                        coverImage.asset.metadata?.lqip ? "blur" : undefined
-                      }
-                      blurDataURL={
-                        coverImage.asset.metadata?.lqip || undefined
-                      }
-                    />
-                  </div>
-                </TransitionLink>
-              )}
-            </div>
-          </div>
-        </div>
+          {buttonLabel && (
+            <TransitionLink
+              className="inline-flex w-fit items-center gap-7 border-b border-solid border-b-current px-0 py-2 text-[16px] leading-[1.4] text-accent [transition:color_0.2s_ease] hover:text-foreground focus-visible:[outline:2px_solid_var(--color-accent)] focus-visible:outline-offset-[6px] motion-reduce:transition-none [&::after]:text-[22px] [&::after]:leading-[1] [&::after]:[content:'↗']"
+              href={href}
+            >
+              {buttonLabel}
+            </TransitionLink>
+          )}
+        </Reveal>
       </div>
     </section>
-    </Reveal>
   );
 }

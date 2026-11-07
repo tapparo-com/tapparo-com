@@ -1,3 +1,5 @@
+import { siteOrigin } from "@/lib/urls";
+import { canIndexSite } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Instrument_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -12,15 +14,14 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tapparo.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
+  metadataBase: new URL(siteOrigin()),
   title: "Tapparo",
   description: "Day bar & focacceria",
+  ...(!canIndexSite() && { robots: { index: false, follow: false } }),
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "de_DE",
     siteName: "Tapparo",
   },
 };
@@ -31,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body
         className={`${instrumentSans.variable} ${spaceGrotesk.variable} font-sans`}
       >

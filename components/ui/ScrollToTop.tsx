@@ -1,25 +1,20 @@
 "use client";
 
+import { useReducedMotion } from "@/lib/useReducedMotion";
+import { AnimatedUnderline } from "@/components/ui/AnimatedUnderline";
+
 export function ScrollToTop() {
+  const reduced = useReducedMotion();
   return (
     <button
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      aria-label="Scroll to top"
-      className="absolute bottom-5 right-3 flex size-12 items-center justify-center bg-background/75 backdrop-blur-sm text-accent transition-colors hover:text-accent/80 md:right-8 xl:bottom-20"
+      onClick={() =>
+        window.scrollTo({ top: 0, behavior: reduced ? "instant" : "smooth" })
+      }
+      aria-label="Nach oben"
+      className="animated-link relative inline-flex min-h-11 max-w-full items-center px-[2px] pt-2 pb-[14px] text-[17px] leading-[1.4] font-medium tracking-[0.06em] wrap-anywhere text-foreground [transition:color_0.2s_ease] focus-visible:[outline:2px_solid_var(--color-accent)] focus-visible:outline-offset-[6px] motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:absolute [&_svg]:bottom-0 [&_svg]:left-0 [&_svg]:h-3 [&_svg]:w-full [&:hover_svg]:text-accent"
     >
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 26V6M16 6L6 16M16 6L26 16"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-      </svg>
+      <span>nach oben</span>
+      <AnimatedUnderline />
     </button>
   );
 }
